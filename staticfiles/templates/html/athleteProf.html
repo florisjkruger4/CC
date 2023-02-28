@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Coach's Corner</title>
+
+    <!-- FontAwesome Icons Link-->
+    <script src="https://kit.fontawesome.com/c4b55b7379.js" crossorigin="anonymous"></script>
+
+    <!-- Bootstrap Link -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+
+    <!-- CSS Styling -->
+    <link rel="stylesheet" href="/staticfiles/templates/css/styling.css" type="text/css">
+
+</head>
+<body>
+
+  <div class="mainFont container-fluid">
+    <div class="row">
+
+      <!-- SideNavbar -->
+      {% include 'html/sidenav.html' %}
+    
+      <div class="col-md-2"></div>
+
+      <!-- Individual Athlete -->
+      <div class="col-md-10" style="padding-top: 10px; padding-right: 45px">
+        <div style="display: flex; width: 75vh;">
+          <h1 class="mainFont" style="padding-bottom: 10px; padding-right: 8%;">{{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
+        </div>
+      </div>
+    </div>
+</div>
+</body>
+</html>
+
+

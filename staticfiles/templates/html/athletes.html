@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Coach's Corner</title>
+
+    <!-- FontAwesome Icons Link-->
+    <script src="https://kit.fontawesome.com/c4b55b7379.js" crossorigin="anonymous"></script>
+
+    <!-- Bootstrap Link -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+
+    <!-- CSS Styling -->
+    <link rel="stylesheet" href="/staticfiles/templates/css/styling.css" type="text/css">
+
+</head>
+<body>
+
+  <div class="mainFont container-fluid">
+    <div class="row">
+
+      <!-- SideNavbar -->
+      {% include 'html/sidenav.html' %}
+
+      <div class="col-md-2"></div>
+
+      <!-- Athlete_T -->
+      <div class="col-md-9" style="padding-top: 10px;">
+        <div style="display: flex; width: 75vh;">
+          <h1 class="mainFont" style="padding-bottom: 10px; padding-right: 8%;">Athletes</h1>
+          <i class="fa-solid fa-magnifying-glass" style="align-self: center; scale: 1.3;"></i>
+          &nbsp;
+          &nbsp;
+          <input type="text" class="searchbar" placeholder="Search...">
+        </div>
+        <table class="table mainFont">
+        <thead>
+            <tr>
+              <th scope="col" style="background-color: #242C3D;" >First Name &nbsp; <i class="fa-solid fa-key"></i></th>
+              <th scope="col">Last Name &nbsp; <i class="fa-solid fa-key"></i></th>
+              <th scope="col" style="background-color: #242C3D;" >Date of Birth &nbsp; <i class="fa-solid fa-key"></i></th>
+              <th scope="col">Sports Team</th>
+              <th scope="col" style="background-color: #242C3D;" >Year</th>
+              <th scope="col">Height (ft)</th>
+              <th scope="col" style="background-color: #242C3D;" >Weight (lbs)</th>
+            </tr>
+          </thead>
+          <tbody class="table-group-divider" >
+            {% for AthleteT in athletes %}
+            <tr>
+                <td style="background-color: #242C3D;" ><a href="{% url 'AthleteProf' AthleteT.fname %}">{{ AthleteT.fname }}</a></td>
+                <td><a href="{% url 'AthleteProf' AthleteT.fname %}">{{ AthleteT.lname }}</a></td>
+                <td style="background-color: #242C3D;" >{{ AthleteT.dob }}</td>
+                <td>{{ AthleteT.sportsteam }}</td>
+                <td style="background-color: #242C3D;" >{{ AthleteT.year }}</td>
+                <td>{{ AthleteT.height }}</td>
+                <td style="background-color: #242C3D;" >{{ AthleteT.weight }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+      </div>
+
+      <!-- View Toggle -->
+      <div class="col-md-1">
+        <div style="display: flex; justify-content: space-evenly; margin-top: 20px;">
+          <a href="/athletes" class="toggle"><h3 style="color: #F2CD49;"><i class="fa-solid fa-bars"></i></h3></a>
+          <a href="/athletes" class="toggle"><h3 style="color: #F2CD49;"><i class="fa-solid fa-square"></i></h3></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
