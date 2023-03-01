@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import AthleteT, TeamT
+from .models import AthleteT, TeamT, WellnessT
 from .utils import get_plot
 
 def Dashboard(request):
@@ -21,9 +21,11 @@ def AthletesDash(request):
 def AthleteProf(request, fname):
 
     athleteProf = AthleteT.objects.get(fname=fname)
+    wellness = WellnessT.objects.filter(fname=fname).values()
 
     context = {
-        'athleteProf':athleteProf
+        'athleteProf':athleteProf,
+        'wellness':wellness
     }
     
     return render(request, 'html/athleteProf.html', context)

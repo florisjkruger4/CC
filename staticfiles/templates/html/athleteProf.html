@@ -37,16 +37,95 @@
           <div class="athprof">
             <img class="athpic"/>
             
-            <div style="display: flex; flex-direction: column; justify-content: space-evenly;">
-                <div style="display: flex;">
-                    <h5>Sport</h5> <h5 style="order: 2;">Rugby</h5>
+            <div style="display: flex; flex-direction: column; justify-content: space-evenly; width: 60%;">
+                <div style="display: flex; justify-content: space-between;">
+                    <h6>Sport</h6> <h6>{{ athleteProf.sportsteam }}</h6>
                 </div>
-                
-                <h5>Position</h5>
-                <h5>Year</h5>
-                <h5>Height</h5>
-                <h5>Weight</h5>
+                <div style="display: flex; justify-content: space-between;">
+                    <h6>Position</h6> <h6>{{ athleteProf.position }}</h6>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <h6>Year</h6> <h6>{{ athleteProf.year }}</h6>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <h6>Height</h6> <h6>{{ athleteProf.height }}</h6>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <h6>Weight</h6> <h6>{{ athleteProf.weight }}</h6>
+                </div>
             </div>
+          </div>
+
+          <div class="athprof">
+            <h5>KPI Trend Report</h5>
+          </div>
+
+          {% for x in wellness %}
+          <div class="status">
+            <div style="border-radius: 5px; width: 100%; text-align: center; padding: 5px; margin-right: 5px;" id="bor">
+                <h5 id="stat">Status:  {{ x.status }}</h5>
+            </div>
+            <div style="border: 1px solid white; border-radius: 5px; width: 100%; text-align: center; padding: 5px; margin-left: 5px;">
+                <div style="display: flex; justify-content: center;">
+                    <h5>Readiness: &nbsp;</h5>
+                    <h5 id="total"></h5>
+                </div>
+            </div>
+          </div>
+
+          <div class="athprof">
+            <table class="table mainFont wellnesstable" style="border-radius: 10px;">
+                
+                <tr>
+                    <td style="border-right: 1px solid white;"><div class="wellnessrows"><h6>Hours of Sleep</h6> <h6>{{ x.hoursofsleep }}</h6></div></td>
+                    <td><div class="wellnessrows"><h6>Sleep Quality</h6> <h6>{{ x.sleepquality }}</h6></div></td>
+                </tr>
+                <tr>
+                    <td style="border-right: 1px solid white;"><div class="wellnessrows"><h6>Breakfast</h6> <h6>{{ x.breakfast }}</h6></div></td>
+                    <td><div class="wellnessrows"><h6>Hydration</h6> <h6>{{ x.hydration }}</h6></div></td>
+                </tr>
+                <tr>
+                    <td style="border-right: 1px solid white;"><div class="wellnessrows"><h6>Soreness</h6> <h6>{{ x.soreness }}</h6></div></td>
+                    <td><div class="wellnessrows"><h6>Stress</h6> <h6>{{ x.stress }}</h6></div></td>
+                  </tr>
+                  <tr>
+                    <td style="border-right: 1px solid white;"><div class="wellnessrows"><h6>Mood</h6> <h6>{{ x.mood }}</h6></div></td>
+                    <td><div class="wellnessrows"><h6>Total</h6><h6 id="total2"></h6></div></td>
+                  </tr>
+    
+                  <script type="text/javascript">
+                    var hoursofsleep = Number("{{ x.hoursofsleep }}")
+                    var sleepquality =  Number("{{ x.sleepquality }}")
+                    var breakfast =  Number("{{ x.breakfast }}")
+                    var hydration =  Number("{{ x.hydration }}")
+                    var soreness =  Number("{{ x.soreness }}")
+                    var stress =  Number("{{ x.stress }}")
+                    var mood =  Number("{{ x.mood }}")
+    
+                    var total = hoursofsleep + sleepquality + breakfast + hydration + soreness + stress + mood
+    
+                    document.getElementById("total").innerHTML = total
+                    document.getElementById("total2").innerHTML = total
+
+                    function status() {
+                        var status = "{{ x.status }}"
+                        if (status == 'N'){
+                            document.getElementById("stat").style.color = "#FC5151"
+                            document.getElementById("bor").style.border = "1px solid #FC5151"
+                        }
+                        else if (status == 'Y'){
+                            document.getElementById("stat").style.color = "#58E767"
+                            document.getElementById("bor").style.border = "1px solid #58E767"
+                        }
+                    }
+
+                    window.onload = function() {
+                        status();
+                    };
+
+                </script>
+                  {% endfor %}
+            </table>
           </div>
         </div>
       </div>
