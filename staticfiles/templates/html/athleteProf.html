@@ -56,10 +56,15 @@
             </div>
           </div>
 
-          <div class="athprof">
-            <h5>KPI Trend Report</h5>
+          <div class="athprof" style="flex-direction: column;">
+            <div style="display: flex; justify-content: space-between;">
+                <h5>KPI Trend Report</h5>
+                <p style="font-size: 12px;">DD/MM/YY    to    DD/MM//YY</p>
+            </div>
+            <button class="kpidatabtn">Add Data</button>
           </div>
 
+          {% if wellness %}
           {% for x in wellness %}
           <div class="status">
             <div style="border-radius: 5px; width: 100%; text-align: center; padding: 5px; margin-right: 5px;" id="bor">
@@ -122,26 +127,32 @@
                     window.onload = function() {
                         status();
                     };
-
-                </script>
+                  </script>
                   {% endfor %}
             </table>
           </div>
+          {% endif %}
+
         </div>
       </div>
 
       <!-- Graphs -->
       <div class="col-md-7" style="padding-top: 10px; padding-left: 45px; padding-right: 45px">
         <div class="graphprof">
-            <h3>woo hoo</h3>
-            <h3>woo hoo</h3>
-            <h3>woo hoo</h3>
-            <h3>woo hoo</h3>
-            <h3>woo hoo</h3>
-            <h3>woo hoo</h3>
-            <h3>woo hoo</h3>
-            <h3>woo hoo</h3>
-            <h3>woo hoo</h3>
+            {% if kpi %}
+            <div style="display: flex; flex-direction: column;">
+                <div style="display: flex;">
+                    <h5>{{ name }} </h5>
+                    <p style="font-size: 12px; padding-left: 5%;">DD/MM/YY    to    DD/MM//YY</p>
+                </div>
+                
+                {% for x in kpi %}
+
+                {{ x.testresult }}
+
+                {% endfor %}
+            </div>
+        {% endif %}
         </div>
       </div>
     </div>

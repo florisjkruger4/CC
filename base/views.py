@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import AthleteT, TeamT, WellnessT
+from .models import AthleteT, TeamT, WellnessT, KpiT
 from .utils import get_plot
 
 def Dashboard(request):
@@ -18,14 +18,18 @@ def AthletesDash(request):
     
     return render(request, 'html/athletes.html', context)
 
-def AthleteProf(request, fname):
+def AthleteProf(request, fname, lname, dob):
 
     athleteProf = AthleteT.objects.get(fname=fname)
-    wellness = WellnessT.objects.filter(fname=fname).values()
+    wellness = WellnessT.objects.filter(fname=fname, lname=lname, dob=dob).values()
+    kpi = KpiT.objects.filter(fname=fname, lname=lname, dob=dob).values()
+    name = KpiT.objects.filter(fname=fname, lname=lname, dob=dob).values_list('testtype', flat=True).distinct()
 
     context = {
         'athleteProf':athleteProf,
-        'wellness':wellness
+        'wellness':wellness,
+        'kpi':kpi,
+        'name':name
     }
     
     return render(request, 'html/athleteProf.html', context)

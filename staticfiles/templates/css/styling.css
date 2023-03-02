@@ -100,3 +100,13 @@ body{
     display: flex; 
     justify-content: space-between;
   }
+
+  .kpidatabtn {
+    background-color: #F2CD49;
+    border-radius: 5px;
+    border: none;
+    width: 90%;
+    align-self: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }

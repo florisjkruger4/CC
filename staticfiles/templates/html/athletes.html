@@ -51,8 +51,8 @@
           <tbody class="table-group-divider" >
             {% for AthleteT in athletes %}
             <tr>
-                <td style="background-color: #242C3D;" ><a href="{% url 'AthleteProf' AthleteT.fname %}">{{ AthleteT.fname }}</a></td>
-                <td><a href="{% url 'AthleteProf' AthleteT.fname %}">{{ AthleteT.lname }}</a></td>
+                <td style="background-color: #242C3D;" ><a href="{% url 'AthleteProf' AthleteT.fname AthleteT.lname AthleteT.dob %}">{{ AthleteT.fname }}</a></td>
+                <td><a href="{% url 'AthleteProf' AthleteT.fname AthleteT.lname AthleteT.dob %}">{{ AthleteT.lname }}</a></td>
                 <td style="background-color: #242C3D;" >{{ AthleteT.sportsteam }}</td>
                 <td>{{ AthleteT.position }}</td>
                 <td style="background-color: #242C3D;" >{{ AthleteT.year }}</td>

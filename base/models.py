@@ -45,3 +45,16 @@ class WellnessT(models.Model):
         managed = False
         db_table = 'Wellness_T'
         unique_together = (('fname', 'lname', 'dob', 'status', 'date'),)
+
+class KpiT(models.Model):
+    fname = models.CharField(db_column='Fname', primary_key=True, max_length=30)  # Field name made lowercase.
+    lname = models.CharField(db_column='Lname', max_length=30)  # Field name made lowercase.
+    dob = models.CharField(db_column='DOB', max_length=10)  # Field name made lowercase.
+    datekpi = models.CharField(db_column='DateKPI', max_length=10)  # Field name made lowercase.
+    testtype = models.CharField(db_column='TestType', max_length=30)  # Field name made lowercase.
+    testresult = models.FloatField(db_column='TestResult', blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'KPI_T'
+        unique_together = (('fname', 'lname', 'dob', 'datekpi', 'testtype'),)
