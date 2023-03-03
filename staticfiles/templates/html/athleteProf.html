@@ -57,9 +57,24 @@
           </div>
 
           <div class="athprof" style="flex-direction: column;">
-            <div style="display: flex; justify-content: space-between;">
+            <div style="display: flex; justify-content: space-evenly;">
                 <h5>KPI Trend Report</h5>
-                <p style="font-size: 12px;">DD/MM/YY    to    DD/MM//YY</p>
+                <form style="font-size: 10px;">
+                    <select id="date1">
+                        <option disabled hidden selected>Select Date</option>
+                        {% for x in all_dates %}
+                        <option>{{ x.datekpi }}</option>
+                        {% endfor %}
+                    </select> 
+                    to   
+                    <select id="date2">
+                        <option disabled hidden selected>Select Date</option>
+                        {% for x in all_dates %}
+                        <option>{{ x.datekpi }}</option>
+                        {% endfor %}
+                    </select> 
+                    <input type="submit" value="submit" class="submit">
+                </form>
             </div>
             <button class="kpidatabtn">Add Data</button>
           </div>
@@ -79,7 +94,7 @@
           </div>
 
           <div class="athprof">
-            <table class="table mainFont wellnesstable" style="border-radius: 10px;">
+            <table class="table mainFont wellnesstable" style="border-radius: 10px; margin: auto;">
                 
                 <tr>
                     <td style="border-right: 1px solid white;"><div class="wellnessrows"><h6>Hours of Sleep</h6> <h6>{{ x.hoursofsleep }}</h6></div></td>
@@ -94,8 +109,8 @@
                     <td><div class="wellnessrows"><h6>Stress</h6> <h6>{{ x.stress }}</h6></div></td>
                   </tr>
                   <tr>
-                    <td style="border-right: 1px solid white;"><div class="wellnessrows"><h6>Mood</h6> <h6>{{ x.mood }}</h6></div></td>
-                    <td><div class="wellnessrows"><h6>Total</h6><h6 id="total2"></h6></div></td>
+                    <td style="border-right: 1px solid white; border-bottom: none;"><div class="wellnessrows"><h6>Mood</h6> <h6>{{ x.mood }}</h6></div></td>
+                    <td style="border-bottom: none;"><div class="wellnessrows"><h6>Total</h6><h6 id="total2"></h6></div></td>
                   </tr>
     
                   <script type="text/javascript">
@@ -128,6 +143,7 @@
                         status();
                     };
                   </script>
+
                   {% endfor %}
             </table>
           </div>
@@ -138,24 +154,69 @@
 
       <!-- Graphs -->
       <div class="col-md-7" style="padding-top: 10px; padding-left: 45px; padding-right: 45px">
-        <div class="graphprof">
-            {% if kpi %}
-            <div style="display: flex; flex-direction: column;">
-                <div style="display: flex;">
-                    <h5>{{ name }} </h5>
-                    <p style="font-size: 12px; padding-left: 5%;">DD/MM/YY    to    DD/MM//YY</p>
-                </div>
-                
-                {% for x in kpi %}
-
-                {{ x.testresult }}
-
-                {% endfor %}
-            </div>
-        {% endif %}
+        {% if testType %}
+        <div style="display: flex; padding-top: 20px;">
+            <p style="font-size: 18px" class="mainFont" id="resultone">DD/MM/YY</p>
+            <p style="font-size: 18px" class="mainFont">&nbsp; to &nbsp;</p>
+            <p style="font-size: 18px" class="mainFont" id="resulttwo">DD/MM/YY</p>
         </div>
+        <p></p>
+            {% for x in testType %}
+            <div class="graphprof">
+                <div style="display: flex; flex-direction: column;">
+                    <div style="display: flex;">
+                        <h2>{{ x.testtype }}</h2>
+                        
+                        <!--
+                        <p style="font-size: 12px; padding-left: 5%;" id="result">DD/MM//YY</p> 
+                        <p style="font-size: 12px;">&nbsp; &nbsp; to &nbsp; &nbsp;</p> 
+                        <p style="font-size: 12px;" id="displayeddate12">DD/MM//YY</p>  
+                        -->
+
+                    </div>
+                    
+                    {% if x.testtype == "10yd Sprint" %}
+                        {% if TenYd_chart %}
+                            <img src="data:image/png;base64, {{TenYd_chart|safe}}">
+                        {% endif %}
+                    {% endif %}
+
+                    {% if x.testtype == "CMJ" %}
+                        {% if CMJ_chart %}
+                            <img src="data:image/png;base64, {{CMJ_chart|safe}}">
+                        {% endif %}
+                    {% endif %}
+
+                    {% if x.testtype == "Barbell Bench Press 1RM" %}
+                        {% if Bench1RM_chart %}
+                            <img src="data:image/png;base64, {{Bench1RM_chart|safe}}">
+                        {% endif %}
+                    {% endif %}
+                    
+                </div>
+            </div>
+
+            <script type="text/javascript">
+                let selection1 = document.getElementById('date1');
+                let date1 = document.getElementById('resultone');
+
+                let selection2 = document.getElementById('date2');
+                let date2 = document.getElementById('resulttwo');
+    
+                selection1.addEventListener('change', () => {
+                    resultone.innerText = selection1.options[selection1.selectedIndex].text;
+                });
+
+                selection2.addEventListener('change', () => {
+                    resulttwo.innerText = selection2.options[selection2.selectedIndex].text;
+                });
+            </script>
+
+            {% endfor %}
+        {% endif %}
       </div>
     </div>
+    
 </div>
 </body>
 </html>

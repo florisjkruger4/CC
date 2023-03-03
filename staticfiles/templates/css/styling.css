@@ -87,6 +87,7 @@ body{
     background-color: #171C27;
     border-radius: 10px;
     padding: 8px;
+    margin-bottom: 20px;
   }
 
   .status {
@@ -109,4 +110,18 @@ body{
     align-self: center;
     padding-top: 5px;
     padding-bottom: 5px;
+    margin-top: 10px;
+  }
+
+  select {
+    background-color: transparent;
+    border: none;
+    font-family: inherit;
+    color: white;
+  }
+  .submit {
+    background-color: #F2CD49;
+    border-radius: 5px;
+    border: none;
+    align-self: center;
   }
