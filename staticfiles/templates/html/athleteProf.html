@@ -35,7 +35,7 @@
         <div style="position: fixed; width: inherit;">
           <h1 class="mainFont" style="padding-bottom: 10px; padding-right: 8%;">{{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
           <div class="athprof">
-            <img class="athpic"/>
+            <img class="athpic" src="/staticfiles/images/{{ athleteProf.image }}" style="width: fill;"/>
             
             <div style="display: flex; flex-direction: column; justify-content: space-evenly; width: 60%;">
                 <div style="display: flex; justify-content: space-between;">
@@ -59,15 +59,16 @@
           <div class="athprof" style="flex-direction: column;">
             <div style="display: flex; justify-content: space-evenly;">
                 <h5>KPI Trend Report</h5>
-                <form style="font-size: 10px;">
-                    <select id="date1">
+                <form style="font-size: 10px;" method="post" id="form">
+                    {% csrf_token %}
+                    <select id="date1" name="date1">
                         <option disabled hidden selected>Select Date</option>
                         {% for x in all_dates %}
                         <option>{{ x.datekpi }}</option>
                         {% endfor %}
                     </select> 
                     to   
-                    <select id="date2">
+                    <select id="date2" name="date2">
                         <option disabled hidden selected>Select Date</option>
                         {% for x in all_dates %}
                         <option>{{ x.datekpi }}</option>
@@ -76,24 +77,71 @@
                     <input type="submit" value="submit" class="submit">
                 </form>
             </div>
+            {% if testType %}
+            <div style="display: flex;" class="kpireport">
+                <div style="display: flex; justify-content: space-evenly; flex-direction: column; width: inherit;">
+                    {% for x in testType %}
+                        {% if x.testtype == "10yd Sprint" %}
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <p>{{ x.testtype }}</p>
+                            {% if TenYd_y %}
+                                <p>Change:<#></p>
+                                <img src="data:image/png;base64, {{TenYd_chart_line|safe}}">
+                            {% else %}
+                                <p>No Data...</p>
+                            {% endif %}
+                        </div>
+                        <hr style="width: 100%; opacity: 20%;">
+                        {% endif %}
+
+                        {% if x.testtype == "Barbell Bench Press 1RM" %}
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <p>{{ x.testtype }}</p>
+                            {% if Bench1RM_y %}
+                                <p>Change:<#></p>
+                                <img src="data:image/png;base64, {{Bench1RM_chart_line|safe}}">
+                            {% else %}
+                                <p>No Data...</p>
+                            {% endif %}
+                        </div>
+                        <hr style="width: 100%; opacity: 20%;">
+                        {% endif %}
+
+                        {% if x.testtype == "CMJ" %}
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <p>{{ x.testtype }}</p>
+                            {% if CMJ_y %}
+                                <p>Change:<#></p>
+                                <img src="data:image/png;base64, {{CMJ_chart_line|safe}}">
+                            {% else %}
+                                <p>No Data...</p>
+                            {% endif %}
+                        </div>
+                        <hr style="width: 100%; opacity: 20%;">
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
             <button class="kpidatabtn">Add Data</button>
           </div>
 
           {% if wellness %}
-          {% for x in wellness %}
-          <div class="status">
-            <div style="border-radius: 5px; width: 100%; text-align: center; padding: 5px; margin-right: 5px;" id="bor">
-                <h5 id="stat">Status:  {{ x.status }}</h5>
-            </div>
-            <div style="border: 1px solid white; border-radius: 5px; width: 100%; text-align: center; padding: 5px; margin-left: 5px;">
-                <div style="display: flex; justify-content: center;">
-                    <h5>Readiness: &nbsp;</h5>
-                    <h5 id="total"></h5>
+            {% for x in wellness %}
+                <div class="status">
+                    <div style="border-radius: 5px; width: 100%; text-align: center; padding: 5px; margin-right: 5px;" id="bor">
+                        <h5 id="stat">Status:  {{ x.status }}</h5>
+                    </div>
+                    <div style="border: 1px solid white; border-radius: 5px; width: 100%; text-align: center; padding: 5px; margin-left: 5px;">
+                        <div style="display: flex; justify-content: center;">
+                            <h5>Readiness: &nbsp;</h5>
+                            <h5 id="total"></h5>
+                        </div>
+                    </div>
                 </div>
-            </div>
-          </div>
 
-          <div class="athprof">
+  
+            <!--
             <table class="table mainFont wellnesstable" style="border-radius: 10px; margin: auto;">
                 
                 <tr>
@@ -112,6 +160,9 @@
                     <td style="border-right: 1px solid white; border-bottom: none;"><div class="wellnessrows"><h6>Mood</h6> <h6>{{ x.mood }}</h6></div></td>
                     <td style="border-bottom: none;"><div class="wellnessrows"><h6>Total</h6><h6 id="total2"></h6></div></td>
                   </tr>
+
+                  </table>
+            -->
     
                   <script type="text/javascript">
                     var hoursofsleep = Number("{{ x.hoursofsleep }}")
@@ -125,7 +176,6 @@
                     var total = hoursofsleep + sleepquality + breakfast + hydration + soreness + stress + mood
     
                     document.getElementById("total").innerHTML = total
-                    document.getElementById("total2").innerHTML = total
 
                     function status() {
                         var status = "{{ x.status }}"
@@ -143,10 +193,8 @@
                         status();
                     };
                   </script>
-
-                  {% endfor %}
-            </table>
-          </div>
+            
+            {% endfor %}
           {% endif %}
 
         </div>
@@ -176,20 +224,26 @@
                     </div>
                     
                     {% if x.testtype == "10yd Sprint" %}
-                        {% if TenYd_chart %}
+                        {% if TenYd_y %}
                             <img src="data:image/png;base64, {{TenYd_chart|safe}}">
+                        {% else %}
+                            <p>No Data...</p>
                         {% endif %}
                     {% endif %}
 
                     {% if x.testtype == "CMJ" %}
-                        {% if CMJ_chart %}
+                        {% if CMJ_y %}
                             <img src="data:image/png;base64, {{CMJ_chart|safe}}">
+                        {% else %}
+                            <p>No Data...</p>
                         {% endif %}
                     {% endif %}
 
                     {% if x.testtype == "Barbell Bench Press 1RM" %}
-                        {% if Bench1RM_chart %}
+                        {% if Bench1RM_y %}
                             <img src="data:image/png;base64, {{Bench1RM_chart|safe}}">
+                        {% else %}
+                            <p>No Data...</p>
                         {% endif %}
                     {% endif %}
                     

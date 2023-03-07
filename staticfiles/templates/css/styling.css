@@ -78,7 +78,15 @@ body{
     aspect-ratio: 1/1;
     background-color: white;
     border-radius: 10px;
-    background: url(http://unsplash.it/300/300);
+  }
+  .kpireport {
+    max-height: 45vh;
+    width: 100%;
+    background-color: #0C0F14;
+    border-radius: 10px;
+    padding: 12px;
+    margin-top: 20px;
+    display: flex;
   }
 
   .graphprof {
@@ -96,6 +104,8 @@ body{
     margin-top: 20px;
     display: flex;
     justify-content: space-evenly;
+    border-bottom: 10px;
+    position: relative;
   }
   .wellnessrows {
     display: flex; 

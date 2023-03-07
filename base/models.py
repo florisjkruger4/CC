@@ -9,6 +9,7 @@ class AthleteT(models.Model):
     year = models.CharField(db_column='Year', max_length=15, blank=True, null=True)  # Field name made lowercase.
     height = models.FloatField(db_column='Height', blank=True, null=True)  # Field name made lowercase.
     weight = models.FloatField(db_column='Weight', blank=True, null=True)  # Field name made lowercase.
+    image = models.TextField(db_column='Image', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
