@@ -34,7 +34,10 @@
           <i class="fa-solid fa-magnifying-glass" style="align-self: center; scale: 1.3;"></i>
           &nbsp;
           &nbsp;
-          <input type="text" class="searchbar" placeholder="Search...">
+          <form method="GET" action="{% url 'AthletesDash' %}">
+            <input type="text" class="searchbar" placeholder="Search..." name="q">
+          </form>
+          <a href="/athletes"><button type="button" class="kpidatabtn">Refresh</button></a>
         </div>
         <table class="table mainFont">
         <thead>

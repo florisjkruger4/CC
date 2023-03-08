@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.db.models import Q
 from .models import AthleteT, TeamT, WellnessT, KpiT
 from .utils import bar_graph, line_graph
 from django.db.models import Count
@@ -11,7 +12,9 @@ def Dashboard(request):
 
 def AthletesDash(request):
 
-    athletes = AthleteT.objects.all()
+    q = request.GET.get('q') if request.GET.get('q') != None else ''
+
+    athletes = AthleteT.objects.filter(Q() | Q(fname__icontains=q) | Q(lname__icontains=q) | Q(sportsteam__icontains=q) | Q(position__icontains=q) | Q(year__icontains=q))
 
     context = {
         'athletes':athletes
@@ -62,6 +65,26 @@ def AthleteProf(request, fname, lname, dob):
     CMJ_chart = bar_graph(CMJ_x, CMJ_y)
     CMJ_chart_line = line_graph(CMJ_x, CMJ_y)
 
+    # Date 1 test score result
+    if (date_one):
+        TenYd_Date1_result = TenYdSprint_results.order_by('datekpi').first()
+        Bench1RM_Date1_result = Bench1RM_results.order_by('datekpi').first()
+        CMJ_Date1_result = CMJ_results.order_by('datekpi').first()
+    else:
+        TenYd_Date1_result = None
+        Bench1RM_Date1_result = None
+        CMJ_Date1_result = None
+
+    # Date 2 test score result 
+    if (date_two):
+        TenYd_Date2_result = TenYdSprint_results.order_by('datekpi').last()
+        Bench1RM_Date2_result = Bench1RM_results.order_by('datekpi').last()
+        CMJ_Date2_result = CMJ_results.order_by('datekpi').last()
+    else:
+        TenYd_Date2_result = None
+        Bench1RM_Date2_result = None
+        CMJ_Date2_result = None
+
     context = {
         'athleteProf':athleteProf,
         'wellness':wellness,
@@ -74,16 +97,22 @@ def AthleteProf(request, fname, lname, dob):
         'TenYd_chart':TenYd_chart,
         'TenYd_chart_line':TenYd_chart_line,
         'TenYd_y':TenYd_y,
+        'TenYd_Date1_result':TenYd_Date1_result,
+        'TenYd_Date2_result':TenYd_Date2_result,
 
         'Bench1RM_results':Bench1RM_results,
         'Bench1RM_chart':Bench1RM_chart,
         'Bench1RM_chart_line':Bench1RM_chart_line,
         'Bench1RM_y':Bench1RM_y,
+        'Bench1RM_Date1_result':Bench1RM_Date1_result,
+        'Bench1RM_Date2_result':Bench1RM_Date2_result,
 
         'CMJ_results':CMJ_results,
         'CMJ_chart':CMJ_chart,
         'CMJ_chart_line':CMJ_chart_line,
         'CMJ_y':CMJ_y,
+        'CMJ_Date1_result':CMJ_Date1_result,
+        'CMJ_Date2_result':CMJ_Date2_result,
 
         'date_one':date_one,
         'date_two':date_two
@@ -102,15 +131,15 @@ def TeamDash(request):
     
     return render(request, 'html/teams.html', context)
 
-def CreateDash(request):
+def recordKPI(request):
 
     context = {}
 
-    return render(request, 'html/create.html', context)
+    return render(request, 'html/recordKPI.html', context)
 
-def AnalyzeDash(request):
+def WellnessDash(request):
 
     context = {}
 
-    return render(request, 'html/analyze.html', context)
+    return render(request, 'html/wellness.html', context)
 

@@ -85,10 +85,10 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                         <p>{{ x.testtype }}</p>
                             {% if TenYd_y %}
-                                <p>Change:<#></p>
+                                <p id="tenydchange"></p>
                                 <img src="data:image/png;base64, {{TenYd_chart_line|safe}}">
                             {% else %}
-                                <p>No Data...</p>
+                                <p>No Data Selected...</p>
                             {% endif %}
                         </div>
                         <hr style="width: 100%; opacity: 20%;">
@@ -98,10 +98,10 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                         <p>{{ x.testtype }}</p>
                             {% if Bench1RM_y %}
-                                <p>Change:<#></p>
+                                <p id="bench1rmchange"></p>
                                 <img src="data:image/png;base64, {{Bench1RM_chart_line|safe}}">
                             {% else %}
-                                <p>No Data...</p>
+                                <p>No Data Selected...</p>
                             {% endif %}
                         </div>
                         <hr style="width: 100%; opacity: 20%;">
@@ -111,10 +111,10 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                         <p>{{ x.testtype }}</p>
                             {% if CMJ_y %}
-                                <p>Change:<#></p>
+                                <p id="cmjchange"></p>
                                 <img src="data:image/png;base64, {{CMJ_chart_line|safe}}">
                             {% else %}
-                                <p>No Data...</p>
+                                <p>No Data Selected...</p>
                             {% endif %}
                         </div>
                         <hr style="width: 100%; opacity: 20%;">
@@ -172,13 +172,23 @@
                     var soreness =  Number("{{ x.soreness }}")
                     var stress =  Number("{{ x.stress }}")
                     var mood =  Number("{{ x.mood }}")
-    
+
                     var total = hoursofsleep + sleepquality + breakfast + hydration + soreness + stress + mood
-    
                     document.getElementById("total").innerHTML = total
 
+                    var TenYd_Change = Number("{{ TenYd_Date2_result.testresult }}") - Number("{{ TenYd_Date1_result.testresult }}")
+                    TenYd_Change = TenYd_Change.toFixed(2)
+
+                    var Bench1RM_Change = Number("{{ Bench1RM_Date2_result.testresult }}") - Number("{{ Bench1RM_Date1_result.testresult }}")
+                    Bench1RM_Change = Bench1RM_Change.toFixed(2)
+    
+                    var CMJ_Change = Number("{{ CMJ_Date2_result.testresult }}") - Number("{{ CMJ_Date1_result.testresult }}")
+                    CMJ_Change = CMJ_Change.toFixed(2)
+
                     function status() {
+
                         var status = "{{ x.status }}"
+
                         if (status == 'N'){
                             document.getElementById("stat").style.color = "#FC5151"
                             document.getElementById("bor").style.border = "1px solid #FC5151"
@@ -186,6 +196,34 @@
                         else if (status == 'Y'){
                             document.getElementById("stat").style.color = "#58E767"
                             document.getElementById("bor").style.border = "1px solid #58E767"
+                        }
+
+                        if (TenYd_Change != 0.00){
+                            document.getElementById("tenydchange").innerHTML = "Change: " + TenYd_Change
+                            if (TenYd_Change > 0.00){
+                                document.getElementById("tenydchange").style.color = "#58E767"
+                            }
+                            else if (TenYd_Change < 0.00){
+                                document.getElementById("tenydchange").style.color = "#FC5151"
+                            }
+                        }
+                        if (Bench1RM_Change != 0.00){
+                            document.getElementById("bench1rmchange").innerHTML = "Change: " + Bench1RM_Change
+                            if (Bench1RM_Change > 0.00){
+                                document.getElementById("bench1rmchange").style.color = "#58E767"
+                            }
+                            else if (Bench1RM_Change < 0.00){
+                                document.getElementById("bench1rmchange").style.color = "#FC5151"
+                            }
+                        }
+                        if (CMJ_Change != 0.00){
+                            document.getElementById("cmjchange").innerHTML = "Change: " + CMJ_Change
+                            if (CMJ_Change > 0.00){
+                                document.getElementById("cmjchange").style.color = "#58E767"
+                            }
+                            else if (CMJ_Change < 0.00){
+                                document.getElementById("cmjchange").style.color = "#FC5151"
+                            }
                         }
                     }
 
@@ -227,7 +265,7 @@
                         {% if TenYd_y %}
                             <img src="data:image/png;base64, {{TenYd_chart|safe}}">
                         {% else %}
-                            <p>No Data...</p>
+                            <p>No Data Selected...</p>
                         {% endif %}
                     {% endif %}
 
@@ -235,7 +273,7 @@
                         {% if CMJ_y %}
                             <img src="data:image/png;base64, {{CMJ_chart|safe}}">
                         {% else %}
-                            <p>No Data...</p>
+                            <p>No Data Selected...</p>
                         {% endif %}
                     {% endif %}
 
@@ -243,7 +281,7 @@
                         {% if Bench1RM_y %}
                             <img src="data:image/png;base64, {{Bench1RM_chart|safe}}">
                         {% else %}
-                            <p>No Data...</p>
+                            <p>No Data Selected...</p>
                         {% endif %}
                     {% endif %}
                     

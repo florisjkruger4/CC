@@ -11,8 +11,8 @@ urlpatterns = [
     path("<str:fname>/<str:lname>/<path:dob>", views.AthleteProf, name="AthleteProf"),
 
     path('teams/', views.TeamDash, name="TeamDash"),
-    path('create/', views.CreateDash, name="CreateDash"),
-    path('analyze/', views.AnalyzeDash, name="AnalyzeDash"),
+    path('recordKPI/', views.recordKPI, name="recordKPI"),
+    path('wellness/', views.WellnessDash, name="WellnessDash"),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

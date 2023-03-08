@@ -81,11 +81,11 @@ WSGI_APPLICATION = 'CC.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'cc_database',
-        'USER': 'root',
-        'PASSWORD': '',
+        'NAME': 'lindenwood',
+        'USER': 'a5group',
+        'PASSWORD': '@spring2023',
         'PORT': '3306',
-        'HOST': '127.0.0.1',
+        'HOST': '137.184.106.207',
     }
 }
 
