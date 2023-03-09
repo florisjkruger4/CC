@@ -7,16 +7,6 @@ body{
     font-family:Verdana, Geneva, Tahoma, sans-serif;
 }
 
-.navbar {
-    background-color: #171C27;
-    width:15%; 
-    height:100%;
-    left: 0;
-    top: 0;
-    position: fixed;
-    overflow-x: hidden;
-}
-
 .admin {
     height: 100px;
     width: 100px;
@@ -30,13 +20,13 @@ body{
     color: white;
   }
 
-  .linkstyle {
+  /*.linkstyle {
     color: white;
     font-family:Verdana, Geneva, Tahoma, sans-serif;
   }
   .linkstyle:hover {
     opacity: 70%;
-  }
+  }*/
 
   .searchbar{
     height: 30px; 

@@ -1,0 +1,61 @@
+  .side-nav {
+    width: 250px;
+    height: 100vh;
+    background-color: #171C27;
+    font-family: 'Titillium Web', sans-serif;
+    font-size: 20px;
+    color: white;
+    position: fixed;
+    display: block;
+    padding: 0;
+  }
+
+  .side-nav a {
+    text-decoration: none;
+    color: white;
+  }
+
+  .side-nav i {
+    width: 24px;
+  }
+
+  .nav-user {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-left: 40px;
+    padding-top: 40px;
+    padding-right: 40px;
+  }
+
+  .nav-pfp {
+    width: 40px;
+    padding-right: 20px;
+  }
+
+  .nav-footer {
+    position: fixed;
+    text-align: center;
+    font-size: 10px;
+    bottom: 0;
+    padding-bottom: 20px;
+  }
+
+  .nav-links {
+    padding-left: 40px;
+    padding-top: 40px;
+    padding-right: 40px;
+  }
+
+  .nav-list-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .line-1 {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    height: 1px;
+    background: #404245;
+  }
