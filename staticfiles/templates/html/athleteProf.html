@@ -50,86 +50,78 @@
                         </div>
                     </div>
 
-                    {% if testType %}
+                        {% if testType %}
 
                     <!-- KPI Trends -->
-                    <div class="kpireport">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <h3>KPI Trend Report</h3>
-                            <div style="display: flex;">
-                                <p style="font-size: 16px" id="resultone">DD/MM/YY</p>
-                                <p style="font-size: 16px">&nbsp; to &nbsp;</p>
-                                <p style="font-size: 16px" id="resulttwo">DD/MM/YY</p>
-                            </div>
-                        </div>
-                        <div>
-                            {% for x in testType %}
-                            {% if x.testtype == "10yd Sprint" %}
+                        <div class="kpireport">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <div>
+                                <h3>KPI Trend Report</h3>
+                                <div style="display: flex;">
+                                    <p style="font-size: 16px" id="resultone">DD/MM/YY</p>
+                                    <p style="font-size: 16px">&nbsp; to &nbsp;</p>
+                                    <p style="font-size: 16px" id="resulttwo">DD/MM/YY</p>
+                                </div>
+                            </div>
+                            <div>
+                                {% for x in testType %}
+                                {% if x.testtype == "10yd Sprint" %}
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
                                     <p>{{ x.testtype }}</p>
                                     {% if TenYd_y %}
                                     <p id="tenydchange"></p>
+                                    <img src="data:image/png;base64, {{TenYd_chart_line|safe}}">
+                                    {% else %}
+                                    <p>No Data Selected...</p>
+                                    {% endif %}
                                 </div>
-                                <img src="data:image/png;base64, {{TenYd_chart_line|safe}}">
-                                {% else %}
-                                <p>No Data Selected...</p>
+                                <hr style="width: 100%; opacity: 20%;">
                                 {% endif %}
-                            </div>
-                            <hr style="width: 100%; opacity: 20%;">
-                            {% endif %}
 
-                            {% if x.testtype == "Barbell Bench Press 1RM" %}
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <div>
+                                {% if x.testtype == "Barbell Bench Press 1RM" %}
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
                                     <p>{{ x.testtype }}</p>
                                     {% if Bench1RM_y %}
                                     <p id="bench1rmchange"></p>
+                                    <img src="data:image/png;base64, {{Bench1RM_chart_line|safe}}">
+                                    {% else %}
+                                    <p>No Data Selected...</p>
+                                    {% endif %}
                                 </div>
-                                <img src="data:image/png;base64, {{Bench1RM_chart_line|safe}}">
-                                {% else %}
-                                <p>No Data Selected...</p>
+                                <hr style="width: 100%; opacity: 20%;">
                                 {% endif %}
-                            </div>
-                            <hr style="width: 100%; opacity: 20%;">
-                            {% endif %}
 
-                            {% if x.testtype == "CMJ" %}
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <div>
+                                {% if x.testtype == "CMJ" %}
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
                                     <p>{{ x.testtype }}</p>
                                     {% if CMJ_y %}
                                     <p style="color:white;" id="cmjchange"></p>
+                                    <img src="data:image/png;base64, {{CMJ_chart_line|safe}}">
+                                    {% else %}
+                                    <p>No Data Selected...</p>
+                                    {% endif %}
                                 </div>
-                                <img src="data:image/png;base64, {{CMJ_chart_line|safe}}">
-                                {% else %}
-                                <p>No Data Selected...</p>
                                 {% endif %}
+                                {% endfor %}
                             </div>
-                            {% endif %}
-                            {% endfor %}
+                            <button class="kpidatabtn">Add Data</button>
                         </div>
-                        <button class="kpidatabtn">Add Data</button>
-                    </div>
-                    {% endif %}
+                        {% endif %}
 
                     {% if wellness %}
                     {% for x in wellness %}
 
                     <!-- Wellness -->
-                    <div class="status">
-                        <div style="border-radius: 5px; width: 100%; text-align: center; padding: 5px; margin-right: 5px;"
-                            id="bor">
-                            <h5 id="stat">Status: {{ x.status }}</h5>
-                        </div>
-                        <div
-                            style="border: 1px solid white; border-radius: 5px; width: 100%; text-align: center; padding: 5px; margin-left: 5px;">
-                            <div style="display: flex; justify-content: center;">
-                                <h5>Readiness: &nbsp;</h5>
-                                <h5 id="total"></h5>
+                        <div class="status">
+                            <div style="border-radius: 5px; width: 100%; text-align: center; padding: 5px; margin-right: 5px;" id="bor">
+                                <h5 id="stat">Status:  {{ x.status }}</h5>
+                            </div>
+                            <div style="border: 1px solid white; border-radius: 5px; width: 100%; text-align: center; padding: 5px; margin-left: 5px;">
+                                <div style="display: flex; justify-content: center;">
+                                    <h5>Readiness: &nbsp;</h5>
+                                    <h5 id="total"></h5>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
                     <!-- Extra Wellness Stuff
             <table class="table mainFont wellnesstable" style="border-radius: 10px; margin: auto;">
@@ -154,99 +146,101 @@
                   </table>
             -->
 
-                    <script type="text/javascript">
-                        var hoursofsleep = Number("{{ x.hoursofsleep }}")
-                        var sleepquality = Number("{{ x.sleepquality }}")
-                        var breakfast = Number("{{ x.breakfast }}")
-                        var hydration = Number("{{ x.hydration }}")
-                        var soreness = Number("{{ x.soreness }}")
-                        var stress = Number("{{ x.stress }}")
-                        var mood = Number("{{ x.mood }}")
-
-                        var total = hoursofsleep + sleepquality + breakfast + hydration + soreness + stress + mood
-                        document.getElementById("total").innerHTML = total
-
-                        var TenYd_Change = Number("{{ TenYd_Date2_result.testresult }}") - Number("{{ TenYd_Date1_result.testresult }}")
-                        TenYd_Change = TenYd_Change.toFixed(2)
-
-                        var Bench1RM_Change = Number("{{ Bench1RM_Date2_result.testresult }}") - Number("{{ Bench1RM_Date1_result.testresult }}")
-                        Bench1RM_Change = Bench1RM_Change.toFixed(2)
-
-                        var CMJ_Change = Number("{{ CMJ_Date2_result.testresult }}") - Number("{{ CMJ_Date1_result.testresult }}")
-                        CMJ_Change = CMJ_Change.toFixed(2)
-
-                        function status() {
-
-                            var status = "{{ x.status }}"
-
-                            if (status == 'N') {
-                                document.getElementById("stat").style.color = "#FC5151"
-                                document.getElementById("bor").style.border = "1px solid #FC5151"
+                        <script type="text/javascript">
+                            var hoursofsleep = Number("{{ x.hoursofsleep }}")
+                            var sleepquality = Number("{{ x.sleepquality }}")
+                            var breakfast = Number("{{ x.breakfast }}")
+                            var hydration = Number("{{ x.hydration }}")
+                            var soreness = Number("{{ x.soreness }}")
+                            var stress = Number("{{ x.stress }}")
+                            var mood = Number("{{ x.mood }}")
+        
+                            var total = hoursofsleep + sleepquality + breakfast + hydration + soreness + stress + mood
+                            document.getElementById("total").innerHTML = total
+        
+                            var TenYd_Change = Number("{{ TenYd_Date2_result.testresult }}") - Number("{{ TenYd_Date1_result.testresult }}")
+                            TenYd_Change = TenYd_Change.toFixed(2)
+        
+                            var Bench1RM_Change = Number("{{ Bench1RM_Date2_result.testresult }}") - Number("{{ Bench1RM_Date1_result.testresult }}")
+                            Bench1RM_Change = Bench1RM_Change.toFixed(2)
+        
+                            var CMJ_Change = Number("{{ CMJ_Date2_result.testresult }}") - Number("{{ CMJ_Date1_result.testresult }}")
+                            CMJ_Change = CMJ_Change.toFixed(2)
+        
+                            function status() {
+        
+                                var status = "{{ x.status }}"
+        
+                                if (status == 'N') {
+                                    document.getElementById("stat").style.color = "#FC5151"
+                                    document.getElementById("bor").style.border = "1px solid #FC5151"
+                                }
+                                else if (status == 'Y') {
+                                    document.getElementById("stat").style.color = "#58E767"
+                                    document.getElementById("bor").style.border = "1px solid #58E767"
+                                }
+        
+                                if (TenYd_Change != 0.00) {
+                                    document.getElementById("tenydchange").innerHTML = "Change: " + TenYd_Change
+                                    if (TenYd_Change > 0.00) {
+                                        document.getElementById("tenydchange").style.color = "#58E767"
+                                    }
+                                    else if (TenYd_Change < 0.00) {
+                                        document.getElementById("tenydchange").style.color = "#FC5151"
+                                    }
+                                }
+                                if (Bench1RM_Change != 0.00) {
+                                    document.getElementById("bench1rmchange").innerHTML = "Change: " + Bench1RM_Change
+                                    if (Bench1RM_Change > 0.00) {
+                                        document.getElementById("bench1rmchange").style.color = "#58E767"
+                                    }
+                                    else if (Bench1RM_Change < 0.00) {
+                                        document.getElementById("bench1rmchange").style.color = "#FC5151"
+                                    }
+                                }
+                                if (CMJ_Change != 0.00) {
+                                    document.getElementById("cmjchange").innerHTML = "Change: " + CMJ_Change
+                                    if (CMJ_Change > 0.00) {
+                                        document.getElementById("cmjchange").style.color = "#58E767"
+                                    }
+                                    else if (CMJ_Change < 0.00) {
+                                        document.getElementById("cmjchange").style.color = "#FC5151"
+                                    }
+                                }
                             }
-                            else if (status == 'Y') {
-                                document.getElementById("stat").style.color = "#58E767"
-                                document.getElementById("bor").style.border = "1px solid #58E767"
-                            }
-
-                            if (TenYd_Change != 0.00) {
-                                document.getElementById("tenydchange").innerHTML = "Change: " + TenYd_Change
-                                if (TenYd_Change > 0.00) {
-                                    document.getElementById("tenydchange").style.color = "#58E767"
-                                }
-                                else if (TenYd_Change < 0.00) {
-                                    document.getElementById("tenydchange").style.color = "#FC5151"
-                                }
-                            }
-                            if (Bench1RM_Change != 0.00) {
-                                document.getElementById("bench1rmchange").innerHTML = "Change: " + Bench1RM_Change
-                                if (Bench1RM_Change > 0.00) {
-                                    document.getElementById("bench1rmchange").style.color = "#58E767"
-                                }
-                                else if (Bench1RM_Change < 0.00) {
-                                    document.getElementById("bench1rmchange").style.color = "#FC5151"
-                                }
-                            }
-                            if (CMJ_Change != 0.00) {
-                                document.getElementById("cmjchange").innerHTML = "Change: " + CMJ_Change
-                                if (CMJ_Change > 0.00) {
-                                    document.getElementById("cmjchange").style.color = "#58E767"
-                                }
-                                else if (CMJ_Change < 0.00) {
-                                    document.getElementById("cmjchange").style.color = "#FC5151"
-                                }
-                            }
-                        }
-
-                        window.onload = function () {
-                            status();
-                        };
-                    </script>
+        
+                            window.onload = function () {
+                                status();
+                            };
+                        </script>
                     {% endfor %}
-                    {% endif %}
+                    {% endif %}    
                 </div>
 
                 <div class="col-lg-7" style="height: 100vh; padding: 0; padding-left: 15px;">
-
-                    <!-- Date Selector + Settings-->
-                    <div class="main-header" style="justify-content: space-between;">
-                        <form method="post" id="form">
-                            {% csrf_token %}
-                            <select id="date1" name="date1">
-                                <option disabled hidden selected>Select Date</option>
-                                {% for x in all_dates %}
-                                <option>{{ x.datekpi }}</option>
-                                {% endfor %}
-                            </select>
-                            to
-                            <select id="date2" name="date2">
-                                <option disabled hidden selected>Select Date</option>
-                                {% for x in all_dates %}
-                                <option>{{ x.datekpi }}</option>
-                                {% endfor %}
-                            </select>
-                            <input type="submit" value="submit" class="submit">
-                        </form>
-                        <i class="fa-solid fa-gear" style="color: var(--yellow-accent); scale: 1.3;"></i>
+                    <div class="col-scroll">
+                        
+                        <!-- Date Selector + Settings-->
+                        <div class="main-header" style="justify-content: space-between;">
+                            <form method="post" id="form">
+                                {% csrf_token %}
+                                <select id="date1" name="date1">
+                                    <option disabled hidden selected>Select Date</option>
+                                    {% for x in all_dates %}
+                                    <option>{{ x.datekpi }}</option>
+                                    {% endfor %}
+                                </select>
+                                to
+                                <select id="date2" name="date2">
+                                    <option disabled hidden selected>Select Date</option>
+                                    {% for x in all_dates %}
+                                    <option>{{ x.datekpi }}</option>
+                                    {% endfor %}
+                                </select>
+                                <input type="submit" value="submit" class="submit">
+                            </form>
+                            <i class="fa-solid fa-gear" style="color: var(--yellow-accent); scale: 1.3;"></i>
+                        </div>
 
                         <!-- Graphs -->
                         {% if testType %}

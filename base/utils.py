@@ -46,7 +46,6 @@ def line_graph(x, y):
 
     plt.switch_backend('AGG')
     plt.figure(figsize=(2.5,.5), facecolor="#1F2126")
-    plt.pad = 0
     #plt.title('line Graph')
     plt.plot(x, y, color="#96B7FF")
     plt.tight_layout()
