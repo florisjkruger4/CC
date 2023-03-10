@@ -17,17 +17,17 @@ def get_graph():
 def bar_graph(x, y):
 
     plt.switch_backend('AGG')
-    plt.figure(figsize=(8,5), facecolor="#171C27")
+    plt.figure(figsize=(8,4), facecolor="#1F2126")
     #plt.title('Bar Graph')
     plt.bar(x, y, color="#96B7FF")
-    plt.xticks(rotation=45)
+    plt.xticks(rotation=0)
     plt.tight_layout()
     ax = plt.gca()
-    ax.set_facecolor("#171C27")
+    ax.set_facecolor("#1F2126")
     ax.spines['bottom'].set_color("white")
     ax.spines['left'].set_color("white")
-    ax.spines['top'].set_color("#171C27")
-    ax.spines['right'].set_color("#171C27")
+    ax.spines['top'].set_color("#1F2126")
+    ax.spines['right'].set_color("#1F2126")
     ax.tick_params(axis='x', colors='white')
     ax.tick_params(axis='y', colors='white')
 
@@ -45,12 +45,13 @@ def bar_graph(x, y):
 def line_graph(x, y):
 
     plt.switch_backend('AGG')
-    plt.figure(figsize=(2,1), facecolor="#171C27")
+    plt.figure(figsize=(2.5,.5), facecolor="#1F2126")
+    plt.pad = 0
     #plt.title('line Graph')
     plt.plot(x, y, color="#96B7FF")
     plt.tight_layout()
     ax = plt.gca()
-    ax.set_facecolor("#171C27")
+    ax.set_facecolor("#1F2126")
     ax.spines['bottom'].set_visible(False)
     ax.spines['left'].set_visible(False)
     ax.spines['top'].set_visible(False)

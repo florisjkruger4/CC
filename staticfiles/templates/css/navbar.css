@@ -1,9 +1,9 @@
   .side-nav {
-    width: 250px;
+    width: 200px;
     height: 100vh;
-    background-color: #171C27;
+    background-color: #1F2126;
     font-family: 'Titillium Web', sans-serif;
-    font-size: 20px;
+    font-size: 16;
     color: white;
     position: fixed;
     display: block;
@@ -16,16 +16,13 @@
   }
 
   .side-nav i {
-    width: 24px;
+    width: 18px;
   }
 
   .nav-user {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-left: 40px;
-    padding-top: 40px;
-    padding-right: 40px;
   }
 
   .nav-pfp {
@@ -34,17 +31,18 @@
   }
 
   .nav-footer {
-    position: fixed;
-    text-align: center;
     font-size: 10px;
+    margin-bottom: 20px;
     bottom: 0;
-    padding-bottom: 20px;
+    position: absolute;
+    text-align: center;
+    
   }
 
   .nav-links {
-    padding-left: 40px;
-    padding-top: 40px;
-    padding-right: 40px;
+    padding-left: 30px;
+    padding-top: 30px;
+    padding-right: 30px;
   }
 
   .nav-list-item {
@@ -53,9 +51,7 @@
     gap: 20px;
   }
 
-  .line-1 {
-    margin-top: 15px;
-    margin-bottom: 15px;
-    height: 1px;
-    background: #404245;
+  .nav-list-item:hover{
+    opacity: 70%;
+    transition: 400ms;
   }

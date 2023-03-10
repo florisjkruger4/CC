@@ -1,127 +1,189 @@
-body{
-    background-color: #0C0F14;
+/* AFFECTS ALL PAGES */
+html * {
+  font-family: 'Titillium Web', sans-serif;
+  color: white;
+  /*src: url(https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&display=swap);*/
 }
 
-.mainFont {
-    color: white;
-    font-family:Verdana, Geneva, Tahoma, sans-serif;
+:root{
+  --blue-accent: #99C7FF;
+  --yellow-accent: #FFCE54;
+  --med-gray-1: #31363D;
+  --med-gray-2: #1F2126;
+  --dark-gray: #101214;
+}
+
+body {
+  background-color: var(--dark-gray);
+  color: white;
+}
+
+/* For titles on all pages */
+h1{
+  font-size: 48; 
+  font-weight: 600;
+}
+
+/* For dates and graph titles */
+h2{
+  font-size: 24;
+  font-weight: 700;
+}
+
+/* For general content */
+h3{
+  font-size: 20;
+  font-weight: 400;
+}
+
+/* For tables */
+td{
+  font-size: 16;
+  font-weight: 400;
+}
+
+.table-customs {
+  --bs-table-bg: var(--med-gray-1) !important;
+  --bs-table-striped-bg: var(--med-gray-2) !important;
+}
+
+.table-customs th {
+  background-color: var(--dark-gray);
+}
+
+.main-container {
+  margin-left: 200px; 
+  padding: 30px 30px 0 30px;
+  display: block;
+}
+
+.main-header{
+  height: 60px;
+  display: flex; 
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 .admin {
-    height: 100px;
-    width: 100px;
-    background-color: #bbb;
-    border-radius: 50%;
-    margin: auto;
-  }
+  height: 100px;
+  width: 100px;
+  background-color: #bbb;
+  border-radius: 50%;
+  margin: auto;
+}
 
-  a:link, a:visited, a:hover, a:active {
-    text-decoration: none;
-    color: white;
-  }
+a:link,
+a:visited,
+a:hover,
+a:active {
+  text-decoration: none;
+  color: white;
+}
 
-  /*.linkstyle {
-    color: white;
-    font-family:Verdana, Geneva, Tahoma, sans-serif;
-  }
-  .linkstyle:hover {
-    opacity: 70%;
-  }*/
+.searchbar {
+  height: 30px;
+  width: 35%;
+  align-self: center;
+  border-radius: 7px;
+  border: white 2px solid;
+  background-color: #171C27;
+}
 
-  .searchbar{
-    height: 30px; 
-    width: 35%;
-    align-self: center;
-    border-radius: 7px;
-    border: white 2px solid;
-    background-color: #171C27;
-  }
-  input[type=text]{
-    background-color: #171C27;
-    color: white;
-    padding: 2px 4px 2px 4px;
-  }
-  input::placeholder {
-    color: white;
-    padding: 3px;
-  }
+input[type=text] {
+  background-color: #171C27;
+  color: white;
+  padding: 2px 4px 2px 4px;
+}
 
-  .toggle{
-    transition: transform 0.3s;
-  }
-  .toggle:hover{
-    transform: scale(1.4);
-  }
+input::placeholder {
+  color: white;
+  padding: 3px;
+}
 
-  .athprof {
-    height: fit-content;
-    width: 100%;
-    background-color: #171C27;
-    border-radius: 10px;
-    padding: 12px;
-    margin-top: 20px;
-    display: flex;
-  }
-  .athpic {
-    margin-right: 10px;
-    width: 45%;
-    aspect-ratio: 1/1;
-    background-color: white;
-    border-radius: 10px;
-  }
-  .kpireport {
-    max-height: 45vh;
-    width: 100%;
-    background-color: #0C0F14;
-    border-radius: 10px;
-    padding: 12px;
-    margin-top: 20px;
-    display: flex;
-  }
+.toggle {
+  transition: transform 0.3s;
+}
 
-  .graphprof {
-    height: fit-content;
-    width: 100%;
-    background-color: #171C27;
-    border-radius: 10px;
-    padding: 8px;
-    margin-bottom: 20px;
-  }
+.toggle:hover {
+  transform: scale(1.4);
+}
 
-  .status {
-    height: fit-content;
-    width: 100%;
-    margin-top: 20px;
-    display: flex;
-    justify-content: space-evenly;
-    border-bottom: 10px;
-    position: relative;
-  }
-  .wellnessrows {
-    display: flex; 
-    justify-content: space-between;
-  }
+.line-1 {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  height: 1px;
+  background: #404245;
+}
 
-  .kpidatabtn {
-    background-color: #F2CD49;
-    border-radius: 5px;
-    border: none;
-    width: 90%;
-    align-self: center;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    margin-top: 10px;
-  }
+.line-2 {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  height: 1px;
+  background: #404245;
+}
 
-  select {
-    background-color: transparent;
-    border: none;
-    font-family: inherit;
-    color: white;
-  }
-  .submit {
-    background-color: #F2CD49;
-    border-radius: 5px;
-    border: none;
-    align-self: center;
-  }
+/* Athlete Individual */
+
+.athlete-pic {
+  width: 200px;
+  background-color: white;
+  border-radius: 10px;
+}
+
+.kpireport {
+  width: 100%;
+  background-color: var(--med-gray-2);
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.graphprof {
+  height: fit-content;
+  width: 100%;
+  background-color: var(--med-gray-2);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.status {
+  height: fit-content;
+  width: 100%;
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-evenly;
+  border-bottom: 10px;
+  position: relative;
+}
+
+.wellnessrows {
+  display: flex;
+  justify-content: space-between;
+}
+
+.kpidatabtn {
+  background-color: #F2CD49;
+  color: black;
+  border-radius: 5px;
+  border: none;
+  width: 100%;
+  align-self: center;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin-top: 10px;
+}
+
+select {
+  background-color: transparent;
+  border: none;
+  font-family: inherit;
+  color: white;
+}
+
+.submit {
+  background-color: #F2CD49;
+  border-radius: 5px;
+  border: none;
+  align-self: center;
+}
