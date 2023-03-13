@@ -8,6 +8,7 @@ urlpatterns = [
     path('', views.Dashboard, name="Dashboard"),
 
     path('athletes/', views.AthletesDash, name="AthletesDash"),
+    path('addathlete/', views.AddAthlete, name='AddAthlete'),
     path("<str:fname>/<str:lname>/<path:dob>", views.AthleteProf, name="AthleteProf"),
 
     path('teams/', views.TeamDash, name="TeamDash"),

@@ -22,7 +22,11 @@
                     </div>
 
                     <div style="display: flex; height: 200px;">
+                        {% if testType %}
+                        <img class="athlete-pic" src="/staticfiles/images/{{ img.image }}"></img>
+                        {% else %}
                         <img class="athlete-pic" src="/staticfiles/images/{{ athleteProf.image }}"></img>
+                        {% endif %}
                         <div style="width: 100%; margin-left: 20px;">
                             <div style="display: flex; justify-content: space-between;">
                                 <h6>Sport</h6>
@@ -50,8 +54,7 @@
                         </div>
                     </div>
 
-                        {% if testType %}
-
+                    {% if testType %}
                     <!-- KPI Trends -->
                         <div class="kpireport">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -103,12 +106,27 @@
                                 {% endif %}
                                 {% endfor %}
                             </div>
-                            <button class="kpidatabtn">Add Data</button>
+                            <button class="kpidatabtn">Add KPI Data</button>
                         </div>
                         {% endif %}
 
+                        <hr>
+                        <form method="post" id="wellnessform">
+                            {% csrf_token %}
+                            <div style="display: flex; justify-content: space-between;">
+                                <select id="wellnessdate" name="wellnessdate">
+                                    <option disabled hidden selected>Select Date</option>
+                                    {% for x in wellnessReportDates %}
+                                    <option>{{ x.date }}</option>
+                                    {% endfor %}
+                                </select>
+                                <input type="submit" value="submit" class="submit">
+                                <p style="font-size: 16px" id="wellnessresult">DD/MM/YY</p>
+                            </div>
+                        </form>                 
+
                     {% if wellness %}
-                    {% for x in wellness %}
+                    {% for x in mostRecentWellnessReport %}
 
                     <!-- Wellness -->
                         <div class="status">
@@ -122,29 +140,7 @@
                                 </div>
                             </div>
                         </div>
-
-                    <!-- Extra Wellness Stuff
-            <table class="table mainFont wellnesstable" style="border-radius: 10px; margin: auto;">
-                
-                <tr>
-                    <td style="border-right: 1px solid white;"><div class="wellnessrows"><h6>Hours of Sleep</h6> <h6>{{ x.hoursofsleep }}</h6></div></td>
-                    <td><div class="wellnessrows"><h6>Sleep Quality</h6> <h6>{{ x.sleepquality }}</h6></div></td>
-                </tr>
-                <tr>
-                    <td style="border-right: 1px solid white;"><div class="wellnessrows"><h6>Breakfast</h6> <h6>{{ x.breakfast }}</h6></div></td>
-                    <td><div class="wellnessrows"><h6>Hydration</h6> <h6>{{ x.hydration }}</h6></div></td>
-                </tr>
-                <tr>
-                    <td style="border-right: 1px solid white;"><div class="wellnessrows"><h6>Soreness</h6> <h6>{{ x.soreness }}</h6></div></td>
-                    <td><div class="wellnessrows"><h6>Stress</h6> <h6>{{ x.stress }}</h6></div></td>
-                  </tr>
-                  <tr>
-                    <td style="border-right: 1px solid white; border-bottom: none;"><div class="wellnessrows"><h6>Mood</h6> <h6>{{ x.mood }}</h6></div></td>
-                    <td style="border-bottom: none;"><div class="wellnessrows"><h6>Total</h6><h6 id="total2"></h6></div></td>
-                  </tr>
-
-                  </table>
-            -->
+                        <button class="kpidatabtn" style="margin-top: 20px;">Add Wellness Report</button>
 
                         <script type="text/javascript">
                             var hoursofsleep = Number("{{ x.hoursofsleep }}")
@@ -222,7 +218,7 @@
                         
                         <!-- Date Selector + Settings-->
                         <div class="main-header" style="justify-content: space-between;">
-                            <form method="post" id="form">
+                            <form method="post" id="kpiform">
                                 {% csrf_token %}
                                 <select id="date1" name="date1">
                                     <option disabled hidden selected>Select Date</option>
@@ -278,11 +274,33 @@
                         </div>
 
                         <script type="text/javascript">
+                            
                             let selection1 = document.getElementById('date1');
                             let date1 = document.getElementById('resultone');
+                            var date_one = "{{ date_one }}"
+                            document.getElementById("resultone").innerHTML = date_one
+                            if (date_one != "None"){
+                                document.getElementById("resultone").innerHTML = date_one
+                            }
 
                             let selection2 = document.getElementById('date2');
                             let date2 = document.getElementById('resulttwo');
+                            var date_two = "{{ date_two }}"
+                            document.getElementById("resulttwo").innerHTML = date_two
+                            if (date_two != "None"){
+                                document.getElementById("resulttwo").innerHTML = date_two
+                            }
+
+                            let selection3 = document.getElementById('wellnessdate');
+                            let date3 = document.getElementById('wellnessresult');
+
+                            var mostrecentdate = "{{ mostRecentWellnessReportDate }}"
+                            document.getElementById("wellnessresult").innerHTML = mostrecentdate
+                            var wellness_date = "{{ wellness_date }}"
+
+                            if (wellness_date != "None"){
+                                document.getElementById("wellnessresult").innerHTML = wellness_date
+                            }
 
                             selection1.addEventListener('change', () => {
                                 resultone.innerText = selection1.options[selection1.selectedIndex].text;
@@ -290,6 +308,10 @@
 
                             selection2.addEventListener('change', () => {
                                 resulttwo.innerText = selection2.options[selection2.selectedIndex].text;
+                            });
+
+                            selection3.addEventListener('change', () => {
+                                wellnessresult.innerText = selection3.options[selection3.selectedIndex].text;
                             });
                         </script>
 

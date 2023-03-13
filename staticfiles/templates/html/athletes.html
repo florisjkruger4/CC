@@ -21,6 +21,7 @@
             <input type="text" class="searchbar" placeholder="Search..." name="q">
           </form>
           <a href="/athletes"><button type="button" class="kpidatabtn">Refresh</button></a>
+          <a href="/addathlete"><button type="button" class="kpidatabtn">Add Athlete</button></a>
     </div>
 
     <!-- Athlete_T --> 
@@ -33,7 +34,6 @@
           <th scope="col">Position</th>
           <th scope="col">Year</th>
           <th scope="col">Height (ft)</th>
-          <th scope="col">Weight (lbs)</th>
         </tr>
       </thead>
       <tbody>
@@ -45,7 +45,6 @@
           <td>{{ AthleteT.position }}</td>
           <td>{{ AthleteT.year }}</td>
           <td>{{ AthleteT.height }}</td>
-          <td>{{ AthleteT.weight }}</td>
         </tr>
         {% endfor %}
     </table>

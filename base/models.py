@@ -8,7 +8,7 @@ class AthleteT(models.Model):
     position = models.CharField(db_column='Position', max_length=30, blank=True, null=True)  # Field name made lowercase.
     year = models.CharField(db_column='Year', max_length=15, blank=True, null=True)  # Field name made lowercase.
     height = models.FloatField(db_column='Height', blank=True, null=True)  # Field name made lowercase.
-    weight = models.FloatField(db_column='Weight', blank=True, null=True)  # Field name made lowercase.
+    #upload_to='staticfiles/images'
     image = models.TextField(db_column='Image', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
@@ -19,12 +19,10 @@ class AthleteT(models.Model):
 
 class TeamT(models.Model):
     sport = models.CharField(db_column='Sport', primary_key=True, max_length=30)  # Field name made lowercase.
-    tname = models.CharField(db_column='Tname', max_length=30)  # Field name made lowercase.
 
     class Meta:
         managed = False
         db_table = 'Team_T'
-        unique_together = (('sport', 'tname'),)
 
 class WellnessT(models.Model):
     fname = models.CharField(db_column='Fname', primary_key=True, max_length=30)  # Field name made lowercase.
@@ -41,6 +39,7 @@ class WellnessT(models.Model):
     soreness = models.IntegerField(db_column='Soreness', blank=True, null=True)  # Field name made lowercase.
     stress = models.IntegerField(db_column='Stress', blank=True, null=True)  # Field name made lowercase.
     mood = models.IntegerField(db_column='Mood', blank=True, null=True)  # Field name made lowercase.
+    image = models.TextField(db_column='Image', max_length=60, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Header -->
+    {% include 'html/header.html' %}
+</head>
+
+<body>
+
+    <!-- SideNavbar -->
+    {% include 'html/sidenav.html' %}
+
+    <div class="main-container" style="padding-right:140px; padding-top: 30px;">
+
+        <div class="main-header" style="gap: 25px;">
+            <a href="{{request.META.HTTP_REFERER}}"><button type="button" class="kpidatabtn">Go Back</button></a>
+          <h1>Add Athlete</h1>
+        </div>
+        <form method="post" id="addathleteform">
+            {% csrf_token %}
+            <div class="kpireport" style="width: 70vh; height: 75vh; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <div style="display: flex; justify-content: space-around;">
+                        <p class="mainFont">First Name</p>
+                        <p class="mainFont">Last Name</p>
+                    </div>
+                    <div style="display: flex; justify-content: space-around;">
+                        <input type="text" class="searchbar" name="fname">
+                        <input type="text" class="searchbar" name="lname">
+                    </div>
+                    &nbsp;
+                    &nbsp;
+                    <div style="display: flex; justify-content: space-around;">
+                        <p class="mainFont">Year</p>
+                        <p class="mainFont">Height</p>
+                    </div>
+                    <div style="display: flex; justify-content: space-around;">
+                        <select name="year" class="searchbar">
+                            <option disabled hidden selected></option>
+                            <option>Freshman</option>
+                            <option>Sophmore</option>
+                            <option>Junior</option>
+                            <option>Senior</option>
+                        </select>
+                        <input type="text" class="searchbar" name="height">
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; justify-content: space-around;">
+                        <input type="file" id="img" name="image" accept="image/*" class="testing">
+                        <div style="text-align: center;">
+                            <p class="mainFont">Date of Birth: DD/MM/YY</p>
+                            <input type="text" class="searchbar" style="width: 100%;" name="dob">
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; justify-content: space-around;">
+                        <p class="mainFont">Team</p>
+                        <p class="mainFont">Position</p>
+                    </div>
+                    <div style="display: flex; justify-content: space-around;">
+                        <select name="sportsteam" class="searchbar">
+                            <option disabled hidden selected></option>
+                            <option>Field Hockey</option>
+                            <option>Football</option>
+                            <option>Men's Ice Hockey</option>
+                            <option>Men's Rugby</option>
+                            <option>Men's Swimming</option>
+                            <option>Women's Ice Hockey</option>
+                            <option>Women's Rugby</option>
+                            <option>Women's Swimming</option>
+                        </select>
+                        <input type="text" class="searchbar" name="position">
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <button class="kpidatabtn" style="width: 25%" type="submit" value="Submit">Submit</button>
+                    <button class="kpidatabtn" style="width: 25%; color: #FC5151; background-color: #fc515100;" type="submit" value="Remove">Remove Student</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>

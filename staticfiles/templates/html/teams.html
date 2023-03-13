@@ -28,14 +28,12 @@
             <thead>
                 <tr>
                   <th scope="col" style="background-color: #242C3D;" >Sport</i></th>
-                  <th scope="col">Team Name</th>
                 </tr>
               </thead>
               <tbody class="table-group-divider" >
                 {% for TeamT in teams %}
                 <tr>
                     <td style="background-color: #242C3D;" >{{ TeamT.sport }}</td>
-                    <td>{{ TeamT.tname }}</td>
                 {% endfor %}
             </table>
           </div>
