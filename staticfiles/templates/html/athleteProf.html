@@ -30,22 +30,22 @@
                         <div style="width: 100%; margin-left: 20px;">
                             <div style="display: flex; justify-content: space-between;">
                                 <h6>Sport</h6>
-                                <h6>{{ athleteProf.sportsteam }}</h6>
+                                <h6 class="text-end">{{ athleteProf.sportsteam }}</h6>
                             </div>
                             <div class="line-2"></div>
                             <div style="display: flex; justify-content: space-between;">
                                 <h6>Position</h6>
-                                <h6>{{ athleteProf.position }}</h6>
+                                <h6 class="text-end">{{ athleteProf.position }}</h6>
                             </div>
                             <div class="line-2"></div>
                             <div style="display: flex; justify-content: space-between;">
                                 <h6>Year</h6>
-                                <h6>{{ athleteProf.year }}</h6>
+                                <h6 class="text-end">{{ athleteProf.year }}</h6>
                             </div>
                             <div class="line-2"></div>
                             <div style="display: flex; justify-content: space-between;">
                                 <h6>Height</h6>
-                                <h6>{{ athleteProf.height }}</h6>
+                                <h6 class="text-end">{{ athleteProf.height }}</h6>
                             </div>
                             <!--<div class="line-2"></div>
                                 <div style="display: flex; justify-content: space-between;">
@@ -59,7 +59,7 @@
                         <div class="kpireport">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                                 <h3>KPI Trend Report</h3>
-                                <div style="display: flex;">
+                                <div class="text-end" style="display: flex;">
                                     <p style="font-size: 16px" id="resultone">DD/MM/YY</p>
                                     <p style="font-size: 16px">&nbsp; to &nbsp;</p>
                                     <p style="font-size: 16px" id="resulttwo">DD/MM/YY</p>
@@ -74,7 +74,7 @@
                                     <p id="tenydchange"></p>
                                     <img src="data:image/png;base64, {{TenYd_chart_line|safe}}">
                                     {% else %}
-                                    <p>No Data Selected...</p>
+                                    <p class="text-end">No Data Selected...</p>
                                     {% endif %}
                                 </div>
                                 <hr style="width: 100%; opacity: 20%;">
@@ -87,7 +87,7 @@
                                     <p id="bench1rmchange"></p>
                                     <img src="data:image/png;base64, {{Bench1RM_chart_line|safe}}">
                                     {% else %}
-                                    <p>No Data Selected...</p>
+                                    <p class="text-end">No Data Selected...</p>
                                     {% endif %}
                                 </div>
                                 <hr style="width: 100%; opacity: 20%;">
@@ -100,7 +100,7 @@
                                     <p style="color:white;" id="cmjchange"></p>
                                     <img src="data:image/png;base64, {{CMJ_chart_line|safe}}">
                                     {% else %}
-                                    <p>No Data Selected...</p>
+                                    <p class="text-end">No Data Selected...</p>
                                     {% endif %}
                                 </div>
                                 {% endif %}
