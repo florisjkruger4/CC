@@ -21,29 +21,29 @@
                         <i class="fa-solid fa-pen" style="color: var(--yellow-accent); scale: 1.3;"></i>
                     </div>
 
-                    <div style="display: flex; height: 200px;">
+                    <div class="d-flex" style="height: 200px;">
                         {% if testType %}
                         <img class="athlete-pic" src="/staticfiles/images/{{ img.image }}"></img>
                         {% else %}
                         <img class="athlete-pic" src="/staticfiles/images/{{ athleteProf.image }}"></img>
                         {% endif %}
                         <div style="width: 100%; margin-left: 20px;">
-                            <div style="display: flex; justify-content: space-between;">
+                            <div class="d-flex" style="justify-content: space-between;">
                                 <h6>Sport</h6>
                                 <h6 class="text-end">{{ athleteProf.sportsteam }}</h6>
                             </div>
                             <div class="line-2"></div>
-                            <div style="display: flex; justify-content: space-between;">
+                            <div class="d-flex" style="justify-content: space-between;">
                                 <h6>Position</h6>
                                 <h6 class="text-end">{{ athleteProf.position }}</h6>
                             </div>
                             <div class="line-2"></div>
-                            <div style="display: flex; justify-content: space-between;">
+                            <div class="d-flex" style="justify-content: space-between;">
                                 <h6>Year</h6>
                                 <h6 class="text-end">{{ athleteProf.year }}</h6>
                             </div>
                             <div class="line-2"></div>
-                            <div style="display: flex; justify-content: space-between;">
+                            <div class="d-flex" style="justify-content: space-between;">
                                 <h6>Height</h6>
                                 <h6 class="text-end">{{ athleteProf.height }}</h6>
                             </div>
@@ -57,9 +57,9 @@
                     {% if testType %}
                     <!-- KPI Trends -->
                         <div class="kpireport">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="d-flex" style="justify-content: space-between; align-items: center;">
                                 <h3>KPI Trend Report</h3>
-                                <div class="text-end" style="display: flex;">
+                                <div class="text-end d-flex">
                                     <p style="font-size: 16px" id="resultone">DD/MM/YY</p>
                                     <p style="font-size: 16px">&nbsp; to &nbsp;</p>
                                     <p style="font-size: 16px" id="resulttwo">DD/MM/YY</p>
@@ -68,7 +68,7 @@
                             <div>
                                 {% for x in testType %}
                                 {% if x.testtype == "10yd Sprint" %}
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div class="d-flex" style="justify-content: space-between; align-items: center;">
                                     <p>{{ x.testtype }}</p>
                                     {% if TenYd_y %}
                                     <p id="tenydchange"></p>
@@ -81,7 +81,7 @@
                                 {% endif %}
 
                                 {% if x.testtype == "Barbell Bench Press 1RM" %}
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div class="d-flex" style="justify-content: space-between; align-items: center;">
                                     <p>{{ x.testtype }}</p>
                                     {% if Bench1RM_y %}
                                     <p id="bench1rmchange"></p>
@@ -94,7 +94,7 @@
                                 {% endif %}
 
                                 {% if x.testtype == "CMJ" %}
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div class="d-flex" style="justify-content: space-between; align-items: center;">
                                     <p>{{ x.testtype }}</p>
                                     {% if CMJ_y %}
                                     <p style="color:white;" id="cmjchange"></p>
@@ -113,7 +113,7 @@
                         <hr>
                         <form method="post" id="wellnessform">
                             {% csrf_token %}
-                            <div style="display: flex; justify-content: space-between;">
+                            <div class="d-flex" style="justify-content: space-between;">
                                 <select id="wellnessdate" name="wellnessdate">
                                     <option disabled hidden selected>Select Date</option>
                                     {% for x in wellnessReportDates %}
@@ -134,7 +134,7 @@
                                 <h5 id="stat">Status:  {{ x.status }}</h5>
                             </div>
                             <div style="border: 1px solid white; border-radius: 5px; width: 100%; text-align: center; padding: 5px; margin-left: 5px;">
-                                <div style="display: flex; justify-content: center;">
+                                <div class="d-flex" style="justify-content: center;">
                                     <h5>Readiness: &nbsp;</h5>
                                     <h5 id="total"></h5>
                                 </div>
@@ -243,8 +243,8 @@
                         {% for x in testType %}
                         <div class="graphprof">
 
-                            <div style="display: flex; flex-direction: column;">
-                                <div style="display: flex;">
+                            <div class="d-flex" style="flex-direction: column;">
+                                <div class="d-flex">
                                     <h3>{{ x.testtype }}</h3>
                                 </div>
                                 {% if x.testtype == "10yd Sprint" %}
