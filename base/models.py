@@ -16,6 +16,9 @@ class AthleteT(models.Model):
         db_table = 'Athlete_T'
         unique_together = (('fname', 'lname', 'dob'),)
 
+    # Overriding the string representation of an athlete to customize output when querying with the interactive shell
+    def __str__(self):
+        return f"Name:{self.fname} {self.lname} | DOB:{self.dob} | Team:{self.sportsteam} | Position:{self.position} | Year:{self.year} | Height:{self.height}"
 
 class TeamT(models.Model):
     sport = models.CharField(db_column='Sport', primary_key=True, max_length=30)  # Field name made lowercase.
@@ -23,6 +26,10 @@ class TeamT(models.Model):
     class Meta:
         managed = False
         db_table = 'Team_T'
+
+    # Overriding the string representation of Team to customize output when querying with the interactive shell
+    def __str__(self):
+        return f"Name:{self.sport}"
 
 class WellnessT(models.Model):
     fname = models.CharField(db_column='Fname', primary_key=True, max_length=30)  # Field name made lowercase.
@@ -46,6 +53,12 @@ class WellnessT(models.Model):
         db_table = 'Wellness_T'
         unique_together = (('fname', 'lname', 'dob', 'status', 'date'),)
 
+    # Overriding the string representation of a Wellness survery to customize output when querying with the interactive shell
+    def __str__(self):
+        return (f"Name:{self.fname} {self.lname} | DOB:{self.dob} | Status:{self.status} | Team:{self.sportsteam} | Date:{self.date} | Position:{self.position} | "
+                f"HoursSleep:{self.hoursofsleep} | SleepQuality:{self.sleepquality} | Breakfast:{self.breakfast} | Hydration:{self.hydration} | soreness:{self.soreness} | "
+                f"Stress:{self.stress} | Mood:{self.mood} ") 
+
 class KpiT(models.Model):
     fname = models.CharField(db_column='Fname', primary_key=True, max_length=30)  # Field name made lowercase.
     lname = models.CharField(db_column='Lname', max_length=30)  # Field name made lowercase.
@@ -58,3 +71,7 @@ class KpiT(models.Model):
         managed = False
         db_table = 'KPI_T'
         unique_together = (('fname', 'lname', 'dob', 'datekpi', 'testtype'),)
+
+    # Overriding the string representation of a KPI to customize output when querying with the interactive shell
+    def __str__(self):
+        return f"Name:{self.fname} {self.lname} | DOB:{self.dob} | DateKPI:{self.datekpi} | TestType:{self.testtype} | TestResult:{self.testresult}"
