@@ -1,9 +1,9 @@
   .side-nav {
-    width: 200px;
+    width: 225px;
     height: 100vh;
     background-color: #1F2126;
     font-family: 'Titillium Web', sans-serif;
-    font-size: 16;
+    font-size: 20;
     color: white;
     position: fixed;
     display: block;
@@ -40,9 +40,9 @@
   }
 
   .nav-links {
-    padding-left: 30px;
-    padding-top: 30px;
-    padding-right: 30px;
+    padding-left: 40px;
+    padding-top: 40px;
+    padding-right: 40px;
   }
 
   .nav-list-item {

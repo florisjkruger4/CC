@@ -11,14 +11,14 @@
     <!-- SideNavbar -->
     {% include 'html/sidenav.html' %}
     <div class="main-container">
-        <div class="container">
+        <div class="container" style="max-width: 1800px;">
             <div class="row">
-                <div class="col-lg-5" style="padding: 0; padding-right: 15px;">
+                <div class="col-lg-5" style="height: 100vh; padding: 0 20px 0 0;">
 
                     <!-- Athlete Info/Header -->
                     <div class="main-header justify-content-between">
                         <h1>{{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
-                        <i class="fa-solid fa-pen" style="color: var(--yellow-accent); scale: 1.3;"></i>
+                        <i class="fa-solid fa-pen" style="color: var(--yellow-accent); font-size: 25px;"></i>
                     </div>
 
                     <div class="d-flex" style="height: 200px;">
@@ -213,7 +213,7 @@
                     {% endif %}    
                 </div>
 
-                <div class="col-lg-7" style="height: 100vh; padding: 0; padding-left: 15px;">
+                <div class="col-lg-7" style="height: 100vh; padding: 0 0 0 20px;">
                     <div class="col-scroll">
                         
                         <!-- Date Selector + Settings-->
@@ -235,7 +235,7 @@
                                 </select>
                                 <input type="submit" value="submit" class="submit">
                             </form>
-                            <i class="fa-solid fa-gear" style="color: var(--yellow-accent); scale: 1.3;"></i>
+                            <i class="fa-solid fa-gear" style="color: var(--yellow-accent); font-size: 25px;"></i>
                         </div>
 
                         <!-- Graphs -->

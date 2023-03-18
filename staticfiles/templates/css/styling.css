@@ -1,43 +1,46 @@
 /* AFFECTS ALL PAGES */
 html * {
   font-family: 'Titillium Web', sans-serif;
-  color: white;
+  color: var(--white-text);
   /*src: url(https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&display=swap);*/
 }
 
-:root{
+:root {
   --blue-accent: #99C7FF;
   --yellow-accent: #FFCE54;
   --med-gray-1: #31363D;
   --med-gray-2: #1F2126;
   --dark-gray: #101214;
+  --separator-gray: #404245;
+  --white-text: white;
+  --black-text: black;
 }
 
 body {
   background-color: var(--dark-gray);
-  color: white;
+  color: var(--white-text);
 }
 
 /* For titles on all pages */
-h1{
-  font-size: 48; 
+h1 {
+  font-size: 48;
   font-weight: 600;
 }
 
 /* For dates and graph titles */
-h2{
+h2 {
   font-size: 24;
   font-weight: 700;
 }
 
 /* For general content */
-h3{
+h3 {
   font-size: 20;
   font-weight: 400;
 }
 
 /* For tables */
-td{
+td {
   font-size: 16;
   font-weight: 400;
 }
@@ -52,16 +55,15 @@ td{
 }
 
 .main-container {
-  margin-left: 200px; 
-  padding: 30px 30px 0 30px;
+  margin-left: 225px;
+  padding: 40px 40px 0 40px;
   display: block;
 }
 
-.main-header{
+.main-header {
   height: 60px;
-  display: flex; 
+  display: flex;
   align-items: center;
-  margin-bottom: 10px;
 }
 
 .admin {
@@ -77,27 +79,7 @@ a:visited,
 a:hover,
 a:active {
   text-decoration: none;
-  color: white;
-}
-
-.searchbar {
-  height: 30px;
-  width: 35%;
-  align-self: center;
-  border-radius: 7px;
-  border: white 2px solid;
-  background-color: #171C27;
-}
-
-input[type=text] {
-  background-color: #171C27;
-  color: white;
-  padding: 2px 4px 2px 4px;
-}
-
-input::placeholder {
-  color: white;
-  padding: 3px;
+  color: var(--white-text);
 }
 
 .toggle {
@@ -112,14 +94,35 @@ input::placeholder {
   margin-top: 15px;
   margin-bottom: 15px;
   height: 1px;
-  background: #404245;
+  background: var(--separator-gray);
 }
 
 .line-2 {
   margin-top: 8px;
   margin-bottom: 8px;
   height: 1px;
-  background: #404245;
+  background: var(--separator-gray);
+}
+
+/* Search bar */
+.input-box{
+  position: relative;
+}
+
+.input-box i {
+  position: absolute;
+  right: 13px;
+  top:12px;
+  color: var(--med-gray-1);
+}
+
+.form-control{
+  height: 40px;
+  background-color: var(--dark-gray);
+  border-color: var(--med-gray-1);
+  color: white;
+  box-shadow: none;
+  border-radius: 10px;
 }
 
 /* Athlete Individual */
@@ -163,7 +166,7 @@ input::placeholder {
 }
 
 .kpidatabtn {
-  background-color: #F2CD49;
+  background-color: var(--yellow-accent);
   color: black;
   border-radius: 5px;
   border: none;
@@ -178,21 +181,23 @@ select {
   background-color: transparent;
   border: none;
   font-family: inherit;
-  color: white;
+  color: var(--white-text);
 }
 
 .submit {
-  background-color: #F2CD49;
-  border-radius: 5px;
+  background-color: var(--yellow-accent);
+  border-radius: 10px;
   border: none;
-  align-self: center;
-  color: black;
+  color: var(--black-text);
+  height: 40px;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
-.testing{
+.testing {
   background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='17' ry='17' stroke='%23333' stroke-width='8' stroke-dasharray='15' stroke-dashoffset='38' stroke-linecap='square'/%3e%3c/svg%3e");
   border-radius: 17px;
   height: 150px;
-  width:150px;
+  width: 150px;
   cursor: pointer;
 }
