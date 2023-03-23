@@ -13,49 +13,50 @@
     <div class="main-container">
         <div class="container" style="max-width: 1800px;">
             <div class="row">
-                <div class="col-lg-5" style="height: 100vh; padding: 0 20px 0 0;">
+                <div class="col-lg-5 overflow-scroll" style="height: 100vh; padding: 0 20px 0 0;">
+                    <div class="col-scroll">
 
-                    <!-- Athlete Info/Header -->
-                    <div class="main-header justify-content-between">
-                        <h1>{{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
-                        <i class="fa-solid fa-pen" style="color: var(--yellow-accent); font-size: 25px;"></i>
-                    </div>
+                        <!-- Athlete Info/Header -->
+                        <div class="main-header justify-content-between">
+                            <h1>{{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
+                            <i class="fa-solid fa-pen" style="color: var(--yellow-accent); font-size: 25px;"></i>
+                        </div>
 
-                    <div class="d-flex" style="height: 200px;">
-                        {% if testType %}
-                        <img class="athlete-pic" src="/staticfiles/images/{{ img.image }}"></img>
-                        {% else %}
-                        <img class="athlete-pic" src="/staticfiles/images/{{ athleteProf.image }}"></img>
-                        {% endif %}
-                        <div class="w-100" style="margin-left: 20px;">
-                            <div class="d-flex justify-content-between">
-                                <h6>Sport</h6>
-                                <h6 class="text-end">{{ athleteProf.sportsteam }}</h6>
-                            </div>
-                            <div class="line-2"></div>
-                            <div class="d-flex justify-content-between">
-                                <h6>Position</h6>
-                                <h6 class="text-end">{{ athleteProf.position }}</h6>
-                            </div>
-                            <div class="line-2"></div>
-                            <div class="d-flex justify-content-between">
-                                <h6>Year</h6>
-                                <h6 class="text-end">{{ athleteProf.year }}</h6>
-                            </div>
-                            <div class="line-2"></div>
-                            <div class="d-flex justify-content-between">
-                                <h6>Height</h6>
-                                <h6 class="text-end">{{ athleteProf.height }}</h6>
-                            </div>
-                            <!--<div class="line-2"></div>
+                        <div class="d-flex" style="height: 200px;">
+                            {% if testType %}
+                            <img class="athlete-pic" src="/staticfiles/images/{{ img.image }}"></img>
+                            {% else %}
+                            <img class="athlete-pic" src="/staticfiles/images/{{ athleteProf.image }}"></img>
+                            {% endif %}
+                            <div class="w-100" style="margin-left: 20px;">
+                                <div class="d-flex justify-content-between">
+                                    <h6>Sport</h6>
+                                    <h6 class="text-end">{{ athleteProf.sportsteam }}</h6>
+                                </div>
+                                <div class="line-2"></div>
+                                <div class="d-flex justify-content-between">
+                                    <h6>Position</h6>
+                                    <h6 class="text-end">{{ athleteProf.position }}</h6>
+                                </div>
+                                <div class="line-2"></div>
+                                <div class="d-flex justify-content-between">
+                                    <h6>Year</h6>
+                                    <h6 class="text-end">{{ athleteProf.year }}</h6>
+                                </div>
+                                <div class="line-2"></div>
+                                <div class="d-flex justify-content-between">
+                                    <h6>Height</h6>
+                                    <h6 class="text-end">{{ athleteProf.height }}</h6>
+                                </div>
+                                <!--<div class="line-2"></div>
                                 <div style="display: flex; justify-content: space-between;">
                                     <h6>DOB</h6> <h6>{{ athleteProf.DOB }}</h6>
                                 </div> -->
+                            </div>
                         </div>
-                    </div>
 
-                    {% if testType %}
-                    <!-- KPI Trends -->
+                        {% if testType %}
+                        <!-- KPI Trends -->
                         <div class="kpireport">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h3>KPI Trend Report</h3>
@@ -125,17 +126,17 @@
                                 <input type="submit" value="submit" class="submit">
                                 <p style="font-size: 16px" id="wellnessresult">DD/MM/YY</p>
                             </div>
-                        </form>                 
+                        </form>
 
-                    {% if wellness %}
-                    {% for x in mostRecentWellnessReport %}
+                        {% if wellness %}
+                        {% for x in mostRecentWellnessReport %}
 
-                    <!-- Wellness -->
+                        <!-- Wellness -->
                         <div class="status">
-                            <div class="w-100" style="border-radius: 5px; text-align: center; padding: 5px; margin-right: 5px;" id="bor">
-                                <h5 id="stat">Status:  {{ x.status }}</h5>
+                            <div class="w-100 wellness-status-display" id="bor">
+                                <h5 id="stat">Status: {{ x.status }}</h5>
                             </div>
-                            <div class="w-100" style="border: 1px solid white; border-radius: 5px; text-align: center; padding: 5px; margin-left: 5px;">
+                            <div class="w-100 wellness-status-display" style="border: 1px solid white;">
                                 <div class="d-flex justify-content-center">
                                     <h5>Readiness: &nbsp;</h5>
                                     <h5 id="total"></h5>
@@ -157,20 +158,20 @@
         
                             var total = hoursofsleep + sleepquality + breakfast + hydration + soreness + stress + mood
                             document.getElementById("total").innerHTML = total
-        
+
                             var TenYd_Change = Number("{{ TenYd_Date2_result.testresult }}") - Number("{{ TenYd_Date1_result.testresult }}")
                             TenYd_Change = TenYd_Change.toFixed(2)
-        
+
                             var Bench1RM_Change = Number("{{ Bench1RM_Date2_result.testresult }}") - Number("{{ Bench1RM_Date1_result.testresult }}")
                             Bench1RM_Change = Bench1RM_Change.toFixed(2)
-        
+
                             var CMJ_Change = Number("{{ CMJ_Date2_result.testresult }}") - Number("{{ CMJ_Date1_result.testresult }}")
                             CMJ_Change = CMJ_Change.toFixed(2)
-        
+
                             function status() {
-        
+
                                 var status = "{{ x.status }}"
-        
+
                                 if (status == 'N') {
                                     document.getElementById("stat").style.color = "#FC5151"
                                     document.getElementById("bor").style.border = "1px solid #FC5151"
@@ -179,7 +180,7 @@
                                     document.getElementById("stat").style.color = "#58E767"
                                     document.getElementById("bor").style.border = "1px solid #58E767"
                                 }
-        
+
                                 if (TenYd_Change != 0.00) {
                                     document.getElementById("tenydchange").innerHTML = "Change: " + TenYd_Change
                                     if (TenYd_Change > 0.00) {
@@ -208,20 +209,19 @@
                                     }
                                 }
                             }
-        
+
                             window.onload = function () {
                                 status();
                             };
                         </script>
-                    {% endfor %}
-                    {% else %}
-                    <a href="{% url 'AddWellness' athleteProf.fname athleteProf.lname athleteProf.dob %}"><button class="kpidatabtn" style="margin-top: 20px;">Add Wellness Report</button></a>
-                    {% endif %}    
+                        {% endfor %}
+                        {% endif %}
+                    </div>
                 </div>
 
-                <div class="col-lg-7" style="height: 100vh; padding: 0 0 0 20px;">
+                <div class="col-lg-7 overflow-scroll" style="height: 100vh; padding: 0 0 0 20px;">
                     <div class="col-scroll">
-                        
+
                         <!-- Date Selector + Settings-->
                         <div class="main-header justify-content-between">
                             <form method="post" id="kpiform">
@@ -280,12 +280,12 @@
                         </div>
 
                         <script type="text/javascript">
-                            
+
                             let selection1 = document.getElementById('date1');
                             let date1 = document.getElementById('resultone');
                             var date_one = "{{ date_one }}"
                             document.getElementById("resultone").innerHTML = date_one
-                            if (date_one != "None"){
+                            if (date_one != "None") {
                                 document.getElementById("resultone").innerHTML = date_one
                             }
 
@@ -293,7 +293,7 @@
                             let date2 = document.getElementById('resulttwo');
                             var date_two = "{{ date_two }}"
                             document.getElementById("resulttwo").innerHTML = date_two
-                            if (date_two != "None"){
+                            if (date_two != "None") {
                                 document.getElementById("resulttwo").innerHTML = date_two
                             }
 
@@ -304,7 +304,7 @@
                             document.getElementById("wellnessresult").innerHTML = mostrecentdate
                             var wellness_date = "{{ wellness_date }}"
 
-                            if (wellness_date != "None"){
+                            if (wellness_date != "None") {
                                 document.getElementById("wellnessresult").innerHTML = wellness_date
                             }
 
