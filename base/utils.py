@@ -41,7 +41,6 @@ def bar_graph(x, y):
     graph = get_graph()
     return graph
 
-
 def line_graph(x, y):
 
     plt.switch_backend('AGG')

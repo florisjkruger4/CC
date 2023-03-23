@@ -8,12 +8,12 @@ urlpatterns = [
     path('', views.Dashboard, name="Dashboard"),
 
     path('athletes/', views.AthletesDash, name="AthletesDash"),
-    path('addathlete/', views.AddAthlete, name='AddAthlete'),
-    path("<str:fname>/<str:lname>/<path:dob>", views.AthleteProf, name="AthleteProf"),
-
+    path('addathlete/', views.AddAthlete, name="AddAthlete"),
+    path('<str:fname>/<str:lname>/<path:dob>', views.AthleteProf, name="AthleteProf"),
     path('teams/', views.TeamDash, name="TeamDash"),
     path('recordKPI/', views.recordKPI, name="recordKPI"),
     path('wellness/', views.WellnessDash, name="WellnessDash"),
+    path('/addwellness/<str:fname>/<str:lname>/<path:dob>', views.AddWellness, name="AddWellness"),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

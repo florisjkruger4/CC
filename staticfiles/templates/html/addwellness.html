@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Header -->
+    {% include 'html/header.html' %}
+</head>
+
+<body>
+
+    <!-- SideNavbar -->
+    {% include 'html/sidenav.html' %}
+
+    <div class="main-container" style="padding-right:140px; padding-top: 30px;">
+
+        <div class="main-header" style="gap: 25px;">
+            <a href="{{request.META.HTTP_REFERER}}"><button type="button" class="kpidatabtn">Go Back</button></a>
+          <h1>Add Wellness Report: {{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
+        </div>
+        <form method="post" id="addwellnessform">
+            {% csrf_token %}
+            <div class="kpireport" style="width: 50vh; height: 40vh; display: flex; flex-direction: column; justify-content: space-between;">
+
+                <table class="table mainFont wellnesstable" style="border-radius: 10px; margin: auto; border-color: rgba(255, 255, 255, 0.321);">
+                    <tr>
+                        <td style="border-right: 1px solid rgba(255, 255, 255, 0.321);"><div class="wellnessrows"><h6>Hours of Sleep</h6> <input type="text" class="searchbar" name="hoursofsleep"></div></td>
+                        <td><div class="wellnessrows"><h6>Sleep Quality</h6> <input type="text" class="searchbar" name="sleepquality"></div></td>
+                    </tr>
+                    <tr>
+                        <td style="border-right: 1px solid rgba(255, 255, 255, 0.321);"><div class="wellnessrows"><h6>Breakfast</h6> <input type="text" class="searchbar" name="breakfast"></td>
+                        <td><div class="wellnessrows"><h6>Hydration</h6> <input type="text" class="searchbar" name="hydration"></div></td>
+                    </tr>
+                    <tr>
+                        <td style="border-right: 1px solid rgba(255, 255, 255, 0.321);"><div class="wellnessrows"><h6>Soreness</h6> <input type="text" class="searchbar" name="soreness"></div></td>
+                        <td><div class="wellnessrows"><h6>Stress</h6> <input type="text" class="searchbar" name="stress"></div></td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: none; border-right: 1px solid rgba(255, 255, 255, 0.321);"><div class="wellnessrows"><h6>Mood</h6> <input type="text" class="searchbar" name="mood"></div></td>
+                    </tr>
+                </table>
+
+                <div style="display: flex; justify-content: space-around;">
+                    <p class="mainFont">Status: Y/N</p>
+                    <p class="mainFont">Date: DD/MM/YY</p>
+                </div>
+                <div style="display: flex; justify-content: space-around;">
+                    <input type="text" class="searchbar" name="status">
+                    <input type="text" class="searchbar" name="date">
+                </div>
+                &nbsp;
+                &nbsp;
+                <button class="kpidatabtn" style="width: 25%" type="submit" value="Submit">Submit</button>
+            </div>
+        </form>
+    </div>
+</body>

@@ -1,20 +1,27 @@
 from django.db import models
 
 class AthleteT(models.Model):
-    fname = models.CharField(db_column='Fname', primary_key=True, max_length=30)  # Field name made lowercase.
+    id = models.BigAutoField(primary_key=True)
+    fname = models.CharField(db_column='Fname', max_length=30)  # Field name made lowercase.
     lname = models.CharField(db_column='Lname', max_length=30)  # Field name made lowercase.
     dob = models.CharField(db_column='DOB', max_length=10)  # Field name made lowercase.
     sportsteam = models.CharField(db_column='SportsTeam', max_length=30, blank=True, null=True)  # Field name made lowercase.
     position = models.CharField(db_column='Position', max_length=30, blank=True, null=True)  # Field name made lowercase.
     year = models.CharField(db_column='Year', max_length=15, blank=True, null=True)  # Field name made lowercase.
-    height = models.FloatField(db_column='Height', blank=True, null=True)  # Field name made lowercase.
+    height = models.CharField(db_column='Height', max_length=10, blank=True, null=True)  # Field name made lowercase.
     #upload_to='staticfiles/images'
     image = models.TextField(db_column='Image', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
         db_table = 'Athlete_T'
-        unique_together = (('fname', 'lname', 'dob'),)
+        constraints = [
+            models.UniqueConstraint(fields=['fname', 'lname', 'dob'], name = 'unique_constraints_athlete')
+        ]
+
+    # Overriding the string representation of an athlete to customize output when querying with the interactive shell
+    def __str__(self):
+        return f"Name:{self.fname} {self.lname} | DOB:{self.dob} | Team:{self.sportsteam} | Position:{self.position} | Year:{self.year} | Height:{self.height}"
 
     # Overriding the string representation of an athlete to customize output when querying with the interactive shell
     def __str__(self):
@@ -51,7 +58,9 @@ class WellnessT(models.Model):
     class Meta:
         managed = False
         db_table = 'Wellness_T'
-        unique_together = (('fname', 'lname', 'dob', 'status', 'date'),)
+        constraints = [
+            models.UniqueConstraint(fields=['fname', 'lname', 'dob', 'status', 'date'], name = 'unique_constraints_wellness')
+        ]
 
     # Overriding the string representation of a Wellness survery to customize output when querying with the interactive shell
     def __str__(self):
@@ -70,8 +79,6 @@ class KpiT(models.Model):
     class Meta:
         managed = False
         db_table = 'KPI_T'
-        unique_together = (('fname', 'lname', 'dob', 'datekpi', 'testtype'),)
-
-    # Overriding the string representation of a KPI to customize output when querying with the interactive shell
-    def __str__(self):
-        return f"Name:{self.fname} {self.lname} | DOB:{self.dob} | DateKPI:{self.datekpi} | TestType:{self.testtype} | TestResult:{self.testresult}"
+        constraints = [
+            models.UniqueConstraint(fields=['fname', 'lname', 'dob', 'datekpi', 'testtype'], name = 'unique_constraints_kpi')
+        ]

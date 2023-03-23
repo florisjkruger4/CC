@@ -106,8 +106,10 @@
                                 {% endif %}
                                 {% endfor %}
                             </div>
-                            <button class="kpidatabtn">Add KPI Data</button>
+                            <a href="/addkpi"><button class="kpidatabtn">Add KPI Data</button></a>
                         </div>
+                        {% else %}
+                        <a href="/addkpi"><button class="kpidatabtn">Add KPI Data</button></a>
                         {% endif %}
 
                         <hr>
@@ -140,7 +142,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button class="kpidatabtn" style="margin-top: 20px;">Add Wellness Report</button>
+                        <a href="{% url 'AddWellness' athleteProf.fname athleteProf.lname athleteProf.dob %}"><button class="kpidatabtn" style="margin-top: 20px;">Add Wellness Report</button></a>
 
                         <script type="text/javascript">
                             var hoursofsleep = Number("{{ x.hoursofsleep }}")
@@ -150,6 +152,8 @@
                             var soreness = Number("{{ x.soreness }}")
                             var stress = Number("{{ x.stress }}")
                             var mood = Number("{{ x.mood }}")
+
+                            console.log(hoursofsleep)
         
                             var total = hoursofsleep + sleepquality + breakfast + hydration + soreness + stress + mood
                             document.getElementById("total").innerHTML = total
@@ -210,6 +214,8 @@
                             };
                         </script>
                     {% endfor %}
+                    {% else %}
+                    <a href="{% url 'AddWellness' athleteProf.fname athleteProf.lname athleteProf.dob %}"><button class="kpidatabtn" style="margin-top: 20px;">Add Wellness Report</button></a>
                     {% endif %}    
                 </div>
 

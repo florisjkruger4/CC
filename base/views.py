@@ -17,7 +17,7 @@ def AthletesDash(request):
     athletes = AthleteT.objects.filter(Q() | Q(fname__icontains=q) | Q(lname__icontains=q) | Q(sportsteam__icontains=q) | Q(position__icontains=q) | Q(year__icontains=q))
 
     context = {
-        'athletes':athletes
+        'athletes':athletes,
     }
     
     return render(request, 'html/athletes.html', context)
@@ -35,13 +35,16 @@ def AddAthlete(request):
         newPosition = request.POST['position']
 
         newAthlete = AthleteT(fname=newFname, lname=newLname, dob=newDOB, sportsteam=newTeam, position=newPosition, year=newYear, height=newHeight, image=newImage)
-        newAthlete.save()
 
+        newAthlete.validate_constraints()
+        newAthlete.save()
+        
     return render(request, 'html/addathlete.html')
 
 def AthleteProf(request, fname, lname, dob):
 
     athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
+
     numOfKPItests = int( KpiT.objects.filter(fname=fname, lname=lname, dob=dob).count())
     numOfWellnesReports = int(WellnessT.objects.filter(fname=fname, lname=lname, dob=dob).count())
 
@@ -207,4 +210,46 @@ def WellnessDash(request):
     }
 
     return render(request, 'html/wellness.html', context)
+
+def AddWellness(request, fname, lname, dob):
+
+    athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
+
+    Fname = fname
+    Lname = lname
+    DOB = dob
+
+    Sports = AthleteT.objects.filter(fname=fname, lname=lname, dob=dob).values('sportsteam')
+    for x in Sports:
+        SportsTeam = x['sportsteam']
+
+    Positions = AthleteT.objects.filter(fname=fname, lname=lname, dob=dob).values('position')
+    for x in Positions:
+        Position = x['position']
+
+    Images = AthleteT.objects.filter(fname=fname, lname=lname, dob=dob).values('image')
+    for x in Images:
+        Img = x['image']
+
+    if request.method == 'POST':
+        newhoursofsleep = request.POST['hoursofsleep']
+        newsleepquality = request.POST['sleepquality']
+        newbreakfast = request.POST['breakfast']
+        newhydration = request.POST['hydration']
+        newsoreness = request.POST['soreness']
+        newstress = request.POST['stress']
+        newmood = request.POST['mood']
+        newstatus = request.POST['status']
+        newdate = request.POST['date']
+
+        newWellness = WellnessT(fname=Fname, lname=Lname, dob=DOB, status=newstatus, sportsteam=SportsTeam, date=newdate, position=Position, hoursofsleep=newhoursofsleep, sleepquality=newsleepquality, breakfast=newbreakfast, hydration=newhydration, soreness=newsoreness, stress=newstress, mood=newmood, image=Img)
+
+        newWellness.validate_constraints()
+        newWellness.save()
+
+    context = {
+        'athleteProf':athleteProf,
+    }
+
+    return render(request, 'html/addwellness.html', context)
 
