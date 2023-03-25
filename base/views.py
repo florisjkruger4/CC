@@ -94,13 +94,14 @@ def AthleteProf(request, fname, lname, dob):
             .distinct()
         )
 
+         # init/reset variables to 0 before next use
+        kpi_bar = 0
+        kpi_line = 0
+        Date1_result = 0
+        Date2_result = 0
+        change = 0
+
         for x in test_type:
-            # init/reset variables to 0 before next use
-            kpi_bar = 0
-            kpi_line = 0
-            Date1_result = 0
-            Date2_result = 0
-            change = 0
 
             # Gets the rows for this test for specific athlete
             kpi_results = KpiT.objects.filter(
@@ -123,7 +124,7 @@ def AthleteProf(request, fname, lname, dob):
                     Date1_result = Date1_result.testresult
 
             else:
-                Date1_result = 0
+                Date1_result = None
 
             # Date 2 test score result
             if date_two:
@@ -133,7 +134,7 @@ def AthleteProf(request, fname, lname, dob):
                     Date2_result = Date2_result.testresult
 
             else:
-                Date2_result = 0
+                Date2_result = None
 
             # If both give values (not null), calculate difference betweeen them
             if Date1_result and Date2_result:
@@ -202,7 +203,7 @@ def AthleteProf(request, fname, lname, dob):
         "latest_val": Date2_result,
         "all_dates": all_dates,
         "kpi_test_data": kpi_test_data,
-        
+
         "numOfWellnesReports": wellness_count,
         "wellness": wellness,
         "wellnessReportDates": wellness_dates,
