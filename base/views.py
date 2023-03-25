@@ -4,252 +4,314 @@ from .models import AthleteT, TeamT, WellnessT, KpiT
 from .utils import bar_graph, line_graph
 from django.db.models import Count
 
-def Dashboard(request):
 
+def Dashboard(request):
     context = {}
 
-    return render(request, 'html/dashboard.html', context)
+    return render(request, "html/dashboard.html", context)
+
 
 def AthletesDash(request):
+    q = request.GET.get("q") if request.GET.get("q") != None else ""
 
-    q = request.GET.get('q') if request.GET.get('q') != None else ''
-
-    athletes = AthleteT.objects.filter(Q() | Q(fname__icontains=q) | Q(lname__icontains=q) | Q(sportsteam__icontains=q) | Q(position__icontains=q) | Q(year__icontains=q))
+    athletes = AthleteT.objects.filter(
+        Q()
+        | Q(fname__icontains=q)
+        | Q(lname__icontains=q)
+        | Q(sportsteam__icontains=q)
+        | Q(position__icontains=q)
+        | Q(year__icontains=q)
+    )
 
     context = {
-        'athletes':athletes,
+        "athletes": athletes,
     }
-    
-    return render(request, 'html/athletes.html', context)
+
+    return render(request, "html/athletes.html", context)
+
 
 def AddAthlete(request):
+    if request.method == "POST":
+        newFname = request.POST["fname"]
+        newLname = request.POST["lname"]
+        newYear = request.POST["year"]
+        newHeight = request.POST["height"]
+        newImage = request.POST["image"]
+        newDOB = request.POST["dob"]
+        newTeam = request.POST["sportsteam"]
+        newPosition = request.POST["position"]
 
-    if request.method == 'POST':
-        newFname = request.POST['fname']
-        newLname = request.POST['lname']
-        newYear = request.POST['year']
-        newHeight = request.POST['height']
-        newImage = request.POST['image']
-        newDOB = request.POST['dob']
-        newTeam = request.POST['sportsteam']
-        newPosition = request.POST['position']
-
-        newAthlete = AthleteT(fname=newFname, lname=newLname, dob=newDOB, sportsteam=newTeam, position=newPosition, year=newYear, height=newHeight, image=newImage)
+        newAthlete = AthleteT(
+            fname=newFname,
+            lname=newLname,
+            dob=newDOB,
+            sportsteam=newTeam,
+            position=newPosition,
+            year=newYear,
+            height=newHeight,
+            image=newImage,
+        )
 
         newAthlete.validate_constraints()
         newAthlete.save()
-        
-    return render(request, 'html/addathlete.html')
+
+    return render(request, "html/addathlete.html")
+
 
 def AthleteProf(request, fname, lname, dob):
-
     athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
+    img = WellnessT.objects.filter(fname=fname, lname=lname, dob=dob)[0]
 
-    numOfKPItests = int( KpiT.objects.filter(fname=fname, lname=lname, dob=dob).count())
-    numOfWellnesReports = int(WellnessT.objects.filter(fname=fname, lname=lname, dob=dob).count())
+    # List of KPI table rows
+    kpi_list = KpiT.objects.filter(fname=fname, lname=lname, dob=dob)
+    kpi_count = len(kpi_list)
 
-    if numOfKPItests > 0 and numOfWellnesReports > 0:
+    # init / clear list
+    kpi_test_data = []
 
-        img = WellnessT.objects.filter(fname=fname, lname=lname, dob=dob)[0]
-        wellness = WellnessT.objects.filter(fname=fname, lname=lname, dob=dob).values()
-        wellnessReportDates = WellnessT.objects.filter(fname=fname, lname=lname, dob=dob).values('date').annotate(dcount=Count('date')).order_by('date')
-        mostRecentWellnessReportDate = wellnessReportDates.last()['date']
+    # ------------ KPI -------------
 
-        # Groups by test type name for specific athlete profile page
-        testType = KpiT.objects.filter(fname=fname, lname=lname, dob=dob).values('testtype').annotate(dcount=Count('testtype')).order_by('testtype')
+    if kpi_count > 0:
+        # Access and store all dates
+        all_dates = (
+            KpiT.objects.filter(fname=fname, lname=lname, dob=dob)
+            .values("datekpi")
+            .distinct()
+        )
 
-        # Access all dates
-        all_dates = KpiT.objects.filter(fname=fname, lname=lname, dob=dob).values('datekpi').distinct()
-
-        # Takes user input through Django form (Wellness date selection)
-        wellness_date = request.POST.get("wellnessdate")
         # Takes user input through a Django form (in this case it takes the "select" option when user hits submit form btn)
         date_one = request.POST.get("date1")
         date_two = request.POST.get("date2")
 
-        # Gets the rows for 10yd Sprint for specific athlete
-        TenYdSprint_results = KpiT.objects.filter(fname=fname, lname=lname, dob=dob, testtype__exact='10yd Sprint', datekpi__range=(date_one, date_two))
-        # Sets x and y coordinate values
-        TenYd_x = [x.datekpi for x in TenYdSprint_results]
-        TenYd_y = [x.testresult for x in TenYdSprint_results]
-        # Calls matplotlib bar graph with above data
-        TenYd_chart = bar_graph(TenYd_x, TenYd_y)
-        TenYd_chart_line = line_graph(TenYd_x, TenYd_y)
+        # Groups by test type name for specific athlete profile page
+        # Only gets test types within selected date range
+        test_type = (
+            KpiT.objects.filter(
+                fname=fname, lname=lname, dob=dob, datekpi__range=(date_one, date_two)
+            )
+            .values_list("testtype", flat=True)
+            .order_by("testtype")
+            .distinct()
+        )
 
-        # Gets the rows for Barbell Bench Press 1RM for specific athlete
-        Bench1RM_results = KpiT.objects.filter(fname=fname, lname=lname, dob=dob, testtype__exact='Barbell Bench Press 1RM', datekpi__range=(date_one, date_two))
-        # Sets x and y coordinate values
-        Bench1RM_x = [x.datekpi for x in Bench1RM_results]
-        Bench1RM_y = [y.testresult for y in Bench1RM_results]
-        # Calls matplotlib bar graph with above data
-        Bench1RM_chart = bar_graph(Bench1RM_x, Bench1RM_y)
-        Bench1RM_chart_line = line_graph(Bench1RM_x, Bench1RM_y)
+        for x in test_type:
+            # init/reset variables to 0 before next use
+            kpi_bar = 0
+            kpi_line = 0
+            Date1_result = 0
+            Date2_result = 0
+            change = 0
 
-        # Gets the rows for CMJ for specific athlete
-        CMJ_results = KpiT.objects.filter(fname=fname, lname=lname, dob=dob, testtype__exact='CMJ', datekpi__range=(date_one, date_two))
-        # Sets x and y coordinate values
-        CMJ_x = [x.datekpi for x in CMJ_results]
-        CMJ_y = [y.testresult for y in CMJ_results]
-        # Calls matplotlib bar graph with above data
-        CMJ_chart = bar_graph(CMJ_x, CMJ_y)
-        CMJ_chart_line = line_graph(CMJ_x, CMJ_y)
+            # Gets the rows for this test for specific athlete
+            kpi_results = KpiT.objects.filter(
+                fname=fname,
+                lname=lname,
+                dob=dob,
+                testtype__exact=x,
+                datekpi__range=(date_one, date_two),
+            )
 
-        # Wellness Date selection
-        if (wellness_date):
-            mostRecentWellnessReport = WellnessT.objects.filter(fname=fname, lname=lname, dob=dob, date__exact=wellness_date).values()
-        else:
-            mostRecentWellnessReport = WellnessT.objects.filter(fname=fname, lname=lname, dob=dob, date__exact=mostRecentWellnessReportDate).values()
+            # Sets x and y coordinate values
+            results_x = [x.datekpi for x in kpi_results]
+            results_y = [x.testresult for x in kpi_results]
 
-        # Date 1 test score result
-        if (date_one):
-            TenYd_Date1_result = TenYdSprint_results.order_by('datekpi').first()
-            Bench1RM_Date1_result = Bench1RM_results.order_by('datekpi').first()
-            CMJ_Date1_result = CMJ_results.order_by('datekpi').first()
-        else:
-            TenYd_Date1_result = None
-            Bench1RM_Date1_result = None
-            CMJ_Date1_result = None
+            # Date 1 test score result
+            if date_one:
+                Date1_result = kpi_results.order_by("datekpi").first()
 
-        # Date 2 test score result 
-        if (date_two):
-            TenYd_Date2_result = TenYdSprint_results.order_by('datekpi').last()
-            Bench1RM_Date2_result = Bench1RM_results.order_by('datekpi').last()
-            CMJ_Date2_result = CMJ_results.order_by('datekpi').last()
-        else:
-            TenYd_Date2_result = None
-            Bench1RM_Date2_result = None
-            CMJ_Date2_result = None
-        
-        context = {
-            'athleteProf':athleteProf,
-            'numOfKPItests':numOfKPItests,
-            'numOfWellnesReports':numOfWellnesReports,
+                if Date1_result:
+                    Date1_result = Date1_result.testresult
 
-            'img':img,
-            'wellness':wellness,
-            'wellnessReportDates':wellnessReportDates,
-            'mostRecentWellnessReportDate':mostRecentWellnessReportDate,
-            'wellness_date':wellness_date,
-            'mostRecentWellnessReport':mostRecentWellnessReport,
+            else:
+                Date1_result = None
 
-            'testType':testType,
+            # Date 2 test score result
+            if date_two:
+                Date2_result = kpi_results.order_by("datekpi").last()
 
-            'all_dates':all_dates,
+                if Date2_result:
+                    Date2_result = Date2_result.testresult
 
-            'TenYdSprint_results':TenYdSprint_results,
-            'TenYd_chart':TenYd_chart,
-            'TenYd_chart_line':TenYd_chart_line,
-            'TenYd_y':TenYd_y,
-            'TenYd_Date1_result':TenYd_Date1_result,
-            'TenYd_Date2_result':TenYd_Date2_result,
+            else:
+                Date2_result = None
 
-            'Bench1RM_results':Bench1RM_results,
-            'Bench1RM_chart':Bench1RM_chart,
-            'Bench1RM_chart_line':Bench1RM_chart_line,
-            'Bench1RM_y':Bench1RM_y,
-            'Bench1RM_Date1_result':Bench1RM_Date1_result,
-            'Bench1RM_Date2_result':Bench1RM_Date2_result,
+            # If both give values (not null), calculate difference betweeen them
+            if Date1_result and Date2_result:
+                change = Date2_result - Date1_result
+                change = round(change, 2)
 
-            'CMJ_results':CMJ_results,
-            'CMJ_chart':CMJ_chart,
-            'CMJ_chart_line':CMJ_chart_line,
-            'CMJ_y':CMJ_y,
-            'CMJ_Date1_result':CMJ_Date1_result,
-            'CMJ_Date2_result':CMJ_Date2_result,
+            # Calls matplotlib bar graph with above data
+            kpi_bar = bar_graph(results_x, results_y)
+            kpi_line = line_graph(results_x, results_y, change)
 
-            'date_one':date_one,
-            'date_two':date_two,
-        }
+            # Put all info being transferred to front end into tuple
+            kpi_single = [x, kpi_bar, kpi_line, Date1_result, Date2_result, change]
 
-        return render(request, 'html/athleteProf.html', context)
-    
+            # Add KPI tuple to list of tuples
+            kpi_test_data.append(kpi_single)
+
     else:
         context = {
-            'athleteProf':athleteProf,
+            "athleteProf": athleteProf,
         }
 
-        return render(request, 'html/athleteProf.html', context)
+        return render(request, "html/athleteProf.html", context)
+
+    # ------------ Wellness -------------
+
+    wellness_count = int(
+        WellnessT.objects.filter(fname=fname, lname=lname, dob=dob).count()
+    )
+
+    if wellness_count > 0:
+        wellness = WellnessT.objects.filter(fname=fname, lname=lname, dob=dob).values()
+        wellness_dates = (
+            WellnessT.objects.filter(fname=fname, lname=lname, dob=dob)
+            .values("date")
+            .annotate(dcount=Count("date"))
+            .order_by("date")
+        )
+        wellness_most_recent = wellness_dates.last()["date"]
+
+        # Takes user input through Django form (Wellness date selection)
+        wellness_date = request.POST.get("wellnessdate")
+
+        # Wellness Date selection
+        if wellness_date:
+            mostRecentWellnessReport = WellnessT.objects.filter(
+                fname=fname, lname=lname, dob=dob, date__exact=wellness_date
+            ).values()
+        else:
+            mostRecentWellnessReport = WellnessT.objects.filter(
+                fname=fname, lname=lname, dob=dob, date__exact=wellness_most_recent
+            ).values()
+
+    else:
+        context = {
+            "athleteProf": athleteProf,
+        }
+
+        return render(request, "html/athleteProf.html", context)
+
+    context = {
+        "athleteProf": athleteProf,
+        "img": img,
+        "numOfKPItests": kpi_count,
+        "prev_val": Date1_result,
+        "latest_val": Date2_result,
+        "all_dates": all_dates,
+        "kpi_test_data": kpi_test_data,
+        "numOfWellnesReports": wellness_count,
+        "wellness": wellness,
+        "wellnessReportDates": wellness_dates,
+        "mostRecentWellnessReportDate": wellness_most_recent,
+        "wellness_date": wellness_date,
+        "mostRecentWellnessReport": mostRecentWellnessReport,
+    }
+
+    return render(request, "html/athleteProf.html", context)
 
 
 def TeamDash(request):
-
     athletes = TeamT.objects.all()
 
-    context = {
-        'teams':athletes
-    }
-    
-    return render(request, 'html/teams.html', context)
+    context = {"teams": athletes}
+
+    return render(request, "html/teams.html", context)
+
 
 def recordKPI(request):
-
-    context = {}
-
-    return render(request, 'html/recordKPI.html', context)
-
-def WellnessDash(request):
-
-    athleteProf = AthleteT.objects.all()
-
-    wellnessDates = WellnessT.objects.values('date').order_by('date').distinct()
-    wellnessSportsTeams = TeamT.objects.values('sport').order_by('sport').distinct()
-
-    selectedDate = request.POST.get("wellnessdate")
-    selectedSport =  request.POST.get("sportsteam")
-
-    allWellnessReports = WellnessT.objects.filter(date__exact=selectedDate, sportsteam__exact=selectedSport)
-
+    teams = TeamT.objects.values("sport")
+    
     context = {
-        'athleteProf':athleteProf,
-        'wellnessDates':wellnessDates,
-        'wellnessSportsTeams':wellnessSportsTeams,
-        'allWellnessReports':allWellnessReports,
-
-        'selectedDate':selectedDate,
-        'selectedSport':selectedSport,
+        "teams": teams,
     }
 
-    return render(request, 'html/wellness.html', context)
+    return render(request, "html/recordKPI.html", context)
+
+
+def WellnessDash(request):
+    athleteProf = AthleteT.objects.all()
+
+    wellnessDates = WellnessT.objects.values("date").order_by("date").distinct()
+    wellnessSportsTeams = TeamT.objects.values("sport").order_by("sport").distinct()
+
+    selectedDate = request.POST.get("wellnessdate")
+    selectedSport = request.POST.get("sportsteam")
+
+    allWellnessReports = WellnessT.objects.filter(
+        date__exact=selectedDate, sportsteam__exact=selectedSport
+    )
+
+    context = {
+        "athleteProf": athleteProf,
+        "wellnessDates": wellnessDates,
+        "wellnessSportsTeams": wellnessSportsTeams,
+        "allWellnessReports": allWellnessReports,
+        "selectedDate": selectedDate,
+        "selectedSport": selectedSport,
+    }
+
+    return render(request, "html/wellness.html", context)
+
 
 def AddWellness(request, fname, lname, dob):
-
     athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
 
     Fname = fname
     Lname = lname
     DOB = dob
 
-    Sports = AthleteT.objects.filter(fname=fname, lname=lname, dob=dob).values('sportsteam')
+    Sports = AthleteT.objects.filter(fname=fname, lname=lname, dob=dob).values(
+        "sportsteam"
+    )
     for x in Sports:
-        SportsTeam = x['sportsteam']
+        SportsTeam = x["sportsteam"]
 
-    Positions = AthleteT.objects.filter(fname=fname, lname=lname, dob=dob).values('position')
+    Positions = AthleteT.objects.filter(fname=fname, lname=lname, dob=dob).values(
+        "position"
+    )
     for x in Positions:
-        Position = x['position']
+        Position = x["position"]
 
-    Images = AthleteT.objects.filter(fname=fname, lname=lname, dob=dob).values('image')
+    Images = AthleteT.objects.filter(fname=fname, lname=lname, dob=dob).values("image")
     for x in Images:
-        Img = x['image']
+        Img = x["image"]
 
-    if request.method == 'POST':
-        newhoursofsleep = request.POST['hoursofsleep']
-        newsleepquality = request.POST['sleepquality']
-        newbreakfast = request.POST['breakfast']
-        newhydration = request.POST['hydration']
-        newsoreness = request.POST['soreness']
-        newstress = request.POST['stress']
-        newmood = request.POST['mood']
-        newstatus = request.POST['status']
-        newdate = request.POST['date']
+    if request.method == "POST":
+        newhoursofsleep = request.POST["hoursofsleep"]
+        newsleepquality = request.POST["sleepquality"]
+        newbreakfast = request.POST["breakfast"]
+        newhydration = request.POST["hydration"]
+        newsoreness = request.POST["soreness"]
+        newstress = request.POST["stress"]
+        newmood = request.POST["mood"]
+        newstatus = request.POST["status"]
+        newdate = request.POST["date"]
 
-        newWellness = WellnessT(fname=Fname, lname=Lname, dob=DOB, status=newstatus, sportsteam=SportsTeam, date=newdate, position=Position, hoursofsleep=newhoursofsleep, sleepquality=newsleepquality, breakfast=newbreakfast, hydration=newhydration, soreness=newsoreness, stress=newstress, mood=newmood, image=Img)
+        newWellness = WellnessT(
+            fname=Fname,
+            lname=Lname,
+            dob=DOB,
+            status=newstatus,
+            sportsteam=SportsTeam,
+            date=newdate,
+            position=Position,
+            hoursofsleep=newhoursofsleep,
+            sleepquality=newsleepquality,
+            breakfast=newbreakfast,
+            hydration=newhydration,
+            soreness=newsoreness,
+            stress=newstress,
+            mood=newmood,
+            image=Img,
+        )
 
         newWellness.validate_constraints()
         newWellness.save()
 
     context = {
-        'athleteProf':athleteProf,
+        "athleteProf": athleteProf,
     }
 
-    return render(request, 'html/addwellness.html', context)
-
+    return render(request, "html/addwellness.html", context)
