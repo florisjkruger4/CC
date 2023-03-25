@@ -123,7 +123,7 @@ def AthleteProf(request, fname, lname, dob):
                     Date1_result = Date1_result.testresult
 
             else:
-                Date1_result = None
+                Date1_result = 0
 
             # Date 2 test score result
             if date_two:
@@ -133,7 +133,7 @@ def AthleteProf(request, fname, lname, dob):
                     Date2_result = Date2_result.testresult
 
             else:
-                Date2_result = None
+                Date2_result = 0
 
             # If both give values (not null), calculate difference betweeen them
             if Date1_result and Date2_result:
@@ -196,11 +196,13 @@ def AthleteProf(request, fname, lname, dob):
     context = {
         "athleteProf": athleteProf,
         "img": img,
+
         "numOfKPItests": kpi_count,
         "prev_val": Date1_result,
         "latest_val": Date2_result,
         "all_dates": all_dates,
         "kpi_test_data": kpi_test_data,
+        
         "numOfWellnesReports": wellness_count,
         "wellness": wellness,
         "wellnessReportDates": wellness_dates,
