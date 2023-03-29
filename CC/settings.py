@@ -124,8 +124,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = 'staticfiles/'
-MEDIA_URL = 'media/'
+STATIC_URL = '/staticfiles/'
 
 if DEBUG:
   STATICFILES_DIRS = [os.path.join(BASE_DIR, 'staticfiles')]
@@ -133,9 +132,15 @@ if DEBUG:
 else:
   STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+DATE_FORMAT = "Y-m-d"
+USE_L10N = False
+

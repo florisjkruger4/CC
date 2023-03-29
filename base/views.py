@@ -25,8 +25,10 @@ def AthletesDash(request):
 def AddAthlete(request):
 
     if request.method == 'POST':
+
         newFname = request.POST['fname']
         newLname = request.POST['lname']
+        newGender = request.POST['gender']
         newYear = request.POST['year']
         newHeight = request.POST['height']
         newImage = request.POST['image']
@@ -34,7 +36,7 @@ def AddAthlete(request):
         newTeam = request.POST['sportsteam']
         newPosition = request.POST['position']
 
-        newAthlete = AthleteT(fname=newFname, lname=newLname, dob=newDOB, sportsteam=newTeam, position=newPosition, year=newYear, height=newHeight, image=newImage)
+        newAthlete = AthleteT(fname=newFname, lname=newLname, gender=newGender, dob=newDOB, sportsteam=newTeam, position=newPosition, year=newYear, height=newHeight, image=newImage)
 
         newAthlete.validate_constraints()
         newAthlete.save()
