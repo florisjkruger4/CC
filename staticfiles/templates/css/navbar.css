@@ -3,7 +3,7 @@
     height: 100vh;
     background-color: #1F2126;
     font-family: 'Titillium Web', sans-serif;
-    font-size: 20;
+    font-size: 20px;
     color: white;
     position: fixed;
     display: block;
@@ -17,6 +17,7 @@
 
   .side-nav i {
     width: 18px;
+    font-size: 20px;
   }
 
   .nav-user {

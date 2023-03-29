@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <!-- Header -->
   {% include 'html/header.html' %}
@@ -7,8 +8,77 @@
 
 <body>
   <div>
-  <!-- SideNavbar -->
-  {% include 'html/sidenav.html' %}
-  </div>
+    <!-- SideNavbar -->
+    {% include 'html/sidenav.html' %}
+
+    <div class="main-container">
+      <div class="main-header">
+        <h1>Record KPI</h1>
+      </div>
+
+      <form method="post" id="kpiform">
+        {% csrf_token %}
+        <select id="team" name="team">
+          <option disabled hidden selected>Select Team</option>
+          {% for x in teams %}
+          <option>{{ x }}</option>
+          {% endfor %}
+        </select>
+      </form>
+
+      <!-- Data Entry Table -->
+      <div>
+        <table id="data_table" style="border: 1px solid white;">
+          <thead style="border: 1px solid white;">
+            <tr>
+              <th style="width: 80px;"></th>
+              <th style="width: 80px;">Test Type</th>
+              <th style="width: 80px;">Test Type</th>
+              <th style="width: 80px;"><i class="fa-solid fa-plus" style="font-size: 10px; color:var(--yellow-accent)"
+                  id="btnAddCol"></i></th>
+            </tr>
+          </thead>
+          <tbody style="border: 1px solid white;">
+            <tr>
+              <td>Athlete</td>
+            </tr>
+            <tr>
+              <td>Athlete</td>
+            </tr>
+            <tr>
+              <td>Athlete</td>
+            </tr>
+            <tr>
+              <td>Athlete</td>
+            </tr>
+
+        </table>
+        <script>
+          var myform = $('#data_table'), iter = 0;
+
+          $('#btnAddCol').click(function () {
+
+            $('#btnAddCol').remove();
+
+            myform.find('tr').each(function () {
+              var trow = $(this);
+              if (trow.index() === 0) {
+                trow.append('<td>Col' + iter + '</td>');
+              } else {
+                trow.append('<td><input type="checkbox" name="cb' + iter + '"/></td>');
+              }
+            });
+
+            trow.append('<th style="width: 80px;"><i class="fa-solid fa-plus" style="font-size: 10px; color:var(--yellow-accent) id=btnAddCol></i></th>');
+
+            iter += 1;
+          });
+
+        </script>
+
+      </div>
+
+    </div>
 </body>
+
 </html>

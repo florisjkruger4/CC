@@ -6,7 +6,7 @@ import numpy as np
 def get_graph():
 
     buffer = BytesIO()
-    plt.savefig(buffer, format='png')
+    plt.savefig(buffer, format='png', transparent=True, dpi=300)
     buffer.seek(0)
     image_png = buffer.getvalue()
     graph = base64.b64encode(image_png)
@@ -17,7 +17,7 @@ def get_graph():
 def bar_graph(x, y):
 
     plt.switch_backend('AGG')
-    plt.figure(figsize=(8,4), facecolor="#1F2126")
+    plt.figure(figsize=(9,4), facecolor="#1F2126")
     #plt.title('Bar Graph')
     plt.bar(x, y, color="#96B7FF")
     plt.xticks(rotation=0)
@@ -41,14 +41,21 @@ def bar_graph(x, y):
     graph = get_graph()
     return graph
 
-def line_graph(x, y):
+def line_graph(x, y, change):
 
     plt.switch_backend('AGG')
     plt.figure(figsize=(2.5,.5), facecolor="#1F2126")
-    #plt.title('line Graph')
-    plt.plot(x, y, color="#96B7FF")
+
+    if change > 0:
+        plt.plot(x, y, color="#58E767")
+    elif change < 0:
+        plt.plot(x, y, color="#FC5151")
+    else:
+        plt.plot(x, y, color="#FFFFFF")
+        
     plt.tight_layout()
     ax = plt.gca()
+    plt.gca().set_position((0, 0, 1, 1))
     ax.set_facecolor("#1F2126")
     ax.spines['bottom'].set_visible(False)
     ax.spines['left'].set_visible(False)

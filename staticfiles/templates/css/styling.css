@@ -14,6 +14,8 @@ html * {
   --separator-gray: #404245;
   --white-text: white;
   --black-text: black;
+  --red-accent: #FC5151;
+  --green-accent: #58E767;
 }
 
 body {
@@ -35,8 +37,12 @@ h2 {
 
 /* For general content */
 h3 {
-  font-size: 20;
-  font-weight: 400;
+  font-size: 24;
+  font-weight: 600;
+}
+
+hr {
+  background: var(--separator-gray);
 }
 
 /* For tables */
@@ -56,7 +62,7 @@ td {
 
 .main-container {
   margin-left: 225px;
-  padding: 30px 40px 0 40px;
+  padding: 20px 40px 0 40px;
   display: block;
 }
 
@@ -128,7 +134,10 @@ a:active {
 /* Athlete Individual */
 
 .athlete-pic {
-  width: 200px;
+  width: auto;
+  height: 100%;
+  max-width: 250px;
+  max-height: 250px;
   background-color: white;
   border-radius: 10px;
 }
@@ -137,8 +146,8 @@ a:active {
   width: 100%;
   background-color: var(--med-gray-2);
   border-radius: 10px;
-  padding: 20px;
-  margin-top: 20px;
+  padding: 25px;
+  margin-top: 25px;
 }
 
 .graphprof {
@@ -146,8 +155,8 @@ a:active {
   width: 100%;
   background-color: var(--med-gray-2);
   border-radius: 10px;
-  padding: 15px;
-  margin-bottom: 20px;
+  padding: 25px;
+  margin-bottom: 25px;
 }
 
 .status {
@@ -183,6 +192,11 @@ a:active {
   padding-top: 5px;
   padding-bottom: 5px;
   margin-top: 10px;
+}
+
+.kpi-img img {
+  height: auto;
+  width: 100%;
 }
 
 select {
