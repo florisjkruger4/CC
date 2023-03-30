@@ -22,10 +22,12 @@
                             <i class="fa-solid fa-pen" style="color: var(--yellow-accent); font-size: 25px;"></i>
                         </div>
 
-                        <div class="d-flex">
-
-                            <img class="athlete-pic" src="/staticfiles/images/{{ img.image }}"></img>
-
+                        <div class="d-flex" style="height: 200px;">
+                            {% if testType %}
+                            <img class="athlete-pic" src="/staticfiles/images/{{ athleteProf.image }}"></img>
+                            {% else %}
+                            <img class="athlete-pic" src="/staticfiles/images/{{ athleteProf.image }}"></img>
+                            {% endif %}
                             <div class="w-100" style="margin-left: 20px;">
                                 <div class="d-flex justify-content-between">
                                     <h6>Sport</h6>
@@ -183,17 +185,17 @@
 
                         <!-- Date Selector + Settings-->
                         <div class="main-header justify-content-between">
-                            <form method="post" id="kpiform">
+                            <form method="post" id="kpiform" name="kpiform">
                                 {% csrf_token %}
                                 <select id="date1" name="date1">
-                                    <option disabled hidden selected>Select Date</option>
+                                    <option selected>{{ kpi_earliest }}</option>
                                     {% for x in all_dates %}
                                     <option>{{ x.datekpi }}</option>
                                     {% endfor %}
                                 </select>
                                 to
                                 <select id="date2" name="date2">
-                                    <option disabled hidden selected>Select Date</option>
+                                    <option selected>{{ kpi_most_recent }}</option>
                                     {% for x in all_dates %}
                                     <option>{{ x.datekpi }}</option>
                                     {% endfor %}
@@ -218,9 +220,11 @@
                         </div>
 
                         <script type="text/javascript">
-
+                            
                             let selection1 = document.getElementById('date1');
                             let date1 = document.getElementById('resultone');
+
+
                             var date_one = "{{ date_one }}"
                             document.getElementById("resultone").innerHTML = date_one
                             if (date_one != "None") {
@@ -229,6 +233,8 @@
 
                             let selection2 = document.getElementById('date2');
                             let date2 = document.getElementById('resulttwo');
+
+
                             var date_two = "{{ date_two }}"
                             document.getElementById("resulttwo").innerHTML = date_two
                             if (date_two != "None") {

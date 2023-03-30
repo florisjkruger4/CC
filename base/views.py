@@ -22,12 +22,18 @@ test_types = [
 ]   
 
 def Dashboard(request):
-    context = {}
+    
+    athletes = AthleteT.objects.all()
+
+    context = {
+        'athletes':athletes,
+    }
 
     return render(request, "html/dashboard.html", context)
 
 
 def AthletesDash(request):
+
     q = request.GET.get("q") if request.GET.get("q") != None else ""
 
     athletes = AthleteT.objects.filter(
@@ -47,26 +53,20 @@ def AthletesDash(request):
 
 
 def AddAthlete(request):
-    if request.method == "POST":
-        newFname = request.POST["fname"]
-        newLname = request.POST["lname"]
-        newYear = request.POST["year"]
-        newHeight = request.POST["height"]
-        newImage = request.POST["image"]
-        newDOB = request.POST["dob"]
-        newTeam = request.POST["sportsteam"]
-        newPosition = request.POST["position"]
 
-        newAthlete = AthleteT(
-            fname=newFname,
-            lname=newLname,
-            dob=newDOB,
-            sportsteam=newTeam,
-            position=newPosition,
-            year=newYear,
-            height=newHeight,
-            image=newImage,
-        )
+    if request.method == 'POST':
+
+        newFname = request.POST['fname']
+        newLname = request.POST['lname']
+        newGender = request.POST['gender']
+        newYear = request.POST['year']
+        newHeight = request.POST['height']
+        newImage = request.POST['image']
+        newDOB = request.POST['dob']
+        newTeam = request.POST['sportsteam']
+        newPosition = request.POST['position']
+
+        newAthlete = AthleteT(fname=newFname, lname=newLname, gender=newGender, dob=newDOB, sportsteam=newTeam, position=newPosition, year=newYear, height=newHeight, image=newImage)
 
         newAthlete.validate_constraints()
         newAthlete.save()
@@ -76,7 +76,6 @@ def AddAthlete(request):
 
 def AthleteProf(request, fname, lname, dob):
     athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
-    img = WellnessT.objects.filter(fname=fname, lname=lname, dob=dob)[0]
 
     # List of KPI table rows
     kpi_list = KpiT.objects.filter(fname=fname, lname=lname, dob=dob)
@@ -89,16 +88,20 @@ def AthleteProf(request, fname, lname, dob):
 
     if kpi_count > 0:
         # Access and store all dates
-        all_dates = (
-            KpiT.objects.filter(fname=fname, lname=lname, dob=dob)
-            .values("datekpi")
-            .distinct()
-        )
+        all_dates = KpiT.objects.filter(fname=fname, lname=lname, dob=dob).values("datekpi").order_by("datekpi").distinct()
 
-        # Takes user input through a Django form (in this case it takes the "select" option when user hits submit form btn)
-        date_one = request.POST.get("date1")
-        date_two = request.POST.get("date2")
+        # Gets earlies and latest kpi dates for specific athlete
+        kpi_earliest = all_dates.first()["datekpi"]
+        kpi_most_recent = all_dates.last()["datekpi"]
 
+        if request.method == 'POST':
+            # Takes user input through a Django form (in this case it takes the "select" option when user hits submit form btn)
+            date_one = request.POST.get("date1")
+            date_two = request.POST.get("date2")
+        else:
+            date_one = kpi_earliest
+            date_two = kpi_most_recent
+        
         # Groups by test type name for specific athlete profile page
         # Only gets test types within selected date range
         test_type = (
@@ -132,6 +135,7 @@ def AthleteProf(request, fname, lname, dob):
             results_x = [x.datekpi for x in kpi_results]
             results_y = [x.testresult for x in kpi_results]
 
+            
             # Date 1 test score result
             if date_one:
                 Date1_result = kpi_results.order_by("datekpi").first()
@@ -156,6 +160,7 @@ def AthleteProf(request, fname, lname, dob):
             if Date1_result and Date2_result:
                 change = Date2_result - Date1_result
                 change = round(change, 2)
+                
 
             # Calls matplotlib bar graph with above data
             kpi_bar = bar_graph(results_x, results_y)
@@ -213,13 +218,15 @@ def AthleteProf(request, fname, lname, dob):
 
     context = {
         "athleteProf": athleteProf,
-        "img": img,
 
         "numOfKPItests": kpi_count,
         "prev_val": Date1_result,
         "latest_val": Date2_result,
         "all_dates": all_dates,
         "kpi_test_data": kpi_test_data,
+
+        "kpi_earliest":kpi_earliest,
+        "kpi_most_recent":kpi_most_recent,
 
         "numOfWellnesReports": wellness_count,
         "wellness": wellness,

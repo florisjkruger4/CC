@@ -13,12 +13,36 @@
           <!-- SideNavbar -->
           {% include 'html/sidenav.html' %}
     
-          <div class="col-md-2"></div>
-    
-          <!-- Team_T -->
-          <div class="col-md-9" style="margin: 10px;">
+          <div style="width: 260px;"></div>
+          <div class="col-md-4" style="padding-top: 20px">
             <div style="display: flex; width: 75vh;">
-              <h1 class="mainFont" style="padding-bottom: 10px; padding-right: 8%;">Recently Viewed</h1>
+              <h1 class="mainFont" style="padding-bottom: 10px; padding-right: 4%;">Recently Viewed</h1>
+            </div>
+            <div class="kpireport" style="display: flex; flex-direction: column; justify-content: space-evenly;">
+              <!--
+              {% for x in athletes %}
+              <div>
+                {{ x.fname }}
+                {{ x.lname }}
+              </div>
+              {% endfor %}
+              -->
+            </div>
+          </div>
+          <div class="col-md-3" style="padding-top: 20px">
+            <div style="display: flex; width: 75vh;">
+              <h1 class="mainFont" style="padding-bottom: 10px; padding-right: 8%;">Teams</h1>
+            </div>
+            <div class="kpireport" style="display: flex; flex-direction: column; justify-content: space-evenly;">
+
+            </div>
+          </div>
+          <div class="col-md-2" style="padding-top: 20px">
+            <div style="display: flex; width: 75vh;">
+              <h1 class="mainFont" style="padding-bottom: 10px; padding-right: 8%;">Quick Actions</h1>
+            </div>
+            <div class="kpireport" style="display: flex; flex-direction: column; justify-content: space-evenly;">
+
             </div>
           </div>
        </div>
