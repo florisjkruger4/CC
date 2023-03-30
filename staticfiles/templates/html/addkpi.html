@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Header -->
+    {% include 'html/header.html' %}
+</head>
+
+<body>
+
+    <!-- SideNavbar -->
+    {% include 'html/sidenav.html' %}
+
+    <div class="main-container" style="padding-right:140px; padding-top: 30px;">
+
+        <div class="main-header" style="gap: 25px;">
+            <a href="{{request.META.HTTP_REFERER}}"><button type="button" class="kpidatabtn">Go Back</button></a>
+            <h1>Add KPI: {{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
+        </div>
+        <form method="post" id="addkpiform">
+            {% csrf_token %}
+            <div class="kpireport"
+                style="width: 50vh; height: 40vh; display: flex; flex-direction: column; justify-content: space-between;">
+
+                <select id="testtype">
+                    <option disabled hidden selected>Select Test</option>
+                    {% for x in test_types %}
+                    <option>{{ x }}</option>
+                    {% endfor %}   
+                </select>
+
+
+                <input type="text" id="testresult" placeholder="Enter Test Result">
+                <input type="date" id="datekpi" style="background-color: var(--dark-gray);">
+                <script>
+                    const date = new Date();
+
+                    let day = date.getDate();
+                    let month = date.getMonth() + 1;
+                    let year = date.getFullYear();
+
+                    if (month < 10)
+                        month = "0" + month;
+
+                    if (day < 10)
+                        month = "0" + month;
+
+                    let currentDate = `${year}-${month}-${day}`;
+
+                    console.log(document.getElementById("date-selector").value);
+
+                    document.getElementById("date-selector").value = currentDate;
+                </script>
+
+
+                &nbsp;
+                &nbsp;
+                <button class="kpidatabtn" style="width: 25%" type="submit" value="Submit">Submit</button>
+            </div>
+        </form>
+    </div>
+</body>

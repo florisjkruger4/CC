@@ -82,3 +82,13 @@ class KpiT(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['fname', 'lname', 'dob', 'datekpi', 'testtype'], name = 'unique_constraints_kpi')
         ]
+
+class TestTypeT(models.Model):
+    tname = models.CharField(db_column='Tname', primary_key=True, max_length=30)
+    minbetter = models.BooleanField(db_column="MinBetter")
+    
+    class Meta:
+        managed = False
+        db_table = 'TestType_T'
+
+    

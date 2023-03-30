@@ -12,73 +12,190 @@
     {% include 'html/sidenav.html' %}
 
     <div class="main-container">
-      <div class="main-header">
-        <h1>Record KPI</h1>
+      <div class="container" style="max-width: 1800px;">
+        <div class="row">
+          <div class="col-lg-9" style="height: 100vh; padding: 0;">
+
+            <div class="main-header justify-content-between">
+              <h1>Record KPI</h1>
+            </div>
+
+            <!-- Date & Team Selectors -->
+            <div class="d-flex">
+
+              <input type="date" id="date-selector" value="Today" style="background-color: var(--dark-gray);">
+              <form method="post" id="kpiform">
+                {% csrf_token %}
+                <select id="sportsteam" name="sportsteam" onchange="this.form.submit()">
+                  <option disabled hidden selected>Select Team</option>
+                  {% for x in teams %}
+                  <option>{{ x.sport }}</option>
+                  {% endfor %}
+                </select>
+              </form>
+
+            </div>
+
+            <script>
+              const date = new Date();
+
+              let day = date.getDate();
+              let month = date.getMonth() + 1;
+              let year = date.getFullYear();
+
+              if (month < 10)
+                month = "0" + month;
+
+              if (day < 10)
+                month = "0" + month;
+
+              let currentDate = `${year}-${month}-${day}`;
+
+              console.log(document.getElementById("date-selector").value);
+
+              document.getElementById("date-selector").value = currentDate;
+            </script>
+
+            <!-- Data Entry Table -->
+            <form id="myform">
+              <table id="data_table" class="table-dark table-striped">
+                <tr id="theader">
+                  <th style="min-width: 80px;"> </th>
+                </tr>
+                {% for x in athletes %}
+                <tr id="tvalues">
+                  <td>{{ x.fname }} {{ x.lname }}</td>
+                </tr>
+                {% endfor %}
+              </table>
+
+            </form>
+
+          </div>
+
+          <div class="col-lg-3 overflow-scroll" style="height: 100vh; padding: 0;">
+            <div style="width: 100%; background-color: var(--med-gray-2); height: 100vh;">
+              <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for tests...">
+              <ul id="myUL">
+                {% for x in test_types %}
+                <li><a>{{ x }}</a><input id="{{ forloop.counter }}" type="checkbox"></li>
+                {% endfor %}
+              </ul>
+
+              <script>
+                function myFunction() {
+                  // Declare variables
+                  var input, filter, ul, li, a, i, txtValue;
+                  input = document.getElementById('myInput');
+                  filter = input.value.toUpperCase();
+                  ul = document.getElementById("myUL");
+                  li = ul.getElementsByTagName('li');
+
+                  // Loop through all list items, and hide those who don't match the search query
+                  for (i = 0; i < li.length; i++) {
+                    a = li[i].getElementsByTagName("a")[0];
+                    txtValue = a.textContent || a.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                      li[i].style.display = "";
+                    } else {
+                      li[i].style.display = "none";
+                    }
+                  }
+                }
+
+                var myform = $('#myform');
+                let header = document.getElementById("theader");
+                let body = document.getElementById("tvalues");
+                document.querySelectorAll("[type=checkbox]").forEach(checkbox => {
+                checkbox.addEventListener("click",function(e)
+                {
+                    if(this.checked)
+                    {
+                      console.log(this.id+" checked");
+                      header.innerHTML+= "<th id=t" + this.id + ">" + this.previousSibling.innerText + "</th>";
+                      myform.find('tr').each(function() 
+                      {
+                        var trow = $(this);
+                        if (trow.index() != 0) {
+                          trow.append('<td><input type="text"/></td>');
+                        }
+                      });
+                    }
+                    else{
+                      console.log(this.id+" unchecked");
+                      document.getElementById("t"+ this.id).remove();
+                      myform.find('tr').each(function() 
+                      {
+                        var trow = $(this);
+                        if (trow.index() != 0) {
+                          trow.remove(this.lastElementChild);
+                        }
+                      });
+                    }
+                    e.stopPropagation();
+                })
+              })
+
+              </script>
+
+              <style>
+                #myInput {
+                  background-image: url('/css/searchicon.png');
+                  /* Add a search icon to input */
+                  background-position: 10px 12px;
+                  /* Position the search icon */
+                  background-repeat: no-repeat;
+                  /* Do not repeat the icon image */
+                  width: 100%;
+                  /* Full-width */
+                  font-size: 16px;
+                  /* Increase font-size */
+                  padding: 12px 20px 12px 40px;
+                  /* Add some padding */
+                  border: 1px solid #ddd;
+                  /* Add a grey border */
+                  margin-bottom: 12px;
+                  /* Add some space below the input */
+                }
+
+                #myUL {
+                  /* Remove default list styling */
+                  list-style-type: none;
+                  padding: 0;
+                  margin: 0;
+                }
+
+                #myUL li a {
+                  border: 1px solid #ddd;
+                  /* Add a border to all links */
+                  margin-top: -1px;
+                  /* Prevent double borders */
+                  background-color: #f6f6f6;
+                  /* Grey background color */
+                  padding: 12px;
+                  /* Add some padding */
+                  text-decoration: none;
+                  /* Remove default text underline */
+                  font-size: 18px;
+                  /* Increase the font-size */
+                  color: black;
+                  /* Add a black text color */
+                  display: block;
+                  /* Make it into a block element to fill the whole list */
+                }
+
+                #myUL li a:hover:not(.header) {
+                  background-color: #eee;
+                  /* Add a hover effect to all links, except for headers */
+                }
+              </style>
+
+            </div>
+          </div>
+        </div>
       </div>
-
-      <form method="post" id="kpiform">
-        {% csrf_token %}
-        <select id="team" name="team">
-          <option disabled hidden selected>Select Team</option>
-          {% for x in teams %}
-          <option>{{ x }}</option>
-          {% endfor %}
-        </select>
-      </form>
-
-      <!-- Data Entry Table -->
-      <div>
-        <table id="data_table" style="border: 1px solid white;">
-          <thead style="border: 1px solid white;">
-            <tr>
-              <th style="width: 80px;"></th>
-              <th style="width: 80px;">Test Type</th>
-              <th style="width: 80px;">Test Type</th>
-              <th style="width: 80px;"><i class="fa-solid fa-plus" style="font-size: 10px; color:var(--yellow-accent)"
-                  id="btnAddCol"></i></th>
-            </tr>
-          </thead>
-          <tbody style="border: 1px solid white;">
-            <tr>
-              <td>Athlete</td>
-            </tr>
-            <tr>
-              <td>Athlete</td>
-            </tr>
-            <tr>
-              <td>Athlete</td>
-            </tr>
-            <tr>
-              <td>Athlete</td>
-            </tr>
-
-        </table>
-        <script>
-          var myform = $('#data_table'), iter = 0;
-
-          $('#btnAddCol').click(function () {
-
-            $('#btnAddCol').remove();
-
-            myform.find('tr').each(function () {
-              var trow = $(this);
-              if (trow.index() === 0) {
-                trow.append('<td>Col' + iter + '</td>');
-              } else {
-                trow.append('<td><input type="checkbox" name="cb' + iter + '"/></td>');
-              }
-            });
-
-            trow.append('<th style="width: 80px;"><i class="fa-solid fa-plus" style="font-size: 10px; color:var(--yellow-accent) id=btnAddCol></i></th>');
-
-            iter += 1;
-          });
-
-        </script>
-
-      </div>
-
     </div>
+  </div>
 </body>
 
 </html>

@@ -5,6 +5,22 @@ from .utils import bar_graph, line_graph
 from django.db.models import Count
 
 
+test_types = [
+    '5m Sprint', '10m Sprint', '10m Fly', '15m Sprint', '15m Fly', '20m Sprint', '20m Fly', '25m Sprint', 
+    '30m Sprint', '40m Sprint', '60m Sprint', '5yd Sprint', '10yd Sprint', '10yd Fly', '15yd Sprint', 
+    '15yd Fly', '20yd Sprint', '20yd Fly', '25yd Sprint', '30yd Sprint', '40yd Sprint', '60yd Sprint', 
+    '110yd Sprint', 'Broad Jump', 'Double Broad Jump', 'Triple Broad Jump', 'Standing Triple Jump', 
+    'Countermovement Jump (Hands-on-Hips Force Plate)', 'Countermovement Rebound Jump (Hands-on-Hips Force Plate)', 
+    'Countermovement Jump (Vertec)', 'Approach Jump (Vertec)', '10-5 RSI', '5-0-5 Agility', '5-10-5 Pro Agility', 
+    '60yd Shuttle', '300yd Shuttle', 'Beep Test (Traditional)', 'Beep Test (Yo-Yo Intermittent Recovery Test)', 
+    'Max Aerobic Speed', 'Clean 1RM', 'Snatch 1RM', 'Jerk 1RM', 'Clean & Jerk 1RM', 'Barbell Bench Press 1RM', 
+    'Barbell Bench Press Max Reps (135lbs)', 'Barbell Bench Press Max Reps (185lbs)', 'Barbell Bench Press Max Reps (225lbs)', 
+    'Dumbbell Bench Press 1RM', 'Barbell Back Squat 1RM', 'Barbell Front Squat 1RM', 'Barbell Deadlift 1RM', 
+    'Hex Bar Deadlift 1RM', 'Pull-Up 1RM', 'Pull-Up Max Reps (60 sec)', 'Push-Up Max Reps (60 sec)', 
+    'Isometric Mid-Thigh Pull', 'Isometric Belt Squat', 'Bodyweight', 'Body Composition', 'Fat Mass', 
+    'Fat Free Mass', 'Lean Body Mass', 'Braking RFD', 'Average Relative Propulsive Force', 'Propulsive Net Impulse'
+]   
+
 def Dashboard(request):
     context = {}
 
@@ -146,6 +162,7 @@ def AthleteProf(request, fname, lname, dob):
             kpi_line = line_graph(results_x, results_y, change)
 
             # Put all info being transferred to front end into tuple
+            # 'x' is test type
             kpi_single = [x, kpi_bar, kpi_line, Date1_result, Date2_result, change]
 
             # Add KPI tuple to list of tuples
@@ -224,10 +241,17 @@ def TeamDash(request):
 
 
 def recordKPI(request):
-    teams = TeamT.objects.values("sport")
+
+    teams = TeamT.objects.values("sport").order_by("sport").distinct()
+    selectedSport = request.POST.get("sportsteam")
+
+    athletes = AthleteT.objects.filter(sportsteam__exact=selectedSport).values("fname", "lname")
     
     context = {
+        "athletes": athletes,
         "teams": teams,
+        "selectedSport": selectedSport,
+        "test_types": test_types,
     }
 
     return render(request, "html/recordKPI.html", context)
@@ -257,6 +281,37 @@ def WellnessDash(request):
 
     return render(request, "html/wellness.html", context)
 
+
+def AddKPI(request, fname, lname, dob):
+    athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
+
+    Fname = fname
+    Lname = lname
+    DOB = dob
+
+    if request.method == "POST":
+        newdate = request.POST["datekpi"]
+        newtest = request.POST["testtype"]
+        newresult = request.POST["testresult"]
+
+        newKPI = KpiT(
+            fname=Fname,
+            lname=Lname,
+            dob=DOB,
+            datekp=newdate,
+            testtype=newtest,
+            testresult=newresult
+        )
+
+        newKPI.validate_constraints()
+        newKPI.save()
+
+    context = {
+        "athleteProf": athleteProf,
+        "test_types": test_types,
+    }
+
+    return render(request, "html/addkpi.html", context)
 
 def AddWellness(request, fname, lname, dob):
     athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
