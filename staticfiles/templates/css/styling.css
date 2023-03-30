@@ -2,9 +2,9 @@
 html * {
   font-family: 'Titillium Web', sans-serif;
   color: var(--white-text);
-  /*src: url(https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&display=swap);*/
 }
 
+/* These some colors fr */
 :root {
   --blue-accent: #99C7FF;
   --yellow-accent: #FFCE54;
@@ -41,6 +41,12 @@ h3 {
   font-weight: 600;
 }
 
+h4 {
+  font-size: 20;
+  font-weight: 400;
+  margin-bottom: 0 !important;
+}
+
 hr {
   background: var(--separator-gray);
 }
@@ -49,6 +55,10 @@ hr {
 td {
   font-size: 16;
   font-weight: 400;
+}
+
+.teams-table tr {
+  height: 200px;
 }
 
 .table-customs {
@@ -162,7 +172,7 @@ a:active {
 .status {
   height: fit-content;
   width: 100%;
-  margin-top: 20px;
+  margin-top: 10px;
   display: flex;
   justify-content: space-evenly;
   border-bottom: 10px;
@@ -179,7 +189,7 @@ a:active {
   border-width: 1px;
   text-align: center; 
   padding: 5px; 
-  margin-left: 5px;
+  vertical-align: middle;
 }
 
 .kpidatabtn {

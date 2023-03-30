@@ -48,6 +48,7 @@
                                     <h6>Height</h6>
                                     <h6 class="text-end">{{ athleteProf.height }}</h6>
                                 </div>
+
                                 <!--<div class="line-2"></div>
                                 <div style="display: flex; justify-content: space-between;">
                                     <h6>DOB</h6> <h6>{{ athleteProf.DOB }}</h6>
@@ -67,25 +68,30 @@
                             </div>
 
                             <hr>
-
-                            <div>
                                 {% load sublist_selector %}
-
+                                
+                                
                                 {% for x in kpi_test_data %}
-
                                 <div class="d-flex justify-content-between align-items-center kpi-img">
-                                    <p> {{ x|get:'test_type'}} </p>
+                                    
+                                    <p> {{ x|get:'test_type' }} </p>
                                     {% if x|get:'change' > 0 %}
-                                    <p style="color:var(--green-accent);"> <i class="fa-solid fa-arrow-up" style="color:var(--green-accent)"></i> {{ x|get:'change' }}</p>
+                                    <p style="color:var(--green-accent);"> 
+                                        <i class="fa-solid fa-arrow-up" style="color:var(--green-accent)"></i> 
+                                        {{ x|get:'change' }}
+                                    </p>
                                     {% elif x|get:'change' < 0 %}
-                                    <p style="color:var(--red-accent);"> <i class="fa-solid fa-arrow-down" style="color:var(--red-accent)"></i> {{ x|get:'change' }}</p>
+                                    <p style="color:var(--red-accent);"> 
+                                        <i class="fa-solid fa-arrow-down" style="color:var(--red-accent)"></i> 
+                                        {{ x|get:'change' }}
+                                    </p>
                                     {% else %}
-                                    <p style="color:var(--med-gray-1);"> {{ x|get:'change' }}</p>
+                                    <p style="color:white;">{{ x|get:'change' }}</p>
                                     {% endif %}
 
-                                    <div style="width:50%;">
+                                    <div style="width: 50%;">
                                         <img src="data:image/png;base64, {{ x|get:'line_graph'|safe }}">
-                                        <div class="d-flex justify-content-between">
+                                        <div class="d-flex justify-content-between align-items-center">
                                             <p> {{ x|get:'prev_val' }}</p>
                                             <p> {{ x|get:'latest_val' }}</p>
                                         </div>
@@ -93,12 +99,14 @@
                                 </div>
 
                                 <hr>
+                                {% endfor %}  
 
-                                {% endfor %}
-                                <a href="/addkpi"><button class="kpidatabtn">Add KPI Data</button></a>
+                                <a href="{% url 'AddKPI' athleteProf.fname athleteProf.lname athleteProf.dob %}">
+                                    <button class="kpidatabtn" style="margin-top: 20px;">Add KPI</button>
+                                </a>    
+              
                             </div>
-                        </div>
-                        
+
                         <form method="post" id="wellnessform">
                             {% csrf_token %}
                             <div class="d-flex justify-content-between">
@@ -113,23 +121,28 @@
                             </div>
                         </form>
 
+                        <!-- Wellness -->
+
                         {% if wellness %}
                         {% for x in mostRecentWellnessReport %}
 
-                        <!-- Wellness -->
-                        <div class="status">
-                            <div class="w-100 wellness-status-display" id="bor">
-                                <h5 id="stat">Status: {{ x.status }}</h5>
+                        <div class="d-flex">
+                            <div class="w-100 wellness-status-display" style="margin-right: 12px;" id="bor">
+                                <h4 id="stat">Status: {{ x.status }}</h4>
                             </div>
-                            <div class="w-100 wellness-status-display" style="border: 1px solid white;">
+                            <div class="w-100 wellness-status-display"
+                                style="margin-left: 12px; border: 1px solid white;">
                                 <div class="d-flex justify-content-center">
-                                    <h5>Readiness: &nbsp;</h5>
-                                    <h5 id="total"></h5>
+                                    <h4>Readiness: &nbsp;</h4>
+                                    <h4 id="total"></h4>
                                 </div>
                             </div>
                         </div>
-                        <a href="{% url 'AddWellness' athleteProf.fname athleteProf.lname athleteProf.dob %}"><button class="kpidatabtn" style="margin-top: 20px;">Add Wellness Report</button></a>
-                        
+
+                        <a href="{% url 'AddWellness' athleteProf.fname athleteProf.lname athleteProf.dob %}">
+                            <button class="kpidatabtn" style="margin-top: 20px;">Add Wellness Report</button>
+                        </a>
+
                         <script type="text/javascript">
                             var hoursofsleep = Number("{{ x.hoursofsleep }}")
                             var sleepquality = Number("{{ x.sleepquality }}")
@@ -140,7 +153,7 @@
                             var mood = Number("{{ x.mood }}")
 
                             console.log(hoursofsleep)
-        
+
                             var total = hoursofsleep + sleepquality + breakfast + hydration + soreness + stress + mood
                             document.getElementById("total").innerHTML = total
 
@@ -192,7 +205,7 @@
                             <i class="fa-solid fa-gear" style="color: var(--yellow-accent); font-size: 25px;"></i>
                         </div>
 
-                        <!-- Graphs --> 
+                        <!-- Graphs -->
                         {% for x in kpi_test_data %}
 
                         <div class="graphprof">

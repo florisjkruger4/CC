@@ -14,6 +14,7 @@ urlpatterns = [
     path('recordKPI/', views.recordKPI, name="recordKPI"),
     path('wellness/', views.WellnessDash, name="WellnessDash"),
     path('/addwellness/<str:fname>/<str:lname>/<path:dob>', views.AddWellness, name="AddWellness"),
-] 
+    path('/addkpi/<str:fname>/<str:lname>/<path:dob>', views.AddKPI, name="AddKPI"),
+]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
