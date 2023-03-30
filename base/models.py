@@ -11,7 +11,7 @@ class AthleteT(models.Model):
     height = models.CharField(db_column='Height', max_length=15, blank=True, null=True)  # Field name made lowercase.
     gender = models.CharField(db_column='Gender', max_length=1, blank=True, null=True)  # Field name made lowercase.
     #upload_to='staticfiles/images'
-    image = models.ImageField(db_column='Image', upload_to='staticfiles/images', blank=True, null=True)  # Field name made lowercase.
+    image = models.ImageField(db_column='Image', upload_to='images', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False

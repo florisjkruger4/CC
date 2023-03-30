@@ -129,7 +129,7 @@
                             </div>
                         </div>
                         <a href="{% url 'AddWellness' athleteProf.fname athleteProf.lname athleteProf.dob %}"><button class="kpidatabtn" style="margin-top: 20px;">Add Wellness Report</button></a>
-
+                        
                         <script type="text/javascript">
                             var hoursofsleep = Number("{{ x.hoursofsleep }}")
                             var sleepquality = Number("{{ x.sleepquality }}")
@@ -152,7 +152,7 @@
                                     document.getElementById("bor").style.border = "1px solid var(--red-accent)"
                                 }
                                 else if (status == 'Y') {
-                                    document.getElementById("stat").style.color = "var(--green-accent);"
+                                    document.getElementById("stat").style.color = "var(--green-accent)"
                                     document.getElementById("bor").style.border = "1px solid var(--green-accent)"
                                 }
                             }
@@ -172,17 +172,17 @@
 
                         <!-- Date Selector + Settings-->
                         <div class="main-header justify-content-between">
-                            <form method="post" id="kpiform">
+                            <form method="post" id="kpiform" name="kpiform">
                                 {% csrf_token %}
                                 <select id="date1" name="date1">
-                                    <option disabled hidden selected>Select Date</option>
+                                    <option selected>{{ kpi_earliest }}</option>
                                     {% for x in all_dates %}
                                     <option>{{ x.datekpi }}</option>
                                     {% endfor %}
                                 </select>
                                 to
                                 <select id="date2" name="date2">
-                                    <option disabled hidden selected>Select Date</option>
+                                    <option selected>{{ kpi_most_recent }}</option>
                                     {% for x in all_dates %}
                                     <option>{{ x.datekpi }}</option>
                                     {% endfor %}
@@ -207,9 +207,11 @@
                         </div>
 
                         <script type="text/javascript">
-
+                            
                             let selection1 = document.getElementById('date1');
                             let date1 = document.getElementById('resultone');
+
+
                             var date_one = "{{ date_one }}"
                             document.getElementById("resultone").innerHTML = date_one
                             if (date_one != "None") {
@@ -218,6 +220,8 @@
 
                             let selection2 = document.getElementById('date2');
                             let date2 = document.getElementById('resulttwo');
+
+
                             var date_two = "{{ date_two }}"
                             document.getElementById("resulttwo").innerHTML = date_two
                             if (date_two != "None") {
