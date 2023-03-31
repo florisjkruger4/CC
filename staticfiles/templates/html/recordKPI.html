@@ -26,7 +26,7 @@
               <input type="date" id="date-selector" value="Today" style="background-color: var(--dark-gray);">
               <form method="post" id="kpiform">
                 {% csrf_token %}
-                <select id="sportsteam" name="sportsteam" onchange="this.form.submit()">
+                <select id="sportsteam" name="sportsteam">
                   <option disabled hidden selected>Select Team</option>
                   {% for x in teams %}
                   <option>{{ x.sport }}</option>
@@ -54,19 +54,63 @@
               console.log(document.getElementById("date-selector").value);
 
               document.getElementById("date-selector").value = currentDate;
+
+              function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== "") {
+                  const cookies = document.cookie.split(";");
+                  for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                    }
+                  }
+                }
+
+                return cookieValue;
+              }
+
+              $("#sportsteam").change(function (event) {
+
+                var sport_selected = document.getElementById("sportsteam").value
+
+                $.ajax({
+                  url: "{% url 'recordKPI' %}",
+                  type: "POST",
+                  dataType: "json",
+                  data: JSON.stringify({ sportsteam: sport_selected, }),
+                  headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRFToken": getCookie("csrftoken"),  // don't forget to include the 'getCookie' function
+                  },
+                  success: (response) => {
+                    $("#tvalues").empty();
+                    for(var key in response.athletes)
+                    {
+                      var athlete = response.athletes[key].fname +" "+ response.athletes[key].lname;
+                      var html = "<tr><td>" + athlete + "</td></tr>";
+                      $("#tvalues").append(html);
+                    }
+                  },
+                  error: (error) => {
+                    alert(error);
+                  }
+                })
+              });
+
             </script>
 
             <!-- Data Entry Table -->
-            <form id="myform">
+            <form id="entry-table">
               <table id="data_table" class="table-dark table-striped">
-                <tr id="theader">
+                <thead id="theader">
                   <th style="min-width: 80px;"> </th>
-                </tr>
-                {% for x in athletes %}
-                <tr id="tvalues">
-                  <td>{{ x.fname }} {{ x.lname }}</td>
-                </tr>
-                {% endfor %}
+                </thead>
+                <tbody id="tvalues">
+                  <tr>
+                </tbody>
               </table>
 
             </form>
@@ -75,20 +119,20 @@
 
           <div class="col-lg-3 overflow-scroll" style="height: 100vh; padding: 0;">
             <div style="width: 100%; background-color: var(--med-gray-2); height: 100vh;">
-              <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for tests...">
-              <ul id="myUL">
+              <input type="text" id="test-search" onkeyup="listFilter()" placeholder="Search for tests...">
+              <ul id="test-list">
                 {% for x in test_types %}
                 <li><a>{{ x }}</a><input id="{{ forloop.counter }}" type="checkbox"></li>
                 {% endfor %}
               </ul>
 
               <script>
-                function myFunction() {
+                function listFilter() {
                   // Declare variables
                   var input, filter, ul, li, a, i, txtValue;
-                  input = document.getElementById('myInput');
+                  input = document.getElementById('test-search');
                   filter = input.value.toUpperCase();
-                  ul = document.getElementById("myUL");
+                  ul = document.getElementById("test-list");
                   li = ul.getElementsByTagName('li');
 
                   // Loop through all list items, and hide those who don't match the search query
@@ -103,29 +147,25 @@
                   }
                 }
 
-                var myform = $('#myform');
+                var myform = $('#entry-table');
                 let header = document.getElementById("theader");
                 let body = document.getElementById("tvalues");
                 document.querySelectorAll("[type=checkbox]").forEach(checkbox => {
-                checkbox.addEventListener("click",function(e)
-                {
-                    if(this.checked)
-                    {
-                      console.log(this.id+" checked");
-                      header.innerHTML+= "<th id=t" + this.id + ">" + this.previousSibling.innerText + "</th>";
-                      myform.find('tr').each(function() 
-                      {
+                  checkbox.addEventListener("click", function (e) {
+                    if (this.checked) {
+                      console.log(this.id + " checked");
+                      header.innerHTML += "<th id=t" + this.id + ">" + this.previousSibling.innerText + "</th>";
+                      myform.find('tr').each(function () {
                         var trow = $(this);
                         if (trow.index() != 0) {
                           trow.append('<td><input type="text"/></td>');
                         }
                       });
                     }
-                    else{
-                      console.log(this.id+" unchecked");
-                      document.getElementById("t"+ this.id).remove();
-                      myform.find('tr').each(function() 
-                      {
+                    else {
+                      console.log(this.id + " unchecked");
+                      document.getElementById("t" + this.id).remove();
+                      myform.find('tr').each(function () {
                         var trow = $(this);
                         if (trow.index() != 0) {
                           trow.remove(this.lastElementChild);
@@ -133,13 +173,13 @@
                       });
                     }
                     e.stopPropagation();
+                  })
                 })
-              })
 
               </script>
 
               <style>
-                #myInput {
+                #test-search {
                   background-image: url('/css/searchicon.png');
                   /* Add a search icon to input */
                   background-position: 10px 12px;
@@ -156,16 +196,18 @@
                   /* Add a grey border */
                   margin-bottom: 12px;
                   /* Add some space below the input */
+
+                  color:black;
                 }
 
-                #myUL {
+                #test-list {
                   /* Remove default list styling */
                   list-style-type: none;
                   padding: 0;
                   margin: 0;
                 }
 
-                #myUL li a {
+                #test-list li a {
                   border: 1px solid #ddd;
                   /* Add a border to all links */
                   margin-top: -1px;
@@ -184,7 +226,7 @@
                   /* Make it into a block element to fill the whole list */
                 }
 
-                #myUL li a:hover:not(.header) {
+                #test-list li a:hover:not(.header) {
                   background-color: #eee;
                   /* Add a hover effect to all links, except for headers */
                 }
