@@ -160,6 +160,10 @@ a:active {
   margin-top: 25px;
 }
 
+.kpireport p {
+  margin-bottom: 0 !important;
+}
+
 .graphprof {
   height: fit-content;
   width: 100%;
@@ -167,6 +171,10 @@ a:active {
   border-radius: 10px;
   padding: 25px;
   margin-bottom: 25px;
+}
+
+.graphprof img {
+  width: 100%;
 }
 
 .status {
@@ -236,4 +244,31 @@ select {
 
 input, textarea{
   color: #000000;
+}
+
+.lds-dual-ring {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+.lds-dual-ring:after {
+  content: " ";
+  display: block;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border-radius: 50%;
+  border: 6px solid #fff;
+  border-color: #fff transparent #fff transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

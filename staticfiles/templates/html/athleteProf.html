@@ -68,44 +68,14 @@
                             </div>
 
                             <hr>
-                                {% load sublist_selector %}
-                                
-                                
-                                {% for x in kpi_test_data %}
-                                <div class="d-flex justify-content-between align-items-center kpi-img">
-                                    
-                                    <p> {{ x|get:'test_type' }} </p>
-                                    {% if x|get:'change' > 0 %}
-                                    <p style="color:var(--green-accent);"> 
-                                        <i class="fa-solid fa-arrow-up" style="color:var(--green-accent)"></i> 
-                                        {{ x|get:'change' }}
-                                    </p>
-                                    {% elif x|get:'change' < 0 %}
-                                    <p style="color:var(--red-accent);"> 
-                                        <i class="fa-solid fa-arrow-down" style="color:var(--red-accent)"></i> 
-                                        {{ x|get:'change' }}
-                                    </p>
-                                    {% else %}
-                                    <p style="color:white;">{{ x|get:'change' }}</p>
-                                    {% endif %}
 
-                                    <div style="width: 50%;">
-                                        <img src="data:image/png;base64, {{ x|get:'line_graph'|safe }}">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <p> {{ x|get:'prev_val' }}</p>
-                                            <p> {{ x|get:'latest_val' }}</p>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div id="kpi-trend"></div>
 
-                                <hr>
-                                {% endfor %}  
+                            <a href="{% url 'AddKPI' athleteProf.fname athleteProf.lname athleteProf.dob %}">
+                                <button class="kpidatabtn" style="margin-top: 20px;">Add KPI</button>
+                            </a>
 
-                                <a href="{% url 'AddKPI' athleteProf.fname athleteProf.lname athleteProf.dob %}">
-                                    <button class="kpidatabtn" style="margin-top: 20px;">Add KPI</button>
-                                </a>    
-              
-                            </div>
+                        </div>
 
                         <form method="post" id="wellnessform">
                             {% csrf_token %}
@@ -120,8 +90,6 @@
                                 <p style="font-size: 16px" id="wellnessresult">DD/MM/YY</p>
                             </div>
                         </form>
-
-                        <!-- Wellness -->
 
                         {% if wellness %}
                         {% for x in mostRecentWellnessReport %}
@@ -187,43 +155,120 @@
                         <div class="main-header justify-content-between">
                             <form method="post" id="kpiform" name="kpiform">
                                 {% csrf_token %}
-                                <select id="date1" name="date1">
+                                <select id="date1" name="date1" style="font-size:20px;">
                                     <option selected>{{ kpi_earliest }}</option>
                                     {% for x in all_dates %}
                                     <option>{{ x.datekpi }}</option>
                                     {% endfor %}
                                 </select>
                                 to
-                                <select id="date2" name="date2">
+                                <select id="date2" name="date2" style="font-size:20px;">
                                     <option selected>{{ kpi_most_recent }}</option>
                                     {% for x in all_dates %}
                                     <option>{{ x.datekpi }}</option>
                                     {% endfor %}
                                 </select>
-                                <input type="submit" value="submit" class="submit">
                             </form>
                             <i class="fa-solid fa-gear" style="color: var(--yellow-accent); font-size: 25px;"></i>
                         </div>
 
-                        <!-- Graphs -->
-                        {% for x in kpi_test_data %}
-
-                        <div class="graphprof">
-                            <div class="d-flex flex-column">
-
-                                <div class="d-flex">
-                                    <h3>{{ x|get:'test_type' }}</h3>
-                                </div>
-                                <img src="data:image/png;base64, {{x|get:'bar_graph'|safe}}">
-
-                            </div>
+                        <div id="bar-graphs" class="graphprof d-flex flex-column">
+                        
                         </div>
 
-                        <script type="text/javascript">
+                        <script>
+                            function getCookie(name) {
+                                let cookieValue = null;
+                                if (document.cookie && document.cookie !== "") {
+                                    const cookies = document.cookie.split(";");
+                                    for (let i = 0; i < cookies.length; i++) {
+                                        const cookie = cookies[i].trim();
+                                        // Does this cookie string begin with the name we want?
+                                        if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                return cookieValue;
+                            }
+
+                            document.getElementById("date1").addEventListener("change", ajax);
+                            document.getElementById("date2").addEventListener("change", ajax);
+
+                            function ajax() {
+
+                                console.log("ajax call");
+
+                                //get dates from selectors
+                                var date_one = document.getElementById("date1").value
+                                var date_two = document.getElementById("date2").value
+
+                                //clear trends and graphs 
+                                $("#kpi-trend").empty()
+                                $("#bar-graphs").empty()
+
+                                //add loading circle
+                                $("#kpi-trend").append("<div class=\"d-flex justify-content-center\"> <div id=\"loading-line\" class=\"lds-dual-ring\"></div></div>");
+                                $("#bar-graphs").append("<div class=\"d-flex justify-content-center\"> <div id=\"loading-bar\" class=\"lds-dual-ring\"></div></div>");
+
+                                $.ajax({
+                                    url: "{% url 'AthleteProf' athleteProf.fname athleteProf.lname athleteProf.dob %}",
+                                    type: "POST",
+                                    dataType: "json",
+                                    data: JSON.stringify({ date1: date_one, date2: date_two }),
+                                    headers: {
+                                        "X-Requested-With": "XMLHttpRequest",
+                                        "X-CSRFToken": getCookie("csrftoken"),  // don't forget to include the 'getCookie' function
+                                    },
+                                    success: (response) => {
+
+                                        //shows info being passed from backend
+                                        console.log(response);
+
+                                        //remove loading circle
+                                        $("#loading-line").remove()
+                                        $("#loading-bar").remove()
+
+                                        //loop thru each test type and get its info
+                                        for (var key in response.test_types) {
+                                            var report = "<div class=\"d-flex justify-content-between align-items-center kpi-img\">";
+                                            var graphs = "<div>";
+                                            report += "<div style=\"width: 25%\"> <p>" + response.test_types[key] + "</p></div>";
+
+                                            // add change
+                                            if (response.changes[key] > 0)
+                                                report += "<p style=\"color:var(--green-accent);\"> <i class=\"fa-solid fa-arrow-up\" style=\"color:var(--green-accent)\"></i> " + response.changes[key] + " </p>";
+                                            else if (response.changes[key] < 0)
+                                                report += "<p style=\"color:var(--red-accent);\"> <i class=\"fa-solid fa-arrow-down\" style=\"color:var(--red-accent)\"></i> " + response.changes[key] + " </p>";
+                                            else
+                                                report += "<p style\"=color:white;\"> " + response.changes[key] + " </p>";
+
+                                            report += "<div style=\"width: 50%;\"> <img src=\"data:image/png;base64, " + response.kpi_line[key] + "\">";
+                                            report += "<div class=\"d-flex justify-content-between align-items-center\"> <p>" + response.Date1_results[key] + "</p> <p>" + response.Date2_results[key] + "</p></div>";
+                                            report += "</div>";
+                                            report += "</div>";
+
+                                            graphs += "<h3>"+ response.test_types[key] +"</h3>"; 
+                                            graphs += "<img src=\"data:image/png;base64, " + response.kpi_bar[key] + "\">";
+                                            graphs += "</div>";
+
+                                            $("#kpi-trend").append(report);
+                                            $("#kpi-trend").append("<hr>");
+
+                                            $("#bar-graphs").append(graphs);
+                                        }
+
+                                    },
+                                    error: (error) => {
+                                        alert(error);
+                                    }
+                                })
+                            }
                             
                             let selection1 = document.getElementById('date1');
                             let date1 = document.getElementById('resultone');
-
 
                             var date_one = "{{ date_one }}"
                             document.getElementById("resultone").innerHTML = date_one
@@ -233,7 +278,6 @@
 
                             let selection2 = document.getElementById('date2');
                             let date2 = document.getElementById('resulttwo');
-
 
                             var date_two = "{{ date_two }}"
                             document.getElementById("resulttwo").innerHTML = date_two
@@ -263,9 +307,8 @@
                             selection3.addEventListener('change', () => {
                                 wellnessresult.innerText = selection3.options[selection3.selectedIndex].text;
                             });
-                        </script>
 
-                        {% endfor %}
+                        </script>
                     </div>
                 </div>
             </div>
