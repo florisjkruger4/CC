@@ -5,8 +5,9 @@ from django.conf import settings
 
 
 urlpatterns = [
-    path('', views.Dashboard, name="Dashboard"),
+    path('', views.LoginRegister, name="LoginRegister"),
 
+    path('dash/', views.Dashboard, name="Dashboard"),
     path('athletes/', views.AthletesDash, name="AthletesDash"),
     path('addathlete/', views.AddAthlete, name="AddAthlete"),
     path('<str:fname>/<str:lname>/<path:dob>', views.AthleteProf, name="AthleteProf"),
