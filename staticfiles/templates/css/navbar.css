@@ -1,5 +1,5 @@
 :root {
-  --nav-padding: 1.5rem;  /* Equivalent to Bootstrap's px-5 */
+  --nav-padding: var(--gutter);  /* Equivalent to Bootstrap's px-5 */
 }
 
 /* Responsive spacing */
@@ -13,6 +13,7 @@ nav {
   width: var(--nav-width);
   padding-left: var(--nav-padding);   /* No shorthand since we're using Bootstrap for the y-axis */
   padding-right: var(--nav-padding);
+  font-size: 20;
 }
   
 /* Old stylings kept for WIP references */

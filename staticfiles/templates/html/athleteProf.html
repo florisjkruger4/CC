@@ -10,10 +10,10 @@
 
     <!-- SideNavbar -->
     {% include 'html/sidenav.html' %}
-    <main class="py-3">
+    <main class="py-3" style="padding-top: 0 !important;; padding-bottom: 0 !important;">
         <div class="container" style="max-width: 1800px;">
             <div class="row">
-                <div class="col-lg-5 overflow-scroll" style="height: 100vh; padding: 20px 20px 0 0;">
+                <div class="col-lg-5 overflow-scroll">
                     <div class="col-scroll">
 
                         <!-- Athlete Info/Header -->
@@ -28,22 +28,22 @@
                             {% else %}
                             <img class="athlete-pic" src="/staticfiles/images/{{ athleteProf.image }}"></img>
                             {% endif %}
-                            <div class="w-100" style="margin-left: 20px;">
+                            <div class="w-100" style="margin-left: var(--inner-padding);">
                                 <div class="d-flex justify-content-between">
                                     <h6>Sport</h6>
                                     <h6 class="text-end">{{ athleteProf.sportsteam }}</h6>
                                 </div>
-                                <div class="line-2"></div>
+                                <hr>
                                 <div class="d-flex justify-content-between">
                                     <h6>Position</h6>
                                     <h6 class="text-end">{{ athleteProf.position }}</h6>
                                 </div>
-                                <div class="line-2"></div>
+                                <hr>
                                 <div class="d-flex justify-content-between">
                                     <h6>Year</h6>
                                     <h6 class="text-end">{{ athleteProf.year }}</h6>
                                 </div>
-                                <div class="line-2"></div>
+                                <hr>
                                 <div class="d-flex justify-content-between">
                                     <h6>Height</h6>
                                     <h6 class="text-end">{{ athleteProf.height }}</h6>
@@ -59,7 +59,7 @@
                         <!-- KPI Trends -->
                         <div class="kpireport">
                             <div class="d-flex justify-content-between align-items-center">
-                                <h3>KPI Trend Report</h3>
+                                <h3>KPI Trends</h3>
                                 <div class="text-end d-flex">
                                     <p style="font-size: 16px" id="resultone">DD/MM/YY</p>
                                     <p style="font-size: 16px">&nbsp; to &nbsp;</p>
@@ -72,7 +72,7 @@
                             <div id="kpi-trend"></div>
 
                             <a href="{% url 'AddKPI' athleteProf.fname athleteProf.lname athleteProf.dob %}">
-                                <button class="kpidatabtn" style="margin-top: 20px;">Add KPI</button>
+                                <button class="kpidatabtn" style="margin-top: var(--inner-padding);">Add KPI</button>
                             </a>
 
                         </div>
@@ -148,7 +148,7 @@
                     </div>
                 </div>
 
-                <div class="col-lg-7 overflow-scroll" style="height: 100vh; padding: 20px 0 0 20px;">
+                <div class="col-lg-7 overflow-scroll">
                     <div class="col-scroll">
 
                         <!-- Date Selector + Settings-->

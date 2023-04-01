@@ -1,0 +1,131 @@
+.athlete-pic {
+    width: auto;
+    height: 100%;
+    max-width: 250px;
+    max-height: 250px;
+    background-color: white;
+    border-radius: 10px;
+}
+
+.kpireport {
+    width: 100%;
+    background-color: var(--med-gray-2);
+    border-radius: 10px;
+    padding: 25px;
+    margin-top: 25px;
+}
+
+.graphprof {
+    height: fit-content;
+    width: 100%;
+    background-color: var(--med-gray-2);
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 25px;
+}
+
+.status {
+    height: fit-content;
+    width: 100%;
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-evenly;
+    border-bottom: 10px;
+    position: relative;
+}
+
+.wellnessrows {
+    display: flex;
+    justify-content: space-between;
+}
+
+.wellness-status-display {
+    border-radius: 5px;
+    border-width: 1px;
+    text-align: center;
+    padding: 5px;
+    vertical-align: middle;
+}
+
+.kpidatabtn {
+    background-color: var(--yellow-accent);
+    color: black;
+    border-radius: 5px;
+    border: none;
+    width: 100%;
+    align-self: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 10px;
+}
+
+.kpi-img img {
+    height: auto;
+    width: 100%;
+
+}
+
+.kpi-img p {
+    margin-bottom: 0 !important;
+}
+
+.lds-dual-ring {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+
+}
+
+.lds-dual-ring:after {
+    content: " ";
+    display: block;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border-radius: 50%;
+    border: 6px solid #fff;
+    border-color: #fff transparent #fff transparent;
+    animation: lds-dual-ring 1.2s linear infinite;
+}
+
+@keyframes lds-dual-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive spacing */
+@media (max-width:992px) {
+
+    /* Bootstrap's breakpoint for lg */
+    .col-lg-5 {
+        padding-right: 0 !important;
+        padding-left: 0 !important;
+    }
+
+    .col-lg-7 {
+        padding-right: 0 !important;
+        padding-left: 0 !important;
+    }
+}
+
+/* Responsive spacing */
+@media (min-width:992px) {
+
+    /* Bootstrap's breakpoint for lg */
+    .col-lg-5 {
+        padding: 1rem calc(var(--gutter)/2) 0 0;
+        height: 100vh;
+    }
+
+    .col-lg-7 {
+        padding: 1rem 0 0 calc(var(--gutter)/2);
+        height: 100vh;
+    }
+}

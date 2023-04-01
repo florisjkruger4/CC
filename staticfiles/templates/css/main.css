@@ -21,7 +21,8 @@
 
   /* Layout affecting vars */
   --nav-width: 225px;
-  --gutter: 1.5rem;   /* Bootstrap's default(24px) */
+  --gutter: 2rem;   /* 32px */
+  --inner-padding: 1.5rem /* Bootstrap Default */
 }
 
 /* Responsive layout variables */
@@ -99,12 +100,6 @@ td {
   background-color: var(--dark-gray);
 }
 
-.main-container {
-  margin-left: 225px;
-  padding: 20px 40px 0 40px;
-  display: block;
-}
-
 .main-header {
   height: 60px;
   display: flex;
@@ -135,20 +130,6 @@ a:active {
   transform: scale(1.4);
 }
 
-.line-1 {
-  margin-top: 15px;
-  margin-bottom: 15px;
-  height: 1px;
-  background: var(--separator-gray);
-}
-
-.line-2 {
-  margin-top: 8px;
-  margin-bottom: 8px;
-  height: 1px;
-  background: var(--separator-gray);
-}
-
 /* Search bar */
 .input-box{
   position: relative;
@@ -170,74 +151,6 @@ a:active {
   border-radius: 10px;
 }
 
-/* Athlete Individual */
-
-.athlete-pic {
-  width: auto;
-  height: 100%;
-  max-width: 250px;
-  max-height: 250px;
-  background-color: white;
-  border-radius: 10px;
-}
-
-.kpireport {
-  width: 100%;
-  background-color: var(--med-gray-2);
-  border-radius: 10px;
-  padding: 25px;
-  margin-top: 25px;
-}
-
-.graphprof {
-  height: fit-content;
-  width: 100%;
-  background-color: var(--med-gray-2);
-  border-radius: 10px;
-  padding: 25px;
-  margin-bottom: 25px;
-}
-
-.status {
-  height: fit-content;
-  width: 100%;
-  margin-top: 10px;
-  display: flex;
-  justify-content: space-evenly;
-  border-bottom: 10px;
-  position: relative;
-}
-
-.wellnessrows {
-  display: flex;
-  justify-content: space-between;
-}
-
-.wellness-status-display{
-  border-radius: 5px; 
-  border-width: 1px;
-  text-align: center; 
-  padding: 5px; 
-  vertical-align: middle;
-}
-
-.kpidatabtn {
-  background-color: var(--yellow-accent);
-  color: black;
-  border-radius: 5px;
-  border: none;
-  width: 100%;
-  align-self: center;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  margin-top: 10px;
-}
-
-.kpi-img img {
-  height: auto;
-  width: 100%;
-}
-
 select {
   background-color: transparent;
   border: none;
@@ -255,7 +168,7 @@ select {
   padding-right: 15px;
 }
 
-.testing {
+.upload-img-frame {
   background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='17' ry='17' stroke='%23333' stroke-width='8' stroke-dasharray='15' stroke-dashoffset='38' stroke-linecap='square'/%3e%3c/svg%3e");
   border-radius: 17px;
   height: 150px;
@@ -265,33 +178,4 @@ select {
 
 input, textarea{
   color: #000000;
-}
-
-.lds-dual-ring {
-  display: inline-block;
-  width: 50px;
-  height: 50px;
-  margin-top: 50px;
-  margin-bottom: 50px;
-
-}
-.lds-dual-ring:after {
-  content: " ";
-  display: block;
-  width: 64px;
-  height: 64px;
-  margin: 8px;
-  border-radius: 50%;
-  border: 6px solid #fff;
-  border-color: #fff transparent #fff transparent;
-  animation: lds-dual-ring 1.2s linear infinite;
-}
-
-@keyframes lds-dual-ring {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
 }
