@@ -1,3 +1,22 @@
+:root {
+  --nav-padding: 1.5rem;  /* Equivalent to Bootstrap's px-5 */
+}
+
+/* Responsive spacing */
+@media screen and (max-width:768px) { /* Bootstrap's breakpoint for md */
+  :root {
+    --nav-padding: 0;
+  }
+}
+
+nav {
+  width: var(--nav-width);
+  padding-left: var(--nav-padding);   /* No shorthand since we're using Bootstrap for the y-axis */
+  padding-right: var(--nav-padding);
+}
+  
+/* Old stylings kept for WIP references */
+  /*
   .side-nav {
     width: 225px;
     height: 100vh;
@@ -56,3 +75,4 @@
     opacity: 70%;
     transition: 400ms;
   }
+  */

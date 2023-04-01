@@ -6,16 +6,13 @@
 </head>
 
 <body>
-
-    <div class="mainFont container-fluid">
-        <div class="row">
     
-          <!-- SideNavbar -->
-          {% include 'html/sidenav.html' %}
-    
-          <div style="width: 260px;"></div>
+    <!-- SideNavbar -->
+    {% include 'html/sidenav.html' %}
+    <main class="py-3">
+      <div class="row">
           <div class="col-md-4" style="padding-top: 20px">
-            <div style="display: flex; width: 75vh;">
+            <div style="display: flex;">
               <h1 class="mainFont" style="padding-bottom: 10px; padding-right: 4%;">Recently Viewed</h1>
             </div>
             <div class="kpireport" style="display: flex; flex-direction: column; justify-content: space-evenly;">
@@ -30,7 +27,7 @@
             </div>
           </div>
           <div class="col-md-3" style="padding-top: 20px">
-            <div style="display: flex; width: 75vh;">
+            <div style="display: flex;">
               <h1 class="mainFont" style="padding-bottom: 10px; padding-right: 8%;">Teams</h1>
             </div>
             <div class="kpireport" style="display: flex; flex-direction: column; justify-content: space-evenly;">
@@ -38,12 +35,12 @@
             </div>
           </div>
           <div class="col-md-2" style="padding-top: 20px">
-            <div style="display: flex; width: 75vh;">
+            <div style="display: flex;">
               <h1 class="mainFont" style="padding-bottom: 10px; padding-right: 8%;">Quick Actions</h1>
             </div>
             
           </div>
        </div>
-    </div>
+    </main>
 </body>
 </html>
