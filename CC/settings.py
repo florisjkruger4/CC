@@ -144,6 +144,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 DATE_FORMAT = "Y-m-d"
 USE_L10N = False
 
-DATE_FORMAT = "Y-m-d"
-USE_L10N = False
-

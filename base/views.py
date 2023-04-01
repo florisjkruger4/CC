@@ -8,9 +8,18 @@ from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
 
 
 def LoginRegister(request):
+
+    page = 'login'
+
+    # if user is loged in... redirect to dashboard (prevents from double logging in)
+    if request.user.is_authenticated:
+        return redirect('dash/')
+    
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -22,13 +31,46 @@ def LoginRegister(request):
 
         user = authenticate(request, username=username, password=password)
 
+        print(user)
+
         if user is not None:
             login(request, user)
-            return redirect('home')
+            return redirect('dash/')
         else:
             messages.error(request, 'Username or Password does not exist')
 
-    context = {}
+    context = {
+        'page':page,
+    }
+    return render(request, 'html/loginRegister.html', context)
+
+# delets the session id token... meaning the user needs to log in once again to create a new session to be authenticated
+def LogoutUser(request):
+
+    logout(request)
+    return redirect('/')
+
+def RegisterUser(request):
+
+    form = UserCreationForm()
+
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            # do we care about case sensitive usernames??
+            user = form.save()
+            user.save()
+
+            # log in created user
+            login(request, user)
+            return redirect('/dash')
+        else:
+            messages.error(request, 'An error occured during registration')
+
+    context = {
+        'form':form,
+    }
+
     return render(request, 'html/loginRegister.html', context)
 
 test_types = [
@@ -100,6 +142,7 @@ test_types = [
 ]
 
 
+@login_required(login_url='/')
 def Dashboard(request):
     athletes = AthleteT.objects.all()
 
@@ -109,7 +152,7 @@ def Dashboard(request):
 
     return render(request, "html/dashboard.html", context)
 
-
+@login_required(login_url='/')
 def AthletesDash(request):
     q = request.GET.get("q") if request.GET.get("q") != None else ""
 
@@ -128,7 +171,7 @@ def AthletesDash(request):
 
     return render(request, "html/athletes.html", context)
 
-
+@login_required(login_url='/')
 def AddAthlete(request):
     if request.method == "POST":
         newFname = request.POST["fname"]
@@ -158,7 +201,7 @@ def AddAthlete(request):
 
     return render(request, "html/addathlete.html")
 
-
+@login_required(login_url='/')
 def AthleteProf(request, fname, lname, dob):
     athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
 
@@ -322,7 +365,7 @@ def AthleteProf(request, fname, lname, dob):
 
     return render(request, "html/athleteProf.html", context)
 
-
+@login_required(login_url='/')
 def TeamDash(request):
     athletes = TeamT.objects.all()
 
@@ -330,7 +373,7 @@ def TeamDash(request):
 
     return render(request, "html/teams.html", context)
 
-
+@login_required(login_url='/')
 def recordKPI(request):
     teams = TeamT.objects.values("sport").order_by("sport").distinct()
 
@@ -358,7 +401,7 @@ def recordKPI(request):
 
     return render(request, "html/recordKPI.html", context)
 
-
+@login_required(login_url='/')
 def WellnessDash(request):
     athleteProf = AthleteT.objects.all()
 
@@ -383,7 +426,7 @@ def WellnessDash(request):
 
     return render(request, "html/wellness.html", context)
 
-
+@login_required(login_url='/')
 def AddKPI(request, fname, lname, dob):
     athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
 
@@ -415,7 +458,7 @@ def AddKPI(request, fname, lname, dob):
 
     return render(request, "html/addkpi.html", context)
 
-
+@login_required(login_url='/')
 def AddWellness(request, fname, lname, dob):
     athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
 

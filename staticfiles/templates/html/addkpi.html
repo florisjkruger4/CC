@@ -22,7 +22,7 @@
             <div class="kpireport"
                 style="width: 50vh; height: 40vh; display: flex; flex-direction: column; justify-content: space-between;">
 
-                <select id="testtype">
+                <select id="testtype" name="testtype">
                     <option disabled hidden selected>Select Test</option>
                     {% for x in test_types %}
                     <option>{{ x }}</option>
@@ -30,8 +30,8 @@
                 </select>
 
 
-                <input type="text" id="testresult" placeholder="Enter Test Result">
-                <input type="date" id="datekpi" style="background-color: var(--dark-gray);">
+                <input type="text" id="testresult" placeholder="Enter Test Result" name="testresult">
+                <input type="date" id="datekpi" style="background-color: var(--dark-gray);" name="datekpi">
                 <script>
                     const date = new Date();
 
