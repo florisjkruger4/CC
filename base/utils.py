@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import base64
 from io import BytesIO
 import numpy as np
+import pandas as pd
+import plotly.express as px
 
 def get_graph():
 
@@ -65,4 +67,53 @@ def line_graph(x, y, change):
     plt.yticks([])
     
     graph = get_graph()
+    return graph
+
+# Define a function that takes in two lists of data points and generates a radar chart
+def radar_chart(labels, results, date):
+    # Create a pandas DataFrame from the data
+    df = pd.DataFrame(dict(Result=results, Test=labels))
+    
+    # Create the radar chart with Plotly
+    fig = px.line_polar(df, r='Result', theta='Test', line_close=True)
+    
+    # Update the style of the chart
+    fig.update_traces(line=dict(color='#96b7ff', width=2))
+    # Update the layout of the figure to set the background color and add a title
+    fig.update_layout(
+        # Set the title text, font color, and size
+        title={
+            'text': f'Results for {date}',
+            'font': {
+                'color': '#ffffff',
+                'size': 24
+            },
+            # Set the position of the title
+            'x': 0.005,
+            'y': 0.95
+        },
+        # Set the background color of the plot
+        paper_bgcolor='#1f2126',
+        # Update the styling of the radial axis
+        polar=dict(
+            # Set the background color of the circular chart
+            bgcolor='#1f2126',
+            radialaxis=dict(
+                # Set the font color of the radial axis labels
+                tickfont=dict(color='#ffffff')
+            ),
+            # Update the styling of the angular axis
+            angularaxis=dict(
+                # Set the font color of the angular axis labels
+                tickfont=dict(color='#ffffff')
+            )
+        )
+    )
+    
+    # Set the config of the figure to make it non-interactive
+    # fig.update_config({'displayModeBar': False})
+    
+    # Convert the figure to a HTML string and return it
+    # displayModeBar False gets rid of the menu (download as png, zoom)
+    graph = fig.to_html(full_html=False, config={'displayModeBar': False})
     return graph

@@ -1,8 +1,8 @@
 import json
 from django.shortcuts import render, redirect
-from django.db.models import Q
+from django.db.models import Q, Avg
 from .models import AthleteT, TeamT, WellnessT, KpiT
-from .utils import bar_graph, line_graph
+from .utils import bar_graph, line_graph, radar_chart
 from django.db.models import Count
 from django.http import JsonResponse
 from django.contrib.auth.models import User
@@ -159,8 +159,8 @@ def AddAthlete(request):
     return render(request, "html/addathlete.html")
 
 
-def AthleteProf(request, fname, lname, dob):
-    athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
+def AthleteProf(request, fname, lname, sportsteam, dob):
+    athleteProf = AthleteT.objects.get(fname=fname, lname=lname, sportsteam=sportsteam, dob=dob)
 
     # List of KPI table rows
     kpi_list = KpiT.objects.filter(fname=fname, lname=lname, dob=dob)
@@ -260,8 +260,56 @@ def AthleteProf(request, fname, lname, dob):
             # Add KPI tuple to list of tuples
             kpi_test_data.append(kpi_single)
 
+    # This code generates a radar/spider chart to display the latest KPI results for an athlete given a date
+    if kpi_count > 2:    
+        # All tests the athlete has taken
+        all_tests = KpiT.objects.filter(fname=fname, lname=lname, dob=dob).values_list('testtype', flat=True).distinct()
+
+        # Selected KPI date
+        radar_date = request.POST.get("radar_date")
+
+        # Selected KPI tests list (labels)
+        selected_radar_tests = request.POST.getlist('selected_radar_tests')
+
+        # Athletes results for selected KPI's and Date
+        athlete_radar_results = []
+        for test in selected_radar_tests:
+            # Get the kpi result <=/lte to the given date
+            athlete_radar_results.append(KpiT.objects.filter(fname=fname, lname=lname, dob=dob, datekpi__lte=radar_date, testtype=test).order_by('datekpi').values_list('testresult', flat=True).first())
+
+        # Need to add code to query for team, position, or gender averages below
+
+        # List specifying which averages to comapre to (Team, Position, or Gender)
+        compare_avg = request.POST.getlist('compare_avg')
+
+        # Team averages (working on it!)
+        # teammates = AthleteT.objects.filter(sportsteam=sportsteam).values_list('fname', 'lname', 'dob')
+        # for item in teammates:
+        #     first_name = item[0]
+        #     last_name = item[1]
+        #     birthdate = item[2]
+        #     print(f"{first_name} {last_name} was born on {birthdate}")
+
+        # team_average = []
+        # for test in selected_radar_tests:
+        #     for teammate in teammates:
+        #         fname = teammate[0]
+        #         lname = teammate[1]
+        #         dob = teammate[2]
+        #         team_average.append(KpiT.objects.filter(fname=fname, lname=lname, dob=dob, testtype=test).values_list('testresult'))
+
+        # average = AthleteT.objects.filter(sportsteam=sportsteam, test_type=test).aggregate(avg_result=Avg('testresult'))
+        # team_radar_averages.append(average['avg_result'])
+
+
+        # Render the graph if more than 2 graphs were selected 
+        if len(selected_radar_tests) > 2:
+            Radar_chart = radar_chart(selected_radar_tests, athlete_radar_results, radar_date)
+        else:
+            Radar_chart = None
+
     else:
-        context = {
+        context += {
             "athleteProf": athleteProf,
         }
 
@@ -318,6 +366,11 @@ def AthleteProf(request, fname, lname, dob):
         "mostRecentWellnessReportDate": wellness_most_recent,
         "wellness_date": wellness_date,
         "mostRecentWellnessReport": mostRecentWellnessReport,
+        # Radar/Spider
+        'Radar_chart': Radar_chart,
+        'radar_date': radar_date,
+        'all_tests': all_tests,
+        'selected_radar_tests': selected_radar_tests,
     }
 
     return render(request, "html/athleteProf.html", context)
