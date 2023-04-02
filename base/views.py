@@ -167,6 +167,10 @@ def AthleteProf(request, fname, lname, dob):
     kpi_list = KpiT.objects.filter(fname=fname, lname=lname, dob=dob)
     kpi_count = len(kpi_list)
 
+    all_dates = []
+    kpi_earliest = None
+    kpi_most_recent = None
+
     # ------------ KPI -------------
 
     if kpi_count > 0:
@@ -272,6 +276,7 @@ def AthleteProf(request, fname, lname, dob):
         "all_dates": all_dates,
         "kpi_earliest": kpi_earliest,
         "kpi_most_recent": kpi_most_recent,
+        "kpi_count": kpi_count,
     }
 
     return render(request, "html/athleteProf.html", context)

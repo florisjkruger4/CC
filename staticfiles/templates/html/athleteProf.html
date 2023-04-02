@@ -61,15 +61,17 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <h3>KPI Trends</h3>
                                 <div class="text-end d-flex">
-                                    <p style="font-size: 16px" id="resultone">DD/MM/YY</p>
+                                    <p style="font-size: 16px" id="resultone"></p>
                                     <p style="font-size: 16px">&nbsp; to &nbsp;</p>
-                                    <p style="font-size: 16px" id="resulttwo">DD/MM/YY</p>
+                                    <p style="font-size: 16px" id="resulttwo"></p>
                                 </div>
                             </div>
 
                             <hr>
 
-                            <div id="kpi-trend"></div>
+                            <div id="kpi-trend">
+                                <p style="margin-bottom: 0;">No data</p>
+                            </div>
 
                             <a href="{% url 'AddKPI' athleteProf.fname athleteProf.lname athleteProf.dob %}">
                                 <button class="kpidatabtn" style="margin-top: var(--inner-padding);">Add KPI</button>
@@ -169,14 +171,32 @@
                                     {% endfor %}
                                 </select>
                             </form>
-                            <i class="fa-solid fa-gear" style="color: var(--yellow-accent); font-size: 25px;"></i>
+                            <div class="d-flex align-items-center" style="gap:var(--inner-padding);">
+                                <h4>Bar Graph</h4>
+                                <h4>Spider Graph</h4>
+                                <i class="fa-solid fa-gear" style="color: var(--yellow-accent); font-size: 25px;"></i>
+                            </div>
                         </div>
 
                         <div id="bar-graphs" class="graphprof d-flex flex-column">
-                        
+                            <p style="margin-bottom: 0; align-self: center;">No data</p>
                         </div>
 
                         <script>
+
+                            //on window load, call ajax to populate page with data
+                            window.onload = function () {
+
+                                //only request data if there are kpis to display
+                                var kpi_count = "{{kpi_count}}";
+
+                                if (kpi_count > 0)
+                                    ajax();
+
+                                dataUpdater();
+                            }
+
+                            //django-provided code to assist ajax
                             function getCookie(name) {
                                 let cookieValue = null;
                                 if (document.cookie && document.cookie !== "") {
@@ -194,12 +214,12 @@
                                 return cookieValue;
                             }
 
+                            //if a date selector changes, call ajax to update the page
                             document.getElementById("date1").addEventListener("change", ajax);
                             document.getElementById("date2").addEventListener("change", ajax);
 
+                            //grabs info from the database without refreshing page and screwing everything up
                             function ajax() {
-
-                                console.log("ajax call");
 
                                 //get dates from selectors
                                 var date_one = document.getElementById("date1").value
@@ -220,14 +240,14 @@
                                     data: JSON.stringify({ date1: date_one, date2: date_two }),
                                     headers: {
                                         "X-Requested-With": "XMLHttpRequest",
-                                        "X-CSRFToken": getCookie("csrftoken"),  // don't forget to include the 'getCookie' function
+                                        "X-CSRFToken": getCookie("csrftoken"),
                                     },
                                     success: (response) => {
 
                                         //shows info being passed from backend
                                         console.log(response);
 
-                                        //remove loading circle
+                                        //remove loading circle after info arrives from db
                                         $("#loading-line").remove()
                                         $("#loading-bar").remove()
 
@@ -245,12 +265,14 @@
                                             else
                                                 report += "<p style\"=color:white;\"> " + response.changes[key] + " </p>";
 
+                                            //add line graph with results below
                                             report += "<div style=\"width: 50%;\"> <img src=\"data:image/png;base64, " + response.kpi_line[key] + "\">";
                                             report += "<div class=\"d-flex justify-content-between align-items-center\"> <p>" + response.Date1_results[key] + "</p> <p>" + response.Date2_results[key] + "</p></div>";
                                             report += "</div>";
                                             report += "</div>";
 
-                                            graphs += "<h3>"+ response.test_types[key] +"</h3>"; 
+                                            //add bar graphs with test name
+                                            graphs += "<h3>" + response.test_types[key] + "</h3>";
                                             graphs += "<img src=\"data:image/png;base64, " + response.kpi_bar[key] + "\">";
                                             graphs += "</div>";
 
@@ -262,51 +284,56 @@
 
                                     },
                                     error: (error) => {
-                                        alert(error);
+                                        console.log("Couldn't complete request: " + error);
                                     }
                                 })
                             }
-                            
-                            let selection1 = document.getElementById('date1');
-                            let date1 = document.getElementById('resultone');
 
-                            var date_one = "{{ date_one }}"
-                            document.getElementById("resultone").innerHTML = date_one
-                            if (date_one != "None") {
+                            function dateUpdater() {
+
+                                let selection1 = document.getElementById('date1');
+                                let date1 = document.getElementById('resultone');
+
+                                var date_one = "{{ date_one }}"
                                 document.getElementById("resultone").innerHTML = date_one
-                            }
+                                if (date_one != "None")
+                                    document.getElementById("resultone").innerHTML = date_one
+                                else
+                                    document.getElementById("resultone").innerHTML = "None";
 
-                            let selection2 = document.getElementById('date2');
-                            let date2 = document.getElementById('resulttwo');
+                                let selection2 = document.getElementById('date2');
+                                let date2 = document.getElementById('resulttwo');
 
-                            var date_two = "{{ date_two }}"
-                            document.getElementById("resulttwo").innerHTML = date_two
-                            if (date_two != "None") {
+                                var date_two = "{{ date_two }}"
                                 document.getElementById("resulttwo").innerHTML = date_two
+                                if (date_two != "None")
+                                    document.getElementById("resulttwo").innerHTML = date_two
+                                else
+                                    document.getElementById("resulttwo").innerHTML = "None";
+
+                                let selection3 = document.getElementById('wellnessdate');
+                                let date3 = document.getElementById('wellnessresult');
+
+                                var mostrecentdate = "{{ mostRecentWellnessReportDate }}"
+                                document.getElementById("wellnessresult").innerHTML = mostrecentdate
+                                var wellness_date = "{{ wellness_date }}"
+
+                                if (wellness_date != "None") {
+                                    document.getElementById("wellnessresult").innerHTML = wellness_date
+                                }
+
+                                selection1.addEventListener('change', () => {
+                                    resultone.innerText = selection1.options[selection1.selectedIndex].text;
+                                });
+
+                                selection2.addEventListener('change', () => {
+                                    resulttwo.innerText = selection2.options[selection2.selectedIndex].text;
+                                });
+
+                                selection3.addEventListener('change', () => {
+                                    wellnessresult.innerText = selection3.options[selection3.selectedIndex].text;
+                                });
                             }
-
-                            let selection3 = document.getElementById('wellnessdate');
-                            let date3 = document.getElementById('wellnessresult');
-
-                            var mostrecentdate = "{{ mostRecentWellnessReportDate }}"
-                            document.getElementById("wellnessresult").innerHTML = mostrecentdate
-                            var wellness_date = "{{ wellness_date }}"
-
-                            if (wellness_date != "None") {
-                                document.getElementById("wellnessresult").innerHTML = wellness_date
-                            }
-
-                            selection1.addEventListener('change', () => {
-                                resultone.innerText = selection1.options[selection1.selectedIndex].text;
-                            });
-
-                            selection2.addEventListener('change', () => {
-                                resulttwo.innerText = selection2.options[selection2.selectedIndex].text;
-                            });
-
-                            selection3.addEventListener('change', () => {
-                                wellnessresult.innerText = selection3.options[selection3.selectedIndex].text;
-                            });
 
                         </script>
                     </div>
