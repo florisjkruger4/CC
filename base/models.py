@@ -72,7 +72,7 @@ class KpiT(models.Model):
     lname = models.CharField(db_column='Lname', max_length=30, blank=True, null=True)  # Field name made lowercase.
     dob = models.CharField(db_column='DOB', max_length=10, blank=True, null=True)  # Field name made lowercase.
     datekpi = models.CharField(db_column='DateKPI', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    testtype = models.CharField(db_column='TestType', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    testtype = models.CharField(db_column='TestType', max_length=50, blank=True, null=True)  # Field name made lowercase.
     testresult = models.FloatField(db_column='TestResult', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:

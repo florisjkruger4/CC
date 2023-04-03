@@ -22,7 +22,11 @@
   /* Layout affecting vars */
   --nav-width: 225px;
   --gutter: 2rem;   /* 32px */
-  --inner-padding: 1.5rem /* Bootstrap Default */
+  --inner-padding: 1.5rem; /* Bootstrap Default */
+  --radius-big: 10px;
+  --radius-small: 5px;
+  
+  --icon-size: 25px;
 }
 
 /* Responsive layout variables */
