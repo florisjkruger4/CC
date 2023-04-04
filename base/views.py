@@ -312,6 +312,21 @@ def AthleteProf(request, fname, lname, dob):
 
     # ------------ Wellness -------------
 
+    # If parameter "request" is an XML request (AJAX)...
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        # ...AND it's also a POST request...
+        if request.method == "POST":
+            # Get the JSON data from the request
+            data = json.load(request)
+            selectedDate = data.get("wellnessdate")
+
+            # Get the appropriate wellness report
+            wellness = WellnessT.objects.filter(fname=fname, lname=lname, dob=dob, date=selectedDate).values()
+
+            # Return the list of athletes
+            return JsonResponse({"wellness": list(wellness.values())})
+        return JsonResponse({"status": "Invalid request"}, status=400)
+
     wellness_count = int(
         WellnessT.objects.filter(fname=fname, lname=lname, dob=dob).count()
     )
