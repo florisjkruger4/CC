@@ -11,10 +11,10 @@
     <!-- SideNavbar -->
     {% include 'html/sidenav.html' %}
 
-    <div class="main-container">
+    <main class="py-3" style="padding-top: 0 !important; padding-bottom: 0 !important;">
       <div class="container" style="max-width: 1800px;">
         <div class="row">
-          <div class="col-lg-9" style="height: 100vh; padding: 0;">
+          <div class="col-lg-9" style="height: 100vh; padding: 1rem 0 0 0;">
 
             <!-- Title Header -->
             <div class="main-header justify-content-between">
@@ -24,10 +24,7 @@
             <!-- Date & Team Selectors -->
             <div class="d-flex">
 
-              <!-- Date Selector -->
-              <input type="date" id="date-selector" value="Today" style="background-color: var(--dark-gray);">
-
-              <!-- Team Selector -->
+              <input type="date" id="date-selector" value="Today" style="background-color: var(--dark-gray); color: white; border: 0;">
               <form method="post" id="kpiform">
                 {% csrf_token %}
                 <select id="sportsteam" name="sportsteam">
@@ -100,59 +97,57 @@
                   // Get value of #sportsteam
                   var sport_selected = document.getElementById("sportsteam").value
 
-                  // Send "POST" AJAX request to url 'recordKPI'
-                  // This request will be handled by the Django backend -> see views.py recordKPI() for that code
-                  $.ajax({
-                    url: "{% url 'recordKPI' %}",
-                    type: "POST",
-                    dataType: "json",
-                    data: JSON.stringify({ sportsteam: sport_selected, }),
-                    headers: {
-                      "X-Requested-With": "XMLHttpRequest",
-                      "X-CSRFToken": getCookie("csrftoken"),  // don't forget to include the 'getCookie' function
-                    },
-                    success: (response) => {
-                      // If the AJAX request is successfully sent, the following will execute
-                      // Empty the contents of "#tvalues" (this is the displayed list of teams)
-                      $("#tvalues").empty();
-                      for(var key in response.athletes)
-                      {
-                        // For each athlete in the response to our POST request, append that athlete's name to "#tvalues"
-                        var athlete = response.athletes[key].fname +" "+ response.athletes[key].lname;
-                        var html = "<tr><td>" + athlete + "</td></tr>";
-                        $("#tvalues").append(html);
-                      }
-                    },
-                    error: (error) => {
-                      alert(error);
+                $.ajax({
+                  url: "{% url 'recordKPI' %}",
+                  type: "POST",
+                  dataType: "json",
+                  data: JSON.stringify({ sportsteam: sport_selected, }),
+                  headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRFToken": getCookie("csrftoken"),  // don't forget to include the 'getCookie' function
+                  },
+                  success: (response) => {
+                    $("#tvalues").empty();
+                    for (var key in response.athletes) {
+                      var athlete = response.athletes[key].fname + " " + response.athletes[key].lname;
+                      var html = "<tr><td>" + athlete + "</td></tr>";
+                      $("#tvalues").append(html);
                     }
-                  })
-                });
-              /* End of "#sportsteam" change function */
+                  },
+                  error: (error) => {
+                    alert(error);
+                  }
+                })
+              });
 
             </script>
 
             <!-- Data Entry Table -->
             <form id="entry-table">
-              <table id="data_table" class="table-dark table-striped">
-                <thead id="theader">
-                  <th style="min-width: 80px;"> </th>
+              <table id="data-table" class="table-dark table-striped">
+                <thead>
+                  <tr id="theader">
+                    <th style="min-width: 80px;"></th>
+                  </tr>
                 </thead>
                 <tbody id="tvalues">
-                  <tr>
                 </tbody>
               </table>
-
             </form>
+
+            <input type="submit" value="submit" class="submit">
 
           </div>
 
-          <div class="col-lg-3 overflow-scroll" style="height: 100vh; padding: 0;">
-            <div style="width: 100%; background-color: var(--med-gray-2); height: 100vh;">
-              <input type="text" id="test-search" onkeyup="listFilter()" placeholder="Search for tests...">
+          <div class="col-lg-3" style="margin-top: var(--gutter); height: 85vh; padding: 0;">
+            <input type="text" id="test-search" onkeyup="listFilter()" placeholder="Search for tests..." style="margin-bottom: 0; border-radius: var(--radius-big) var(--radius-big) 0 0;">
+            <div class="overflow-auto" style="background-color: var(--med-gray-2); height: 100%; padding-top: var(--inner-padding); border-radius: 0 0 var(--radius-big) var(--radius-big);">
               <ul id="test-list">
                 {% for x in test_types %}
-                <li><a>{{ x }}</a><input id="{{ forloop.counter }}" type="checkbox"></li>
+                <li>
+                  <div><a>{{ x }}</a><input id="{{ forloop.counter }}" type="checkbox"></div>
+                </li>
+                <hr style="margin-left: var(--inner-padding); margin-right: var(--inner-padding);">
                 {% endfor %}
               </ul>
 
@@ -169,39 +164,58 @@
                   for (i = 0; i < li.length; i++) {
                     a = li[i].getElementsByTagName("a")[0];
                     txtValue = a.textContent || a.innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    if (txtValue.toUpperCase().indexOf(filter) > -1)
                       li[i].style.display = "";
-                    } else {
+                    else
                       li[i].style.display = "none";
-                    }
+
                   }
                 }
 
-                var myform = $('#entry-table');
-                let header = document.getElementById("theader");
-                let body = document.getElementById("tvalues");
+                //add a column to the table with new test type as header and 
+                //input boxes for each athlete
+                function addColumn(value, id) {
+                  var tblHeadObj = document.getElementById("data-table").tHead;
+                  for (var h = 0; h < tblHeadObj.rows.length; h++) {
+                    var newTH = document.createElement('th');
+
+                    //attach id of test type from list to this header cell so that it
+                    //can be removed/tracked later
+                    newTH.setAttribute('id', id);
+                    tblHeadObj.rows[h].appendChild(newTH);
+                    newTH.innerHTML = value;
+                  }
+
+                  var tblBodyObj = document.getElementById("data-table").tBodies[0];
+                  for (var i = 0; i < tblBodyObj.rows.length; i++) {
+                    var newCell = tblBodyObj.rows[i].insertCell(-1);
+                    //attach id of test type from list to this body cell so that it
+                    //can be removed/tracked later
+                    newCell.setAttribute('id', id);
+
+                    //add text field input to cell
+                    newCell.innerHTML = "<input class=\"test-list\" type=\"text\"></input>";
+                  }
+                }
+
+                //deletes a column when test type is unchecked
+                function deleteColumn(id) {
+                  //find all headers with desired id and remove
+                  $("#data-table").find("th#" + id).remove();
+
+                  //find all cells with desired id and remove
+                  $("#data-table").find("td#" + id).remove();
+                }
+
+                //listen for updated checkbox input in list of test types
+                //if checked, add a column to table
+                //if unchecked, remove the column
                 document.querySelectorAll("[type=checkbox]").forEach(checkbox => {
                   checkbox.addEventListener("click", function (e) {
-                    if (this.checked) {
-                      console.log(this.id + " checked");
-                      header.innerHTML += "<th id=t" + this.id + ">" + this.previousSibling.innerText + "</th>";
-                      myform.find('tr').each(function () {
-                        var trow = $(this);
-                        if (trow.index() != 0) {
-                          trow.append('<td><input type="text"/></td>');
-                        }
-                      });
-                    }
-                    else {
-                      console.log(this.id + " unchecked");
-                      document.getElementById("t" + this.id).remove();
-                      myform.find('tr').each(function () {
-                        var trow = $(this);
-                        if (trow.index() != 0) {
-                          trow.remove(this.lastElementChild);
-                        }
-                      });
-                    }
+                    if (this.checked)
+                      addColumn(this.previousSibling.innerText, this.id);
+                    else
+                      deleteColumn(this.id);
                     e.stopPropagation();
                   })
                 })
@@ -210,7 +224,8 @@
 
               <style>
                 #test-search {
-                  background-image: url('/css/searchicon.png');
+                  background-image: url('https://fontawesome.com/icons/magnifying-glass?f=classic&s=solid');
+                  background-color: var(--dark-gray);
                   /* Add a search icon to input */
                   background-position: 10px 12px;
                   /* Position the search icon */
@@ -222,12 +237,13 @@
                   /* Increase font-size */
                   padding: 12px 20px 12px 40px;
                   /* Add some padding */
-                  border: 1px solid #ddd;
+                  border: 2px solid var(--med-gray-1);
+                  border-radius: var(--radius-big);
                   /* Add a grey border */
                   margin-bottom: 12px;
                   /* Add some space below the input */
 
-                  color:black;
+                  color: black;
                 }
 
                 #test-list {
@@ -237,36 +253,42 @@
                   margin: 0;
                 }
 
-                #test-list li a {
-                  border: 1px solid #ddd;
+                #test-list input {
+                  width: 25px;
+                  border: 2px solid var(--yellow-accent);
+                  background-color: var(--med-gray-1);
+                }
+
+                /* When the checkbox is checked, add a blue background */
+                .container input:checked~.checkmark {
+                  background-color: var(--yellow-accent);
+                }
+
+                #test-list div {
                   /* Add a border to all links */
                   margin-top: -1px;
                   /* Prevent double borders */
-                  background-color: #f6f6f6;
                   /* Grey background color */
-                  padding: 12px;
+                  padding: 0 var(--inner-padding) 0 var(--inner-padding);
                   /* Add some padding */
                   text-decoration: none;
                   /* Remove default text underline */
                   font-size: 18px;
                   /* Increase the font-size */
-                  color: black;
+                  color: white;
                   /* Add a black text color */
-                  display: block;
+                  display: flex;
+                  justify-content: space-between;
+                  gap: var(--inner-padding);
+
                   /* Make it into a block element to fill the whole list */
                 }
-
-                #test-list li a:hover:not(.header) {
-                  background-color: #eee;
-                  /* Add a hover effect to all links, except for headers */
-                }
               </style>
-
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </main>
   </div>
 </body>
 

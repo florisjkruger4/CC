@@ -10,16 +10,16 @@
 
     <!-- SideNavbar -->
     {% include 'html/sidenav.html' %}
-    <div class="main-container" style="padding-top: 0;">
+    <main class="py-3" style="padding-top: 0 !important; padding-bottom: 0 !important;">
         <div class="container" style="max-width: 1800px;">
             <div class="row">
-                <div class="col-lg-5 overflow-scroll" style="height: 100vh; padding: 20px 20px 0 0;">
+                <div class="col-lg-5 overflow-scroll">
                     <div class="col-scroll">
 
                         <!-- Athlete Info/Header -->
                         <div class="main-header justify-content-between">
                             <h1>{{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
-                            <i class="fa-solid fa-pen" style="color: var(--yellow-accent); font-size: 25px;"></i>
+                            <i class="fa-solid fa-pen" style="color: var(--yellow-accent); font-size: var(--icon-size);"></i>
                         </div>
 
                         <div class="d-flex" style="height: 200px;">
@@ -28,22 +28,22 @@
                             {% else %}
                             <img class="athlete-pic" src="/staticfiles/images/{{ athleteProf.image }}"></img>
                             {% endif %}
-                            <div class="w-100" style="margin-left: 20px;">
+                            <div class="w-100" style="margin-left: var(--inner-padding);">
                                 <div class="d-flex justify-content-between">
                                     <h6>Sport</h6>
                                     <h6 class="text-end">{{ athleteProf.sportsteam }}</h6>
                                 </div>
-                                <div class="line-2"></div>
+                                <hr>
                                 <div class="d-flex justify-content-between">
                                     <h6>Position</h6>
                                     <h6 class="text-end">{{ athleteProf.position }}</h6>
                                 </div>
-                                <div class="line-2"></div>
+                                <hr>
                                 <div class="d-flex justify-content-between">
                                     <h6>Year</h6>
                                     <h6 class="text-end">{{ athleteProf.year }}</h6>
                                 </div>
-                                <div class="line-2"></div>
+                                <hr>
                                 <div class="d-flex justify-content-between">
                                     <h6>Height</h6>
                                     <h6 class="text-end">{{ athleteProf.height }}</h6>
@@ -59,57 +59,26 @@
                         <!-- KPI Trends -->
                         <div class="kpireport">
                             <div class="d-flex justify-content-between align-items-center">
-                                <h3>KPI Trend Report</h3>
+                                <h3>KPI Trends</h3>
                                 <div class="text-end d-flex">
-                                    <p style="font-size: 16px" id="resultone">DD/MM/YY</p>
+                                    <p style="font-size: 16px" id="resultone"></p>
                                     <p style="font-size: 16px">&nbsp; to &nbsp;</p>
-                                    <p style="font-size: 16px" id="resulttwo">DD/MM/YY</p>
+                                    <p style="font-size: 16px" id="resulttwo"></p>
                                 </div>
                             </div>
 
                             <hr>
-                                {% load sublist_selector %}
 
-
-                                {% for x in kpi_test_data %}
-                                <div class="d-flex justify-content-between align-items-center kpi-img">
-
-                                    <p> {{ x|get:'test_type' }} </p>
-                                    {% if x|get:'change' > 0 %}
-                                    <p style="color:var(--green-accent);">
-                                        <i class="fa-solid fa-arrow-up" style="color:var(--green-accent)"></i>
-                                        {{ x|get:'change' }}
-                                    </p>
-                                    {% elif x|get:'change' < 0 %}
-                                    <p style="color:var(--red-accent);">
-                                        <i class="fa-solid fa-arrow-down" style="color:var(--red-accent)"></i>
-                                        {{ x|get:'change' }}
-                                    </p>
-                                    {% else %}
-                                    <p style="color:white;">{{ x|get:'change' }}</p>
-                                    {% endif %}
-
-                                    <div style="width: 50%;">
-                                        <img src="data:image/png;base64, {{ x|get:'line_graph'|safe }}">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <p> {{ x|get:'prev_val' }}</p>
-                                            <p> {{ x|get:'latest_val' }}</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <hr>
-                                {% endfor %}
-
-                                <a href="{% url 'AddKPI' athleteProf.fname athleteProf.lname athleteProf.dob %}">
-                                    <button class="kpidatabtn" style="margin-top: 20px;">Add KPI</button>
-                                </a>
-
+                            <div id="kpi-trend">
+                                <p style="margin-bottom: 0;">No data</p>
                             </div>
 
-                        <!-- Wellness Form -->
-                        <!-- Right now, this wellness form works by refreshing the page, which re-runs the code in the script below
-                        We need to get those values to update using AJAX -->
+                            <a href="{% url 'AddKPI' athleteProf.fname athleteProf.lname athleteProf.dob %}">
+                                <button class="kpidatabtn" style="margin-top: var(--inner-padding);">Add KPI</button>
+                            </a>
+
+                        </div>
+
                         <form method="post" id="wellnessform">
                             {% csrf_token %}
                             <div class="d-flex justify-content-between">
@@ -284,95 +253,195 @@
                     </div>
                 </div>
 
-                <div class="col-lg-7 overflow-scroll" style="height: 100vh; padding: 20px 0 0 20px;">
+                <div class="col-lg-7 overflow-scroll">
                     <div class="col-scroll">
 
                         <!-- Date Selector + Settings-->
                         <div class="main-header justify-content-between">
                             <form method="post" id="kpiform" name="kpiform">
                                 {% csrf_token %}
-                                <select id="date1" name="date1">
+                                <select id="date1" name="date1" style="font-size:20px;">
                                     <option selected>{{ kpi_earliest }}</option>
                                     {% for x in all_dates %}
                                     <option>{{ x.datekpi }}</option>
                                     {% endfor %}
                                 </select>
                                 to
-                                <select id="date2" name="date2">
+                                <select id="date2" name="date2" style="font-size:20px;">
                                     <option selected>{{ kpi_most_recent }}</option>
                                     {% for x in all_dates %}
                                     <option>{{ x.datekpi }}</option>
                                     {% endfor %}
                                 </select>
-                                <input type="submit" value="submit" class="submit">
                             </form>
-                            <i class="fa-solid fa-gear" style="color: var(--yellow-accent); font-size: 25px;"></i>
-                        </div>
-
-                        <!-- Graphs -->
-                        {% for x in kpi_test_data %}
-
-                        <div class="graphprof">
-                            <div class="d-flex flex-column">
-
-                                <div class="d-flex">
-                                    <h3>{{ x|get:'test_type' }}</h3>
-                                </div>
-                                <img src="data:image/png;base64, {{x|get:'bar_graph'|safe}}">
-
+                            <div class="d-flex align-items-center" style="gap:var(--inner-padding);">
+                                <h4>Bar Graph</h4>
+                                <h4>Spider Graph</h4>
+                                <i class="fa-solid fa-gear" style="color: var(--yellow-accent); font-size: var(--icon-size);"></i>
                             </div>
                         </div>
 
-                        <script type="text/javascript">
+                        <div id="bar-graphs" class="graphprof d-flex flex-column">
+                            <p style="margin-bottom: 0; align-self: center;">No data</p>
+                        </div>
 
-                            let selection1 = document.getElementById('date1');
-                            let date1 = document.getElementById('resultone');
+                        <script>
 
+                            //on window load, call ajax to populate page with data
+                            window.onload = function () {
 
-                            var date_one = "{{ date_one }}"
-                            document.getElementById("resultone").innerHTML = date_one
-                            if (date_one != "None") {
+                                //only request data if there are kpis to display
+                                var kpi_count = "{{kpi_count}}";
+
+                                if (kpi_count > 0)
+                                    ajax();
+
+                                dataUpdater();
+                            }
+
+                            //django-provided code to assist ajax
+                            function getCookie(name) {
+                                let cookieValue = null;
+                                if (document.cookie && document.cookie !== "") {
+                                    const cookies = document.cookie.split(";");
+                                    for (let i = 0; i < cookies.length; i++) {
+                                        const cookie = cookies[i].trim();
+                                        // Does this cookie string begin with the name we want?
+                                        if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                return cookieValue;
+                            }
+
+                            //if a date selector changes, call ajax to update the page
+                            document.getElementById("date1").addEventListener("change", ajax);
+                            document.getElementById("date2").addEventListener("change", ajax);
+
+                            //grabs info from the database without refreshing page and screwing everything up
+                            function ajax() {
+
+                                //get dates from selectors
+                                var date_one = document.getElementById("date1").value
+                                var date_two = document.getElementById("date2").value
+
+                                //clear trends and graphs 
+                                $("#kpi-trend").empty()
+                                $("#bar-graphs").empty()
+
+                                //add loading circle
+                                $("#kpi-trend").append("<div class=\"d-flex justify-content-center\"> <div id=\"loading-line\" class=\"lds-dual-ring\"></div></div>");
+                                $("#bar-graphs").append("<div class=\"d-flex justify-content-center\"> <div id=\"loading-bar\" class=\"lds-dual-ring\"></div></div>");
+
+                                $.ajax({
+                                    url: "{% url 'AthleteProf' athleteProf.fname athleteProf.lname athleteProf.dob %}",
+                                    type: "POST",
+                                    dataType: "json",
+                                    data: JSON.stringify({ date1: date_one, date2: date_two }),
+                                    headers: {
+                                        "X-Requested-With": "XMLHttpRequest",
+                                        "X-CSRFToken": getCookie("csrftoken"),
+                                    },
+                                    success: (response) => {
+
+                                        //shows info being passed from backend
+                                        console.log(response);
+
+                                        //remove loading circle after info arrives from db
+                                        $("#loading-line").remove()
+                                        $("#loading-bar").remove()
+
+                                        //loop thru each test type and get its info
+                                        for (var key in response.test_types) {
+                                            var report = "<div class=\"d-flex justify-content-between align-items-center kpi-img\">";
+                                            var graphs = "<div>";
+                                            report += "<div style=\"width: 25%\"> <p>" + response.test_types[key] + "</p></div>";
+
+                                            // add change
+                                            if (response.changes[key] > 0)
+                                                report += "<p style=\"color:var(--green-accent);\"> <i class=\"fa-solid fa-arrow-up\" style=\"color:var(--green-accent)\"></i> " + response.changes[key] + " </p>";
+                                            else if (response.changes[key] < 0)
+                                                report += "<p style=\"color:var(--red-accent);\"> <i class=\"fa-solid fa-arrow-down\" style=\"color:var(--red-accent)\"></i> " + response.changes[key] + " </p>";
+                                            else
+                                                report += "<p style\"=color:white;\"> " + response.changes[key] + " </p>";
+
+                                            //add line graph with results below
+                                            report += "<div style=\"width: 50%;\"> <img src=\"data:image/png;base64, " + response.kpi_line[key] + "\">";
+                                            report += "<div class=\"d-flex justify-content-between align-items-center\"> <p>" + response.Date1_results[key] + "</p> <p>" + response.Date2_results[key] + "</p></div>";
+                                            report += "</div>";
+                                            report += "</div>";
+
+                                            //add bar graphs with test name
+                                            graphs += "<h3>" + response.test_types[key] + "</h3>";
+                                            graphs += "<img src=\"data:image/png;base64, " + response.kpi_bar[key] + "\">";
+                                            graphs += "</div>";
+
+                                            $("#kpi-trend").append(report);
+                                            $("#kpi-trend").append("<hr>");
+
+                                            $("#bar-graphs").append(graphs);
+                                        }
+
+                                    },
+                                    error: (error) => {
+                                        console.log("Couldn't complete request: " + error);
+                                    }
+                                })
+                            }
+
+                            //function dateUpdater() {
+
+                                let selection1 = document.getElementById('date1');
+                                let date1 = document.getElementById('resultone');
+
+                                var date_one = "{{ date_one }}"
                                 document.getElementById("resultone").innerHTML = date_one
-                            }
+                                if (date_one != "None")
+                                    document.getElementById("resultone").innerHTML = date_one
+                                else
+                                    document.getElementById("resultone").innerHTML = "None";
 
-                            let selection2 = document.getElementById('date2');
-                            let date2 = document.getElementById('resulttwo');
+                                let selection2 = document.getElementById('date2');
+                                let date2 = document.getElementById('resulttwo');
 
-
-                            var date_two = "{{ date_two }}"
-                            document.getElementById("resulttwo").innerHTML = date_two
-                            if (date_two != "None") {
+                                var date_two = "{{ date_two }}"
                                 document.getElementById("resulttwo").innerHTML = date_two
-                            }
+                                if (date_two != "None")
+                                    document.getElementById("resulttwo").innerHTML = date_two
+                                else
+                                    document.getElementById("resulttwo").innerHTML = "None";
 
-                            let selection3 = document.getElementById('wellnessdate');
-                            let date3 = document.getElementById('wellnessresult');
+                                let selection3 = document.getElementById('wellnessdate');
+                                let date3 = document.getElementById('wellnessresult');
 
-                            var mostrecentdate = "{{ mostRecentWellnessReportDate }}"
-                            document.getElementById("wellnessresult").innerHTML = mostrecentdate
-                            var wellness_date = "{{ wellness_date }}"
+                                var mostrecentdate = "{{ mostRecentWellnessReportDate }}"
+                                document.getElementById("wellnessresult").innerHTML = mostrecentdate
+                                var wellness_date = "{{ wellness_date }}"
 
-                            if (wellness_date != "None") {
-                                document.getElementById("wellnessresult").innerHTML = wellness_date
-                            }
+                                if (wellness_date != "None") {
+                                    document.getElementById("wellnessresult").innerHTML = wellness_date
+                                }
 
-                            selection1.addEventListener('change', () => {
-                                resultone.innerText = selection1.options[selection1.selectedIndex].text;
-                            });
+                                selection1.addEventListener('change', () => {
+                                    resultone.innerText = selection1.options[selection1.selectedIndex].text;
+                                });
 
-                            selection2.addEventListener('change', () => {
-                                resulttwo.innerText = selection2.options[selection2.selectedIndex].text;
-                            });
+                                selection2.addEventListener('change', () => {
+                                    resulttwo.innerText = selection2.options[selection2.selectedIndex].text;
+                                });
 
-                            selection3.addEventListener('change', () => {
-                                wellnessresult.innerText = selection3.options[selection3.selectedIndex].text;
-                            });
+                                selection3.addEventListener('change', () => {
+                                    wellnessresult.innerText = selection3.options[selection3.selectedIndex].text;
+                                });
+                            //}
+
                         </script>
-
-                        {% endfor %}
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 </body>

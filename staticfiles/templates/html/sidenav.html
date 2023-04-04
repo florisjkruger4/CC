@@ -1,3 +1,50 @@
+<nav class="position-fixed bg-dark min-vh-100 py-5"> <!-- class="col-auto col-md-2 col-xl-2 px-sm-2 px-0 bg-dark min-vh-100" -->
+
+  <div class="d-flex justify-content-center justify-content-md-between mb-5"> <!-- justify-content-between  -->
+    <i class="fs-4 fa-solid fa-user "></i> <span class="d-none d-md-inline">User</span>
+  </div>
+
+  <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-md-start" id="menu"> <!-- align-items-sm-start -->
+    <li class="nav-item">
+        <a href="/dash" class="nav-link align-middle px-0">
+            <i class="fs-4 fa-solid fa-house fa-fw"></i> <span class="ms-1 d-none d-md-inline">Home</span>
+        </a>
+    </li>
+    <hr class="w-100 my-2 d-none d-md-inline" />
+    <li>
+        <a href="/athletes" class="nav-link px-0 align-middle">
+            <i class="fs-4 fa-solid fa-person-running fa-fw"></i> <span class="ms-1 d-none d-md-inline">Athletes</span> <!-- d-md-inline -->
+        </a>
+    </li>
+    <hr class="w-100 my-2 d-none d-md-inline" />
+    <li>
+      <a href="/teams" class="nav-link px-0 align-middle">
+          <i class="fs-4 fa-solid fa-people-group fa-fw"></i> <span class="ms-1 d-none d-md-inline">Teams</span>
+      </a>
+    </li>
+    <hr class="w-100 my-2 d-none d-md-inline" />
+    <li>
+      <a href="/recordKPI" class="nav-link px-0 align-middle">
+          <i class="fs-4 fa-solid fa-pen-to-square fa-fw"></i> <span class="ms-1 d-none d-md-inline">Record KPI</span>
+      </a>
+    </li>
+    <hr class="w-100 my-2 d-none d-md-inline" />
+    <li>
+      <a href="/wellness" class="nav-link px-0 align-middle">
+        <i class="fs-4 fa-solid fa-heart fa-fw"></i> <span class="ms-1 d-none d-md-inline">Wellness</span>
+      </a>
+    </li>
+  </ul>
+
+  <!--
+  <div class="nav-footer">
+    <small>Coach's Corner v1.0</small>
+  </div>
+  -->
+</nav>
+
+<!-- Old nav kept for WIP references -->
+<!--
 <nav class="side-nav">
   <div class="nav-user nav-links">
     {% if request.user.is_authenticated %}
@@ -21,3 +68,4 @@
   </div>
   <div class="nav-footer"><small>Coach's Corner v1.0</small></div>
 </nav>
+-->

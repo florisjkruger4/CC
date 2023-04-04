@@ -18,9 +18,7 @@ def bar_graph(x, y):
 
     plt.switch_backend('AGG')
     plt.figure(figsize=(9,4), facecolor="#1F2126")
-    #plt.title('Bar Graph')
     plt.bar(x, y, color="#96B7FF")
-    plt.xticks(rotation=0)
     plt.tight_layout()
     ax = plt.gca()
     ax.set_facecolor("#1F2126")
@@ -31,11 +29,17 @@ def bar_graph(x, y):
     ax.tick_params(axis='x', colors='white')
     ax.tick_params(axis='y', colors='white')
 
+    if(len(x) > 20):
+        plt.xticks(rotation=45)
+    elif(len(x) > 40):
+        plt.xticks(rotation=90)
+    else:
+        plt.xticks(rotation=0)
+
     if (len(y) > 0):
         avg = sum(y)/len(y)
         ax.axhline(avg, color='#F2CD49', linewidth=2)
     
-    #plt.plot(x, y, color="#F2CD49")
     plt.bar_label(ax.containers[0], label_type='center')
     
     graph = get_graph()

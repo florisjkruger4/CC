@@ -1,0 +1,99 @@
+.athlete-pic {
+    width: auto;
+    height: 100%;
+    max-width: 250px;
+    max-height: 250px;
+    background-color: white;
+    border-radius: var(--radius-big);
+}
+
+.kpireport {
+    width: 100%;
+    background-color: var(--med-gray-2);
+    border-radius: var(--radius-big);
+    padding: var(--inner-padding);
+    margin-top: var(--inner-padding);
+}
+
+.graphprof {
+    height: fit-content;
+    width: 100%;
+    background-color: var(--med-gray-2);
+    border-radius: var(--radius-big);
+    padding: var(--inner-padding);
+    margin-bottom: var(--inner-padding);
+}
+
+.status {
+    height: fit-content;
+    width: 100%;
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-evenly;
+    border-bottom: 10px;
+    position: relative;
+}
+
+.wellnessrows {
+    display: flex;
+    justify-content: space-between;
+}
+
+.wellness-status-display {
+    border-radius: 5px;
+    border-width: 1px;
+    text-align: center;
+    padding: 5px;
+    vertical-align: middle;
+}
+
+.kpidatabtn {
+    background-color: var(--yellow-accent);
+    color: black;
+    border-radius: var(--radius-small);
+    border: none;
+    width: 100%;
+    align-self: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 10px;
+}
+
+.kpi-img img {
+    height: auto;
+    width: 100%;
+}
+
+.kpi-img p {
+    margin-bottom: 0 !important;
+}
+
+/* Responsive spacing below 992px */
+@media (max-width:992px) {
+
+    /* Bootstrap's breakpoint for lg */
+    .col-lg-5 {
+        padding-right: 0 !important;
+        padding-left: 0 !important;
+    }
+
+    .col-lg-7 {
+        padding-right: 0 !important;
+        padding-left: 0 !important;
+    }
+}
+
+/* Responsive spacing above 992px */
+@media (min-width:992px) {
+
+    /* Bootstrap's breakpoint for lg */
+    .col-lg-5 {
+        padding: 1rem calc(var(--gutter)/2) 0 0;
+        height: 100vh;
+    }
+
+    .col-lg-7 {
+        padding: 1rem 0 0 calc(var(--gutter)/2);
+        height: 100vh;
+    }
+}

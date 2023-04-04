@@ -7,129 +7,124 @@
 
 <body>
 
-    <div class="mainFont container-fluid">
-        <div class="row">
+    <!-- SideNavbar -->
+    {% include 'html/sidenav.html' %}
     
-          <!-- SideNavbar -->
-          {% include 'html/sidenav.html' %}
-    
-          <div class="col-md-2"></div>
-    
-          <div class="col-md-9" style="margin: 10px;">
+    <main class="py-3">
+      <div class="col-md-9" style="margin: 10px;">
 
-            <div style="display: flex; width: 100%; justify-content: space-between;">
-              <h1 class="mainFont" style="padding-bottom: 10px; padding-right: 8%;">Wellness</h1>
+        <div style="display: flex; width: 100%; justify-content: space-between;">
+          <h1 class="mainFont" style="padding-bottom: 10px; padding-right: 8%;">Wellness</h1>
 
-              <form method="post" id="wellnessdisplayform">
-                {% csrf_token %}
-                <div style="display: flex; justify-content: space-between;">
+          <form method="post" id="wellnessdisplayform">
+            {% csrf_token %}
+            <div style="display: flex; justify-content: space-between;">
 
-                  <select id="wellnessdate" name="wellnessdate">
-                    <option disabled hidden selected>Select Date</option>
-                    {% for x in wellnessDates %}
-                    <option>{{ x.date }}</option>
-                    {% endfor %}
-                  </select>
-                  &nbsp;
-                  &nbsp;
-                  <select id="sportsteam" name="sportsteam">
-                    <option disabled hidden selected>Select Sports Team</option>
-                    {% for x in wellnessSportsTeams %}
-                    <option>{{ x.sport }}</option>
-                    {% endfor %}
-                  </select>
-                  &nbsp;
-                  &nbsp;
-                  <input type="submit" value="submit" class="submit">
-                </div>
-              </form>
+              <select id="wellnessdate" name="wellnessdate">
+                <option disabled hidden selected>Select Date</option>
+                {% for x in wellnessDates %}
+                <option>{{ x.date }}</option>
+                {% endfor %}
+              </select>
+              &nbsp;
+              &nbsp;
+              <select id="sportsteam" name="sportsteam">
+                <option disabled hidden selected>Select Sports Team</option>
+                {% for x in wellnessSportsTeams %}
+                <option>{{ x.sport }}</option>
+                {% endfor %}
+              </select>
+              &nbsp;
+              &nbsp;
+              <input type="submit" value="submit" class="submit">
             </div>
+          </form>
+        </div>
 
-            <div style="display: flex;">
-              <h2 id="selecteddate">DD/MM/YY</h2> 
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-              <h2 id="selectedsport">"Sports Team"</h2>
-            </div>
-            
-            <div style="display: flex; flex-wrap: wrap;">
-              {% for x in allWellnessReports %}
-                <div style="width: 33%; padding-right: 10px; padding-left: 10px; background-color: #1F2126;; border-radius: 7px;">
-                  <div style="display: flex; justify-content: space-between;">
-                    <p style="font-size: 30px;">{{ x.fname }} {{ x.lname }}</p>
-                    <p style="font-size: 30px;">{{ x.position }}#</p>
-                  </div>
+        <div style="display: flex;">
+          <h2 id="selecteddate">DD/MM/YY</h2> 
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+          <h2 id="selectedsport">"Sports Team"</h2>
+        </div>
+        
+        <div style="display: flex; flex-wrap: wrap;">
+          {% for x in allWellnessReports %}
+            <div style="width: 33%; padding-right: 10px; padding-left: 10px; background-color: #1F2126;; border-radius: 7px;">
+              <div style="display: flex; justify-content: space-between;">
+                <p style="font-size: 30px;">{{ x.fname }} {{ x.lname }}</p>
+                <p style="font-size: 30px;">{{ x.position }}#</p>
+              </div>
 
-                  <div style="display: flex; justify-content: space-evenly;">
-                    <div>
-                      <img style="width: 100px; height: 100px;" src="/staticfiles/images/{{ x.image }}"></img>
+              <div style="display: flex; justify-content: space-evenly;">
+                <div>
+                  <img style="width: 100px; height: 100px;" src="/staticfiles/images/{{ x.image }}"></img>
 
-                      <div style="display: flex; flex-direction: column; justify-content: space-between;">
-                        <div style="border-radius: 5px; width: 100%; text-align: center; padding: 5px; margin-right: 5px;" id="bor{{forloop.counter}}">
-                          <p style="font-size: smaller;" id="stat{{forloop.counter}}">Status:  {{ x.status }}</p>
-                        </div>
-                        <div style="border: 1px solid white; border-radius: 5px; width: 80%; text-align: center; padding: 5px; margin: auto; height: 35px">
-                            <div style="display: flex; justify-content: center; font-size: smaller;">
-                                <p>Readiness: &nbsp;</p>
-                                <p id="readiness{{forloop.counter}}"></p>
-                            </div>
-                        </div>
-                      </div>
+                  <div style="display: flex; flex-direction: column; justify-content: space-between;">
+                    <div style="border-radius: 5px; width: 100%; text-align: center; padding: 5px; margin-right: 5px;" id="bor{{forloop.counter}}">
+                      <p style="font-size: smaller;" id="stat{{forloop.counter}}">Status:  {{ x.status }}</p>
                     </div>
-
-                    <table class="table mainFont wellnesstable" style="border-radius: 10px; margin: auto; border-color: rgba(255, 255, 255, 0.321);">
-                      <tr>
-                          <td><div class="wellnessrows"><h6>Hours of Sleep</h6> <h6>{{ x.hoursofsleep }}</h6></div></td>
-                      </tr>
-                      <tr>
-                        <td><div class="wellnessrows"><h6>Sleep Quality</h6> <h6>{{ x.sleepquality }}</h6></div></td>
-                      </tr>
-                      <tr>
-                          <td><div class="wellnessrows"><h6>Breakfast</h6> <h6>{{ x.breakfast }}</h6></div></td>
-                      </tr>
-                      <tr>
-                        <td><div class="wellnessrows"><h6>Hydration</h6> <h6>{{ x.hydration }}</h6></div></td>
-                      </tr>
-                      <tr>
-                          <td><div class="wellnessrows"><h6>Soreness</h6> <h6>{{ x.soreness }}</h6></div></td>
-                        </tr>
-                        <tr>
-                          <td><div class="wellnessrows"><h6>Stress</h6> <h6>{{ x.stress }}</h6></div></td>
-                        </tr>
-                        <tr>
-                          <td style="border-bottom: none;"><div class="wellnessrows"><h6>Mood</h6> <h6>{{ x.mood }}</h6></div></td>
-                        </tr>
-                      </table>
-                      <script type="text/javascript">
-                        var hoursofsleep = Number("{{ x.hoursofsleep }}")
-                        var sleepquality = Number("{{ x.sleepquality }}")
-                        var breakfast = Number("{{ x.breakfast }}")
-                        var hydration = Number("{{ x.hydration }}")
-                        var soreness = Number("{{ x.soreness }}")
-                        var stress = Number("{{ x.stress }}")
-                        var mood = Number("{{ x.mood }}")
-      
-                        var total = hoursofsleep + sleepquality + breakfast + hydration + soreness + stress + mood
-                        document.getElementById("readiness{{forloop.counter}}").innerHTML = total
-
-                        var status = "{{ x.status }}"
-
-                        if (status == 'N') {
-                            document.getElementById("stat{{forloop.counter}}").style.color = "#FC5151"
-                            document.getElementById("bor{{forloop.counter}}").style.border = "1px solid #FC5151"
-                        }
-                        else if (status == 'Y') {
-                            document.getElementById("stat{{forloop.counter}}").style.color = "#58E767"
-                            document.getElementById("bor{{forloop.counter}}").style.border = "1px solid #58E767"
-                        }
-                      </script>
+                    <div style="border: 1px solid white; border-radius: 5px; width: 80%; text-align: center; padding: 5px; margin: auto; height: 35px">
+                        <div style="display: flex; justify-content: center; font-size: smaller;">
+                            <p>Readiness: &nbsp;</p>
+                            <p id="readiness{{forloop.counter}}"></p>
+                        </div>
+                    </div>
                   </div>
                 </div>
-              {% endfor %}
+
+                <table class="table mainFont wellnesstable" style="border-radius: 10px; margin: auto; border-color: rgba(255, 255, 255, 0.321);">
+                  <tr>
+                      <td><div class="wellnessrows"><h6>Hours of Sleep</h6> <h6>{{ x.hoursofsleep }}</h6></div></td>
+                  </tr>
+                  <tr>
+                    <td><div class="wellnessrows"><h6>Sleep Quality</h6> <h6>{{ x.sleepquality }}</h6></div></td>
+                  </tr>
+                  <tr>
+                      <td><div class="wellnessrows"><h6>Breakfast</h6> <h6>{{ x.breakfast }}</h6></div></td>
+                  </tr>
+                  <tr>
+                    <td><div class="wellnessrows"><h6>Hydration</h6> <h6>{{ x.hydration }}</h6></div></td>
+                  </tr>
+                  <tr>
+                      <td><div class="wellnessrows"><h6>Soreness</h6> <h6>{{ x.soreness }}</h6></div></td>
+                    </tr>
+                    <tr>
+                      <td><div class="wellnessrows"><h6>Stress</h6> <h6>{{ x.stress }}</h6></div></td>
+                    </tr>
+                    <tr>
+                      <td style="border-bottom: none;"><div class="wellnessrows"><h6>Mood</h6> <h6>{{ x.mood }}</h6></div></td>
+                    </tr>
+                  </table>
+                  <script type="text/javascript">
+                    var hoursofsleep = Number("{{ x.hoursofsleep }}")
+                    var sleepquality = Number("{{ x.sleepquality }}")
+                    var breakfast = Number("{{ x.breakfast }}")
+                    var hydration = Number("{{ x.hydration }}")
+                    var soreness = Number("{{ x.soreness }}")
+                    var stress = Number("{{ x.stress }}")
+                    var mood = Number("{{ x.mood }}")
+  
+                    var total = hoursofsleep + sleepquality + breakfast + hydration + soreness + stress + mood
+                    document.getElementById("readiness{{forloop.counter}}").innerHTML = total
+
+                    var status = "{{ x.status }}"
+
+                    if (status == 'N') {
+                        document.getElementById("stat{{forloop.counter}}").style.color = "#FC5151"
+                        document.getElementById("bor{{forloop.counter}}").style.border = "1px solid #FC5151"
+                    }
+                    else if (status == 'Y') {
+                        document.getElementById("stat{{forloop.counter}}").style.color = "#58E767"
+                        document.getElementById("bor{{forloop.counter}}").style.border = "1px solid #58E767"
+                    }
+                  </script>
+              </div>
             </div>
-            
-          </div>
-       </div>
-    </div>
+          {% endfor %}
+        </div>
+        
+      </div>
+    </main>
 
     <script type="text/javascript">
 
