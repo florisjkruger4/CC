@@ -203,10 +203,9 @@
                               },
                               success: (response) => {
 
-                                console.log(response);
-
-                                document.getElementById("stat").style.color = "var(--green-accent)"
-                                document.getElementById("bor").style.border = "1px solid var(--green-accent)"
+                                //document.getElementById("stat").style.color = "var(--green-accent)"
+                                //document.getElementById("bor").style.border = "1px solid var(--green-accent)"
+                                console.log(response)
 
                                 // Get individual values needed for wellness total and then sum them
 
@@ -218,7 +217,7 @@
                                 var stress = Number( response.wellness[0].stress )
                                 var mood = Number( response.wellness[0].mood )
 
-                                console.log(hoursofsleep)
+                                //console.log(hoursofsleep)
 
                                 var total = hoursofsleep + sleepquality + breakfast + hydration + soreness + stress + mood
                                 // Update total in document
