@@ -201,191 +201,182 @@ def AddAthlete(request):
 
     return render(request, "html/addathlete.html")
 
+
+def kpiAjax(fname, lname, dob, date_one, date_two):
+
+    # init/reset variables to 0 before next use
+    kpi_bar = []
+    kpi_line = []
+    Date1_results = []
+    Date2_results = []
+    changes = []
+    iter = 0
+
+    # Gets test types within selected date range
+    test_type = (
+        KpiT.objects.filter(
+            fname=fname,
+            lname=lname,
+            dob=dob,
+            datekpi__range=(date_one, date_two),
+        )
+        .values_list("testtype", flat=True)
+        .order_by("testtype")
+        .distinct()
+    )
+
+    # Get kpi results for each test type 
+    for x in test_type:
+        # Gets the rows for this test for specific athlete
+        kpi_results = KpiT.objects.filter(
+            fname=fname,
+            lname=lname,
+            dob=dob,
+            testtype__exact=x,
+            datekpi__range=(date_one, date_two),
+        )
+
+        # Sets x and y coordinate values
+        results_x = [x.datekpi for x in kpi_results]
+        results_y = [x.testresult for x in kpi_results]
+
+        # Date 1 test score result
+        if date_one:
+            Date1_result = kpi_results.order_by("datekpi").first()
+                    
+            if Date1_result:
+                Date1_results.append(Date1_result.testresult)
+
+        else:
+            Date1_results.append(None)
+
+        # Date 2 test score result
+        if date_two:
+            Date2_result = kpi_results.order_by("datekpi").last()
+
+            if Date2_result:
+                Date2_results.append(Date2_result.testresult)
+
+        else:
+            Date2_results.append(None)
+
+        # If both give values (not null), calculate difference betweeen them
+        if Date1_results[iter] and Date2_results[iter]:
+                    
+            change = Date2_results[iter] - Date1_results[iter]
+            changes.append(round(change, 2))
+
+        # Calls matplotlib bar graph with above data
+        kpi_line.append(line_graph(results_x, results_y, changes[iter]))
+        kpi_bar.append(bar_graph(results_x, results_y))
+
+        iter += 1
+
+    # Objects returned to frontend:
+    # test_types = list of all test types for this athlete
+    # Date1_results = list of floating point values of kpis on first date selected 
+    # Date2_results = list of floating point values of kpis on second date selected 
+    # changes = list of floating point values of difference between date1 and date2 results
+    # kpi_bar and kpi_line: bar and line graphs respectively 
+    return JsonResponse({
+        "test_types": list(test_type),
+        "Date1_results": list(Date1_results),
+        "Date2_results": list(Date2_results),
+        "changes": list(changes),
+        "kpi_bar": list(kpi_bar),
+        "kpi_line": list(kpi_line),
+    })
+
+    
+def wellnessAjax(fname, lname, dob, wellnessdate):
+    
+    # Get the appropriate wellness report
+    wellness = WellnessT.objects.filter(fname=fname, lname=lname, dob=dob, date=wellnessdate).values()
+
+    # Return the list of athletes
+    return JsonResponse({"wellness": list(wellness.values())})
+
+
 @login_required(login_url='/')
 def AthleteProf(request, fname, lname, dob):
     athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
-
-    # List of KPI table rows
-    kpi_list = KpiT.objects.filter(fname=fname, lname=lname, dob=dob)
-    kpi_count = len(kpi_list)
-
-    all_dates = []
-    kpi_earliest = None
-    kpi_most_recent = None
-
-    # ------------ KPI -------------
-
-    if kpi_count > 0:
-        # Access and store all dates
-        all_dates = (
-            KpiT.objects.filter(fname=fname, lname=lname, dob=dob)
-            .values("datekpi")
-            .order_by("datekpi")
-            .distinct()
-        )
-
-        # Gets earlies and latest kpi dates for specific athlete
-        kpi_earliest = all_dates.first()["datekpi"]
-        kpi_most_recent = all_dates.last()["datekpi"]
-
-        if request.headers.get("x-requested-with") == "XMLHttpRequest":
-
-            # Takes user input through a Django form (in this case it takes the "select" option when user hits submit form btn)
-            data = json.load(request)
-            date_one = data.get("date1")
-            date_two = data.get("date2")
-
-            # Groups by test type name for specific athlete profile page
-            # Only gets test types within selected date range
-
-            test_type = (
-                KpiT.objects.filter(
-                    fname=fname,
-                    lname=lname,
-                    dob=dob,
-                    datekpi__range=(date_one, date_two),
-                )
-                .values_list("testtype", flat=True)
-                .order_by("testtype")
-                .distinct()
-            )
-
-            # init/reset variables to 0 before next use
-            kpi_bar = []
-            kpi_line = []
-            Date1_results = []
-            Date2_results = []
-            changes = []
-            iter = 0
-
-            for x in test_type:
-                # Gets the rows for this test for specific athlete
-                kpi_results = KpiT.objects.filter(
-                    fname=fname,
-                    lname=lname,
-                    dob=dob,
-                    testtype__exact=x,
-                    datekpi__range=(date_one, date_two),
-                )
-
-                # Sets x and y coordinate values
-                results_x = [x.datekpi for x in kpi_results]
-                results_y = [x.testresult for x in kpi_results]
-
-                # Date 1 test score result
-                if date_one:
-                    Date1_result = kpi_results.order_by("datekpi").first()
-                        
-                    if Date1_result:
-                        Date1_results.append(Date1_result.testresult)
-
-                else:
-                    Date1_results.append(None)
-
-                # Date 2 test score result
-                if date_two:
-                    Date2_result = kpi_results.order_by("datekpi").last()
-
-                    if Date2_result:
-                        Date2_results.append(Date2_result.testresult)
-
-                else:
-                    Date2_results.append(None)
-
-                # If both give values (not null), calculate difference betweeen them
-                if Date1_results[iter] and Date2_results[iter]:
-                        
-                    change = Date2_results[iter] - Date1_results[iter]
-                    changes.append(round(change, 2))
-
-                # Calls matplotlib bar graph with above data
-                kpi_line.append(line_graph(results_x, results_y, changes[iter]))
-                kpi_bar.append(bar_graph(results_x, results_y))
-
-                iter += 1
-
-            return JsonResponse({
-                "test_types": list(test_type),
-                "Date1_results": list(Date1_results),
-                "Date2_results": list(Date2_results),
-                "changes": list(changes),
-                "kpi_bar": list(kpi_bar),
-                "kpi_line": list(kpi_line),
-            })
-    else:
-        context = {
-            "athleteProf": athleteProf,
-        }
-
-        return render(request, "html/athleteProf.html", context)
-
-    # ------------ Wellness -------------
 
     # If parameter "request" is an XML request (AJAX)...
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
         # ...AND it's also a POST request...
         if request.method == "POST":
-            # Get the JSON data from the request
+            # load data from AJAX 
             data = json.load(request)
-            selectedDate = data.get("wellnessdate")
 
-            # Get the appropriate wellness report
-            wellness = WellnessT.objects.filter(fname=fname, lname=lname, dob=dob, date=selectedDate).values()
-
-            # Return the list of athletes
-            return JsonResponse({"wellness": list(wellness.values())})
-        return JsonResponse({"status": "Invalid request"}, status=400)
-
-    wellness_count = int(
+            # if we have data for "date1" and "date2", we have a kpi update request
+            if data.get("date1") and data.get("date2"):
+                return kpiAjax(fname, lname, dob, data.get("date1"), data.get("date2"))
+            
+            # if we have data for "wellnessdate", we have a wellness update request
+            elif data.get("wellnessdate"):
+                return wellnessAjax(fname, lname, dob, data.get("wellnessdate"))
+            else:
+                return JsonResponse({"status": "Invalid request"}, status=400)
+        else:
+            return JsonResponse({"status": "Invalid request"}, status=400)
+        
+    # Not an AJAX call... page is likely initially loading
+    # Init page will contain Athlete Profile info (fname, lname, sport, pos...) +
+    # all kpi dates and all wellness dates. 
+    else:
+        kpi_count = KpiT.objects.filter(fname=fname, lname=lname, dob=dob).count()
+        wellness_count = int(
         WellnessT.objects.filter(fname=fname, lname=lname, dob=dob).count()
-    )
+        )
 
-    if wellness_count > 0:
-        wellness = WellnessT.objects.filter(fname=fname, lname=lname, dob=dob).values()
-        wellness_dates = (
+        # We don't have any wellness or kpi data, so just return 
+        if kpi_count == 0 and wellness_count == 0:
+
+            context = {
+                "athleteProf": athleteProf,
+            }
+
+            return render(request, "html/athleteProf.html", context)
+
+        if kpi_count > 0:
+            # Access and store all dates
+            kpi_dates = (
+                KpiT.objects.filter(fname=fname, lname=lname, dob=dob)
+                .values("datekpi")
+                .order_by("datekpi")
+                .distinct()
+            )
+
+            # Gets earlies and latest kpi dates for specific athlete
+            kpi_earliest = kpi_dates.first()["datekpi"]
+            kpi_most_recent = kpi_dates.last()["datekpi"]
+
+        if wellness_count > 0:
+            #Access and store all dates
+            wellness_dates = (
             WellnessT.objects.filter(fname=fname, lname=lname, dob=dob)
             .values("date")
             .annotate(dcount=Count("date"))
             .order_by("date")
-        )
-        wellness_most_recent = wellness_dates.last()["date"]
+            )
 
-        # Takes user input through Django form (Wellness date selection)
-        wellness_date = request.POST.get("wellnessdate")
-
-        # Wellness Date selection
-        if wellness_date:
-            mostRecentWellnessReport = WellnessT.objects.filter(
-                fname=fname, lname=lname, dob=dob, date__exact=wellness_date
-            ).values()
-        else:
-            mostRecentWellnessReport = WellnessT.objects.filter(
-                fname=fname, lname=lname, dob=dob, date__exact=wellness_most_recent
-            ).values()
-
-    else:
-        context = {
-            "athleteProf": athleteProf,
-        }
-
-        return render(request, "html/athleteProf.html", context)
+            wellness_most_recent = wellness_dates.last()["date"]
 
     context = {
         "athleteProf": athleteProf,
-        "all_dates": all_dates,
+
+        "all_dates": kpi_dates,
         "kpi_earliest": kpi_earliest,
         "kpi_most_recent": kpi_most_recent,
         "kpi_count": kpi_count,
-        "numOfWellnesReports": wellness_count,
-        "wellness": wellness,
+        
         "wellnessReportDates": wellness_dates,
         "mostRecentWellnessReportDate": wellness_most_recent,
-        "wellness_date": wellness_date,
-        "mostRecentWellnessReport": mostRecentWellnessReport,
+        "wellness_count": wellness_count,
     }
 
     return render(request, "html/athleteProf.html", context)
-
+    
 @login_required(login_url='/')
 def TeamDash(request):
     athletes = TeamT.objects.all()

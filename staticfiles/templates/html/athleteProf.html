@@ -19,7 +19,8 @@
                         <!-- Athlete Info/Header -->
                         <div class="main-header justify-content-between">
                             <h1>{{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
-                            <i class="fa-solid fa-pen" style="color: var(--yellow-accent); font-size: var(--icon-size);"></i>
+                            <i class="fa-solid fa-pen"
+                                style="color: var(--yellow-accent); font-size: var(--icon-size);"></i>
                         </div>
 
                         <div class="d-flex" style="height: 200px;">
@@ -83,29 +84,25 @@
                             {% csrf_token %}
                             <div class="d-flex justify-content-between">
                                 <select id="wellnessdate" name="wellnessdate">
-                                    <option disabled hidden selected>Select Date</option>
+                                    <option selected>{{ mostRecentWellnessReportDate }}</option>
                                     {% for x in wellnessReportDates %}
                                     <option>{{ x.date }}</option>
                                     {% endfor %}
                                 </select>
-                                <input type="submit" value="submit" class="submit">
+
                                 <p style="font-size: 16px" id="wellnessresult">DD/MM/YY</p>
                             </div>
                         </form>
 
                         <!-- Wellness Display -->
 
-                        {% if wellness %}
-                        {% for x in mostRecentWellnessReport %}
-
                         <div class="d-flex">
                             <div class="w-100 wellness-status-display" style="margin-right: 12px;" id="bor">
-                                <h4 id="stat">Status: {{ x.status }}</h4>
+                                <h4 id="stat">Status: </h4>
                             </div>
-                            <div class="w-100 wellness-status-display"
-                                style="margin-left: 12px; border: 1px solid white;">
+                            <div class="w-100 wellness-status-display" style="margin-left: 12px; border: 1px solid white;">
                                 <div class="d-flex justify-content-center">
-                                    <h4>Readiness: &nbsp;</h4>
+                                    <h4 id="readiness">Readiness: </h4>
                                     <h4 id="total"></h4>
                                 </div>
                             </div>
@@ -117,139 +114,110 @@
 
                         <script type="text/javascript">
 
-                            // Get individual values needed for wellness total and then sum them
-                            var hoursofsleep = Number("{{ x.hoursofsleep }}")
-                            var sleepquality = Number("{{ x.sleepquality }}")
-                            var breakfast = Number("{{ x.breakfast }}")
-                            var hydration = Number("{{ x.hydration }}")
-                            var soreness = Number("{{ x.soreness }}")
-                            var stress = Number("{{ x.stress }}")
-                            var mood = Number("{{ x.mood }}")
-
-                            console.log(hoursofsleep)
-
-                            var total = hoursofsleep + sleepquality + breakfast + hydration + soreness + stress + mood
-                            // Update total in document
-                            document.getElementById("total").innerHTML = total
-
-                            function status() {
-                                var status = "{{ x.status }}"
-
-                                if (status == 'N') {
-                                    document.getElementById("stat").style.color = "var(--red-accent)"
-                                    document.getElementById("bor").style.border = "1px solid var(--red-accent)"
-                                }
-                                else if (status == 'Y') {
-                                    document.getElementById("stat").style.color = "var(--green-accent)"
-                                    document.getElementById("bor").style.border = "1px solid var(--green-accent)"
-                                }
-                            }
-
+                            //on window load, call ajax to populate page with data
                             window.onload = function () {
-                                status();
-                            };
 
+                                //only request data if there are kpis to display
+                                var wellness_count = "{{ wellness_count }}";
 
+                                console.log(wellness_count);
 
-                        // Code for Wellness AJAX Request:
+                                if (wellness_count > 0)
+                                    wellness_ajax();
 
-                        /* getCookie() function definition*/
-                          // Definition for "getCookie" function, which will return a cookie from the document matching the parameter "name".
-                          // This is a utility funciton utilized to send and AJAX request (see next code block)
-
-                          // Cookie is initialized to null
-                          // If there is are document cookies and they are NOT empty, the cookies in the document are fetched and placed in an array
-                          // This array is searched for a cookie that matches parameter "name"
-                          // If such a cookie is found, it is returned.
-                          function getCookie(name) {
-                            let cookieValue = null;
-                            if (document.cookie && document.cookie !== "") {
-                              const cookies = document.cookie.split(";");
-                              for (let i = 0; i < cookies.length; i++) {
-                                const cookie = cookies[i].trim();
-                                // Does this cookie string begin with the name we want?
-                                if (cookie.substring(0, name.length + 1) === (name + "=")) {
-                                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                                  break;
-                                }
-                              }
                             }
+                            // Code for Wellness AJAX Request:
 
-                            return cookieValue;
-                          }
-                        /* End of getCookie() function definition*/
+                            /* getCookie() function definition*/
+                            // Definition for "getCookie" function, which will return a cookie from the document matching the parameter "name".
+                            // This is a utility funciton utilized to send and AJAX request (see next code block)
 
-                        /* When the "#wellnessform" form is submitted, this function will send an AJAX request to fetch the new data. */
-                          $("#wellnessform").submit(function (event) {
-
-                            // Override default behavior for 'submit'
-                            event.preventDefault();
-
-                            // Get value of #sportsteam
-                            var date_selected = document.getElementById("wellnessdate").value
-                            //alert(date_selected);
-
-                            // Send "POST" AJAX request to url 'AthleteProf'
-                            // This request will be handled by the Django backend -> see views.py recordKPI() for that code
-                            $.ajax({
-                              //URL needs to be fname, lname, DOB for athletes
-                              url: "{% url 'AthleteProf' athleteProf.fname athleteProf.lname athleteProf.dob %}",
-                              type: "POST",
-                              dataType: "json",
-                              data: JSON.stringify({ wellnessdate: date_selected, }),
-                              headers: {
-                                "X-Requested-With": "XMLHttpRequest",
-                                "X-CSRFToken": getCookie("csrftoken"),  // don't forget to include the 'getCookie' function
-                              },
-                              success: (response) => {
-
-                                //document.getElementById("stat").style.color = "var(--green-accent)"
-                                //document.getElementById("bor").style.border = "1px solid var(--green-accent)"
-                                console.log(response)
-
-                                // Get individual values needed for wellness total and then sum them
-
-                                var hoursofsleep = Number( response.wellness[0].hoursofsleep )
-                                var sleepquality = Number( response.wellness[0].sleepquality )
-                                var breakfast = Number( response.wellness[0].breakfast )
-                                var hydration = Number( response.wellness[0].hydration )
-                                var soreness = Number( response.wellness[0].soreness )
-                                var stress = Number( response.wellness[0].stress )
-                                var mood = Number( response.wellness[0].mood )
-
-                                //console.log(hoursofsleep)
-
-                                var total = hoursofsleep + sleepquality + breakfast + hydration + soreness + stress + mood
-                                // Update total in document
-                                document.getElementById("total").innerHTML = total
-
-                                var status = response.wellness[0].status
-
-                                if (status == 'N') {
-                                    document.getElementById("stat").style.color = "var(--red-accent)"
-                                    document.getElementById("bor").style.border = "1px solid var(--red-accent)"
-                                }
-                                else if (status == 'Y') {
-                                    document.getElementById("stat").style.color = "var(--green-accent)"
-                                    document.getElementById("bor").style.border = "1px solid var(--green-accent)"
+                            // Cookie is initialized to null
+                            // If there is are document cookies and they are NOT empty, the cookies in the document are fetched and placed in an array
+                            // This array is searched for a cookie that matches parameter "name"
+                            // If such a cookie is found, it is returned.
+                            function getCookie(name) {
+                                let cookieValue = null;
+                                if (document.cookie && document.cookie !== "") {
+                                    const cookies = document.cookie.split(";");
+                                    for (let i = 0; i < cookies.length; i++) {
+                                        const cookie = cookies[i].trim();
+                                        // Does this cookie string begin with the name we want?
+                                        if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                            break;
+                                        }
+                                    }
                                 }
 
-                                // Update wellness result
-                                document.getElementById("wellnessresult").innerHTML = response.wellness[0].date
+                                return cookieValue;
+                            }
+                            /* End of getCookie() function definition*/
 
-                              },
-                              error: (error) => {
+                            //if a date selector changes, call ajax to update the page
+                            document.getElementById("wellnessdate").addEventListener("change", wellness_ajax);
 
-                                console.log(error);
-                                alert("Pause");
-                              }
-                            })
-                          });
+                            /* When the "#wellnessform" form is submitted, this function will send an AJAX request to fetch the new data. */
+                            function wellness_ajax(){
+
+                                // Get value of #sportsteam
+                                var date_selected = document.getElementById("wellnessdate").value
+                                //alert(date_selected);
+
+                                // Send "POST" AJAX request to url 'AthleteProf'
+                                // This request will be handled by the Django backend -> see views.py recordKPI() for that code
+                                $.ajax({
+                                    //URL needs to be fname, lname, DOB for athletes
+                                    url: "{% url 'AthleteProf' athleteProf.fname athleteProf.lname athleteProf.dob %}",
+                                    type: "POST",
+                                    dataType: "json",
+                                    data: JSON.stringify({ wellnessdate: date_selected, }),
+                                    headers: {
+                                        "X-Requested-With": "XMLHttpRequest",
+                                        "X-CSRFToken": getCookie("csrftoken"),  // don't forget to include the 'getCookie' function
+                                    },
+                                    success: (response) => {
+
+                                        console.log(response)
+
+                                        // Get individual values needed for wellness total and then sum them
+                                        var hoursofsleep = Number(response.wellness[0].hoursofsleep)
+                                        var sleepquality = Number(response.wellness[0].sleepquality)
+                                        var breakfast = Number(response.wellness[0].breakfast)
+                                        var hydration = Number(response.wellness[0].hydration)
+                                        var soreness = Number(response.wellness[0].soreness)
+                                        var stress = Number(response.wellness[0].stress)
+                                        var mood = Number(response.wellness[0].mood)
+
+                                        var total = hoursofsleep + sleepquality + breakfast + hydration + soreness + stress + mood
+                                        
+                                        // Update total in document
+                                        document.getElementById("total").innerHTML = total
+
+                                        var status = response.wellness[0].status
+
+                                        if (status == 'N') {
+                                            document.getElementById("stat").style.color = "var(--red-accent)"
+                                            document.getElementById("bor").style.border = "1px solid var(--red-accent)"
+                                        }
+                                        else if (status == 'Y') {
+                                            document.getElementById("stat").style.color = "var(--green-accent)"
+                                            document.getElementById("bor").style.border = "1px solid var(--green-accent)"
+                                        }
+
+                                        // Update wellness result
+                                        document.getElementById("wellnessresult").innerHTML = response.wellness[0].date
+
+                                    },
+                                    error: (error) => {
+
+                                        console.log(error);
+                                        alert("Pause");
+                                    }
+                                })
+                            }
                         /* End of "#sportsteam" change function */
                         </script>
-
-                        {% endfor %}
-                        {% endif %}
                     </div>
                 </div>
 
@@ -277,7 +245,8 @@
                             <div class="d-flex align-items-center" style="gap:var(--inner-padding);">
                                 <h4>Bar Graph</h4>
                                 <h4>Spider Graph</h4>
-                                <i class="fa-solid fa-gear" style="color: var(--yellow-accent); font-size: var(--icon-size);"></i>
+                                <i class="fa-solid fa-gear"
+                                    style="color: var(--yellow-accent); font-size: var(--icon-size);"></i>
                             </div>
                         </div>
 
@@ -294,9 +263,9 @@
                                 var kpi_count = "{{kpi_count}}";
 
                                 if (kpi_count > 0)
-                                    ajax();
+                                    kpi_ajax();
 
-                                dataUpdater();
+                                dateUpdater();
                             }
 
                             //django-provided code to assist ajax
@@ -318,11 +287,11 @@
                             }
 
                             //if a date selector changes, call ajax to update the page
-                            document.getElementById("date1").addEventListener("change", ajax);
-                            document.getElementById("date2").addEventListener("change", ajax);
+                            document.getElementById("date1").addEventListener("change", kpi_ajax);
+                            document.getElementById("date2").addEventListener("change", kpi_ajax);
 
                             //grabs info from the database without refreshing page and screwing everything up
-                            function ajax() {
+                            function kpi_ajax() {
 
                                 //get dates from selectors
                                 var date_one = document.getElementById("date1").value
@@ -392,7 +361,7 @@
                                 })
                             }
 
-                            //function dateUpdater() {
+                            function dateUpdater() {
 
                                 let selection1 = document.getElementById('date1');
                                 let date1 = document.getElementById('resultone');
@@ -436,8 +405,7 @@
                                 selection3.addEventListener('change', () => {
                                     wellnessresult.innerText = selection3.options[selection3.selectedIndex].text;
                                 });
-                            //}
-
+                            }
                         </script>
                     </div>
                 </div>
