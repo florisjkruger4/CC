@@ -79,6 +79,9 @@
 
                         </div>
 
+                        <!-- Wellness Form -->
+                        <!-- Right now, this wellness form works by refreshing the page, which re-runs the code in the script below
+                        We need to get those values to update using AJAX -->
                         <form method="post" id="wellnessform">
                             {% csrf_token %}
                             <div class="d-flex justify-content-between">
@@ -92,6 +95,8 @@
                                 <p style="font-size: 16px" id="wellnessresult">DD/MM/YY</p>
                             </div>
                         </form>
+
+                        <!-- Wellness Display -->
 
                         {% if wellness %}
                         {% for x in mostRecentWellnessReport %}
@@ -114,6 +119,8 @@
                         </a>
 
                         <script type="text/javascript">
+
+                            // Get individual values needed for wellness total and then sum them
                             var hoursofsleep = Number("{{ x.hoursofsleep }}")
                             var sleepquality = Number("{{ x.sleepquality }}")
                             var breakfast = Number("{{ x.breakfast }}")
@@ -125,6 +132,7 @@
                             console.log(hoursofsleep)
 
                             var total = hoursofsleep + sleepquality + breakfast + hydration + soreness + stress + mood
+                            // Update total in document
                             document.getElementById("total").innerHTML = total
 
                             function status() {
@@ -143,6 +151,103 @@
                             window.onload = function () {
                                 status();
                             };
+
+
+
+                        // Code for Wellness AJAX Request:
+
+                        /* getCookie() function definition*/
+                          // Definition for "getCookie" function, which will return a cookie from the document matching the parameter "name".
+                          // This is a utility funciton utilized to send and AJAX request (see next code block)
+
+                          // Cookie is initialized to null
+                          // If there is are document cookies and they are NOT empty, the cookies in the document are fetched and placed in an array
+                          // This array is searched for a cookie that matches parameter "name"
+                          // If such a cookie is found, it is returned.
+                          function getCookie(name) {
+                            let cookieValue = null;
+                            if (document.cookie && document.cookie !== "") {
+                              const cookies = document.cookie.split(";");
+                              for (let i = 0; i < cookies.length; i++) {
+                                const cookie = cookies[i].trim();
+                                // Does this cookie string begin with the name we want?
+                                if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                  break;
+                                }
+                              }
+                            }
+
+                            return cookieValue;
+                          }
+                        /* End of getCookie() function definition*/
+
+                        /* When the "#wellnessform" form is submitted, this function will send an AJAX request to fetch the new data. */
+                          $("#wellnessform").submit(function (event) {
+
+                            // Override default behavior for 'submit'
+                            event.preventDefault();
+
+                            // Get value of #sportsteam
+                            var date_selected = document.getElementById("wellnessdate").value
+                            //alert(date_selected);
+
+                            // Send "POST" AJAX request to url 'AthleteProf'
+                            // This request will be handled by the Django backend -> see views.py recordKPI() for that code
+                            $.ajax({
+                              //URL needs to be fname, lname, DOB for athletes
+                              url: "{% url 'AthleteProf' athleteProf.fname athleteProf.lname athleteProf.dob %}",
+                              type: "POST",
+                              dataType: "json",
+                              data: JSON.stringify({ wellnessdate: date_selected, }),
+                              headers: {
+                                "X-Requested-With": "XMLHttpRequest",
+                                "X-CSRFToken": getCookie("csrftoken"),  // don't forget to include the 'getCookie' function
+                              },
+                              success: (response) => {
+
+                                document.getElementById("stat").style.color = "var(--green-accent)"
+                                document.getElementById("bor").style.border = "1px solid var(--green-accent)"
+
+                                // Get individual values needed for wellness total and then sum them
+
+                                var hoursofsleep = Number( response.wellness[0].hoursofsleep )
+                                var sleepquality = Number( response.wellness[0].sleepquality )
+                                var breakfast = Number( response.wellness[0].breakfast )
+                                var hydration = Number( response.wellness[0].hydration )
+                                var soreness = Number( response.wellness[0].soreness )
+                                var stress = Number( response.wellness[0].stress )
+                                var mood = Number( response.wellness[0].mood )
+
+                                console.log(hoursofsleep)
+
+                                var total = hoursofsleep + sleepquality + breakfast + hydration + soreness + stress + mood
+                                // Update total in document
+                                document.getElementById("total").innerHTML = total
+
+                                var status = response.wellness[0].status
+
+                                if (status == 'N') {
+                                    document.getElementById("stat").style.color = "var(--red-accent)"
+                                    document.getElementById("bor").style.border = "1px solid var(--red-accent)"
+                                }
+                                else if (status == 'Y') {
+                                    document.getElementById("stat").style.color = "var(--green-accent)"
+                                    document.getElementById("bor").style.border = "1px solid var(--green-accent)"
+                                }
+
+                                // Update wellness result
+                                document.getElementById("wellnessresult").innerHTML = response.wellness[0].date
+
+                              },
+                              error: (error) => {
+
+                                console.log(error);
+                                alert("Pause");
+                              }
+                            })
+                          });
+                        /* End of "#sportsteam" change function */
                         </script>
 
                         {% endfor %}

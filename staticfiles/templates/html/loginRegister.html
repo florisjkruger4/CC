@@ -7,13 +7,52 @@
 </head>
 
 <body>
-    <div class="kpireport" style="display: flex; flex-direction: column; justify-content: space-evenly; height: 90vh; width: 65vh; margin: auto; margin-top: 40px; text-align: center;">
-        <h1>Login</h1>
-        <input type="text" class="searchbar" name="username" placeholder="Enter Username">
-        <input type="password" class="searchbar" name="password" placeholder="Enter Password">
-        <a href="/dash"><button class="submit">Login</button></a>
-    </div>
+    <div class="kpireport" style="display: flex; flex-direction: column; height: 90vh; width: 65vh; margin: auto; margin-top: 40px; text-align: center;">
+        {% if page == 'login' %}
+        <form method="POST" action="">
+            {% csrf_token %}
+            <div style="margin-top: 10%;">
+                <div>
+                    <h1>Login</h1>
+                </div>
+                <div style="padding-top: 25px; padding-bottom: 30px;">
+                    <i class="fa-solid fa-user" style="font-size: 100px;"></i>
+                </div>
+                <div style="display: flex; flex-direction: column; margin-left: auto; margin-right: auto; width: 80%; height: 40%; justify-content: space-evenly;">
+                    <input type="text" class="searchbar" name="username" placeholder="Enter Username" style="margin-bottom: 30px;">
+                    <input type="password" class="searchbar" name="password" placeholder="Enter Password" style="margin-bottom: 30px;">
+                    <button class="submit" style="margin-bottom: 30px; height: 45px; width: 40%; margin: auto;">Login</button>
+                </div>
+            </div>
+            <body>
+                {% if messages %}
+                <p class="messages" style="padding-top: 15px;">
+                  {% for message in messages %}
+                  <p> <center>{{ message }}</center></p>
+                  {% endfor %}
+                </p>
+                {% endif %} 
+            </body>
+        </form>
+        <p>Haven't registered yet?</p>
+        <a href="{% url 'Register' %}">Register</a>
 
+        {% else %}
+
+        <div style="display: flex; flex-direction: column; justify-content: space-around; height: 100%; margin-bottom: 20%;">
+            <form method="POST" action="">
+                {% csrf_token %}
+                <div style="display: flex; flex-direction: column; margin: auto; width: 80%; height: 100%; justify-content: space-evenly;">
+                    {{ form.as_p }}
+                    <button class="submit" style="margin-bottom: 30px; height: 45px; width: 40%; margin: auto;">Register</button>
+                </div>
+                <p>Already registered?</p>
+                <a href="{% url 'LoginRegister' %}">Login</a>
+            </form>
+            
+            {% endif %}
+        </div>
+    </div>
 </body>
 
 </html>

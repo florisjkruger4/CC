@@ -8,12 +8,21 @@ from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
 
 
 def LoginRegister(request):
-    if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
+
+    page = 'login'
+
+    # if user is loged in... redirect to dashboard (prevents from double logging in)
+    if request.user.is_authenticated:
+        return redirect('dash/')
+
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
 
         try:
             user = User.objects.get(username=username)
@@ -22,15 +31,47 @@ def LoginRegister(request):
 
         user = authenticate(request, username=username, password=password)
 
+        print(user)
+
         if user is not None:
             login(request, user)
-            return redirect("home")
+            return redirect('dash/')
         else:
             messages.error(request, "Username or Password does not exist")
 
-    context = {}
-    return render(request, "html/loginRegister.html", context)
+    context = {
+        'page':page,
+    }
+    return render(request, 'html/loginRegister.html', context)
 
+# delets the session id token... meaning the user needs to log in once again to create a new session to be authenticated
+def LogoutUser(request):
+
+    logout(request)
+    return redirect('/')
+
+def RegisterUser(request):
+
+    form = UserCreationForm()
+
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            # do we care about case sensitive usernames??
+            user = form.save()
+            user.save()
+
+            # log in created user
+            login(request, user)
+            return redirect('/dash')
+        else:
+            messages.error(request, 'An error occured during registration')
+
+    context = {
+        'form':form,
+    }
+
+    return render(request, 'html/loginRegister.html', context)
 
 test_types = [
     "5m Sprint",
@@ -101,6 +142,7 @@ test_types = [
 ]
 
 
+@login_required(login_url='/')
 def Dashboard(request):
     athletes = AthleteT.objects.all()
 
@@ -110,7 +152,7 @@ def Dashboard(request):
 
     return render(request, "html/dashboard.html", context)
 
-
+@login_required(login_url='/')
 def AthletesDash(request):
     q = request.GET.get("q") if request.GET.get("q") != None else ""
 
@@ -129,7 +171,7 @@ def AthletesDash(request):
 
     return render(request, "html/athletes.html", context)
 
-
+@login_required(login_url='/')
 def AddAthlete(request):
     if request.method == "POST":
         newFname = request.POST["fname"]
@@ -159,7 +201,7 @@ def AddAthlete(request):
 
     return render(request, "html/addathlete.html")
 
-
+@login_required(login_url='/')
 def AthleteProf(request, fname, lname, dob):
     athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
 
@@ -262,14 +304,66 @@ def AthleteProf(request, fname, lname, dob):
 
                 iter += 1
 
-            return JsonResponse({
-                "test_types": list(test_type),
-                "Date1_results": list(Date1_results),
-                "Date2_results": list(Date2_results),
-                "changes": list(changes),
-                "kpi_bar": list(kpi_bar),
-                "kpi_line": list(kpi_line),
-            })
+            # Add KPI tuple to list of tuples
+            kpi_test_data.append(kpi_single)
+
+    else:
+        context = {
+            "athleteProf": athleteProf,
+        }
+
+        return render(request, "html/athleteProf.html", context)
+
+    # ------------ Wellness -------------
+
+    # If parameter "request" is an XML request (AJAX)...
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        # ...AND it's also a POST request...
+        if request.method == "POST":
+            # Get the JSON data from the request
+            data = json.load(request)
+            selectedDate = data.get("wellnessdate")
+
+            # Get the appropriate wellness report
+            wellness = WellnessT.objects.filter(fname=fname, lname=lname, dob=dob, date=selectedDate).values()
+
+            # Return the list of athletes
+            return JsonResponse({"wellness": list(wellness.values())})
+        return JsonResponse({"status": "Invalid request"}, status=400)
+
+    wellness_count = int(
+        WellnessT.objects.filter(fname=fname, lname=lname, dob=dob).count()
+    )
+
+    if wellness_count > 0:
+        wellness = WellnessT.objects.filter(fname=fname, lname=lname, dob=dob).values()
+        wellness_dates = (
+            WellnessT.objects.filter(fname=fname, lname=lname, dob=dob)
+            .values("date")
+            .annotate(dcount=Count("date"))
+            .order_by("date")
+        )
+        wellness_most_recent = wellness_dates.last()["date"]
+
+        # Takes user input through Django form (Wellness date selection)
+        wellness_date = request.POST.get("wellnessdate")
+
+        # Wellness Date selection
+        if wellness_date:
+            mostRecentWellnessReport = WellnessT.objects.filter(
+                fname=fname, lname=lname, dob=dob, date__exact=wellness_date
+            ).values()
+        else:
+            mostRecentWellnessReport = WellnessT.objects.filter(
+                fname=fname, lname=lname, dob=dob, date__exact=wellness_most_recent
+            ).values()
+
+    else:
+        context = {
+            "athleteProf": athleteProf,
+        }
+
+        return render(request, "html/athleteProf.html", context)
 
     context = {
         "athleteProf": athleteProf,
@@ -281,7 +375,7 @@ def AthleteProf(request, fname, lname, dob):
 
     return render(request, "html/athleteProf.html", context)
 
-
+@login_required(login_url='/')
 def TeamDash(request):
     athletes = TeamT.objects.all()
 
@@ -289,25 +383,35 @@ def TeamDash(request):
 
     return render(request, "html/teams.html", context)
 
-
+@login_required(login_url='/')
 def recordKPI(request):
+
+    # Define teams
     teams = TeamT.objects.values("sport").order_by("sport").distinct()
 
+    # Initialise selectedSport and athletes to null and empty set respectively
     selectedSport = ""
     athletes = []
 
+    # If parameter "request" is an XML request (AJAX)...
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        # ...AND it's also a POST request...
         if request.method == "POST":
+            # Get the JSON data from the request
             data = json.load(request)
             selectedSport = data.get("sportsteam")
 
+            # Get the first names and last names of all the athletes whose team matches requested team
             athletes = AthleteT.objects.filter(sportsteam__exact=selectedSport).values(
                 "fname", "lname"
             )
 
+            # Return the list of athletes
             return JsonResponse({"athletes": list(athletes.values())})
         return JsonResponse({"status": "Invalid request"}, status=400)
 
+    # Other (non-AJAX) requests will recieve a response with a whole HTML document. This requires a page reload.
+    #      Is this still being used after we implemented AJAX on this page?
     context = {
         "athletes": athletes,
         "teams": teams,
@@ -317,7 +421,7 @@ def recordKPI(request):
 
     return render(request, "html/recordKPI.html", context)
 
-
+@login_required(login_url='/')
 def WellnessDash(request):
     athleteProf = AthleteT.objects.all()
 
@@ -342,7 +446,7 @@ def WellnessDash(request):
 
     return render(request, "html/wellness.html", context)
 
-
+@login_required(login_url='/')
 def AddKPI(request, fname, lname, dob):
     athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
 
@@ -374,7 +478,7 @@ def AddKPI(request, fname, lname, dob):
 
     return render(request, "html/addkpi.html", context)
 
-
+@login_required(login_url='/')
 def AddWellness(request, fname, lname, dob):
     athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
 

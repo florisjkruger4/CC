@@ -6,6 +6,8 @@ from django.conf import settings
 
 urlpatterns = [
     path('', views.LoginRegister, name="LoginRegister"),
+    path('logout/', views.LogoutUser, name="LogoutUser"),
+    path('register/', views.RegisterUser, name="Register"),
 
     path('dash/', views.Dashboard, name="Dashboard"),
     path('athletes/', views.AthletesDash, name="AthletesDash"),

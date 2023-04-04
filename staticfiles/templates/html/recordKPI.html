@@ -16,6 +16,7 @@
         <div class="row">
           <div class="col-lg-9" style="height: 100vh; padding: 1rem 0 0 0;">
 
+            <!-- Title Header -->
             <div class="main-header justify-content-between">
               <h1>Record KPI</h1>
             </div>
@@ -36,45 +37,65 @@
 
             </div>
 
+            <!-- Script defining behavior for updating current date, getCookie() function, and sending an AJAX request for "#sportsteam"-->
             <script>
-              const date = new Date();
 
-              let day = date.getDate();
-              let month = date.getMonth() + 1;
-              let year = date.getFullYear();
+              /* This block of code sets the default date in the selector to today's date */
+                // Set date form to the current day by default
+                const date = new Date();
 
-              if (month < 10)
-                month = "0" + month;
+                let day = date.getDate();
+                let month = date.getMonth() + 1;
+                let year = date.getFullYear();
 
-              if (day < 10)
-                month = "0" + month;
+                if (month < 10)
+                  month = "0" + month;
 
-              let currentDate = `${year}-${month}-${day}`;
+                if (day < 10)
+                  month = "0" + month;
 
-              console.log(document.getElementById("date-selector").value);
+                let currentDate = `${year}-${month}-${day}`;
 
-              document.getElementById("date-selector").value = currentDate;
+                // Log result of date calculation to console
+                //  Do we still need this?
+                console.log(document.getElementById("date-selector").value);
 
-              function getCookie(name) {
-                let cookieValue = null;
-                if (document.cookie && document.cookie !== "") {
-                  const cookies = document.cookie.split(";");
-                  for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    // Does this cookie string begin with the name we want?
-                    if (cookie.substring(0, name.length + 1) === (name + "=")) {
-                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                      break;
+                // Update date selector in document
+                document.getElementById("date-selector").value = currentDate;
+              /* End of date block */
+
+              /* getCookie() function definition*/
+                // Definition for "getCookie" function, which will return a cookie from the document matching the parameter "name".
+                // This is a utility funciton utilized to send and AJAX request (see next code block)
+
+                // Cookie is initialized to null
+                // If there is are document cookies and they are NOT empty, the cookies in the document are fetched and placed in an array
+                // This array is searched for a cookie that matches parameter "name"
+                // If such a cookie is found, it is returned.
+                function getCookie(name) {
+                  let cookieValue = null;
+                  if (document.cookie && document.cookie !== "") {
+                    const cookies = document.cookie.split(";");
+                    for (let i = 0; i < cookies.length; i++) {
+                      const cookie = cookies[i].trim();
+                      // Does this cookie string begin with the name we want?
+                      if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                      }
                     }
                   }
+
+                  return cookieValue;
                 }
+              /* End of getCookie() function definition*/
 
-                return cookieValue;
-              }
+              /* When the "#sportsteam" form is changed, this function will send an AJAX request to fetch the new team data. */
+                // When for "#sportsteam" is changed...
+                $("#sportsteam").change(function (event) {
 
-              $("#sportsteam").change(function (event) {
-
-                var sport_selected = document.getElementById("sportsteam").value
+                  // Get value of #sportsteam
+                  var sport_selected = document.getElementById("sportsteam").value
 
                 $.ajax({
                   url: "{% url 'recordKPI' %}",
