@@ -44,9 +44,9 @@
         <tbody>
           {% for AthleteT in athletes %}
           <tr>
-            <td><a href="{% url 'AthleteProf' AthleteT.fname AthleteT.lname AthleteT.sportsteam AthleteT.dob %}">{{ AthleteT.fname }}</a>
+            <td><a href="{% url 'AthleteProf' AthleteT.fname AthleteT.lname AthleteT.sportsteam AthleteT.position AthleteT.gender AthleteT.dob %}">{{ AthleteT.fname }}</a>
             </td>
-            <td><a href="{% url 'AthleteProf' AthleteT.fname AthleteT.lname AthleteT.sportsteam AthleteT.dob %}">{{ AthleteT.lname }}</a>
+            <td><a href="{% url 'AthleteProf' AthleteT.fname AthleteT.lname AthleteT.sportsteam AthleteT.position AthleteT.gender AthleteT.dob %}">{{ AthleteT.lname }}</a>
             </td>
             <td>{{ AthleteT.sportsteam }}</td>
             <td>{{ AthleteT.position }}</td>

@@ -159,8 +159,8 @@ def AddAthlete(request):
     return render(request, "html/addathlete.html")
 
 
-def AthleteProf(request, fname, lname, sportsteam, dob):
-    athleteProf = AthleteT.objects.get(fname=fname, lname=lname, sportsteam=sportsteam, dob=dob)
+def AthleteProf(request, fname, lname, sportsteam, position, gender, dob):
+    athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
 
     # List of KPI table rows
     kpi_list = KpiT.objects.filter(fname=fname, lname=lname, dob=dob)
@@ -265,11 +265,13 @@ def AthleteProf(request, fname, lname, sportsteam, dob):
         # All tests the athlete has taken
         all_tests = KpiT.objects.filter(fname=fname, lname=lname, dob=dob).values_list('testtype', flat=True).distinct()
 
-        # Selected KPI date
-        radar_date = request.POST.get("radar_date")
-
-        # Selected KPI tests list (labels)
-        selected_radar_tests = request.POST.getlist('selected_radar_tests')
+        if request.method == "POST":
+            # Selected KPI date
+            radar_date = request.POST.get("radar_date")
+            selected_radar_tests = request.POST.getlist('selected_radar_tests')
+        else:
+            radar_date = kpi_most_recent
+            selected_radar_tests = all_tests
 
         # Athletes results for selected KPI's and Date
         athlete_radar_results = []
@@ -277,30 +279,25 @@ def AthleteProf(request, fname, lname, sportsteam, dob):
             # Get the kpi result <=/lte to the given date
             athlete_radar_results.append(KpiT.objects.filter(fname=fname, lname=lname, dob=dob, datekpi__lte=radar_date, testtype=test).order_by('datekpi').values_list('testresult', flat=True).first())
 
-        # Need to add code to query for team, position, or gender averages below
-
         # List specifying which averages to comapre to (Team, Position, or Gender)
         compare_avg = request.POST.getlist('compare_avg')
 
-        # Team averages (working on it!)
-        # teammates = AthleteT.objects.filter(sportsteam=sportsteam).values_list('fname', 'lname', 'dob')
-        # for item in teammates:
-        #     first_name = item[0]
-        #     last_name = item[1]
-        #     birthdate = item[2]
-        #     print(f"{first_name} {last_name} was born on {birthdate}")
+        # Gender (just returns athletes of the same team and position for now)
+        if "gender_avg" in compare_avg:
+            same_gender_athletes = AthleteT.objects.filter(gender=gender).exclude(fname=fname, lname=lname, dob=dob).values_list('fname', 'lname', 'dob')
+            # same_gender_ruslts = []
+            # for athlete in same_gender_athletes:
+            #     fname, lname, dob = athlete
+            #     for test in selected_radar_tests:
+            #         same_gender_ruslts.append(KpiT.objects.filter(fname=fname, lname=lname, dob=dob, testtype=test, datekpi__lte=radar_date))
 
-        # team_average = []
-        # for test in selected_radar_tests:
-        #     for teammate in teammates:
-        #         fname = teammate[0]
-        #         lname = teammate[1]
-        #         dob = teammate[2]
-        #         team_average.append(KpiT.objects.filter(fname=fname, lname=lname, dob=dob, testtype=test).values_list('testresult'))
+        # Position (just returns athletes of the same team and position for now)
+        if "position_avg" in compare_avg:
+            same_position_athletes = AthleteT.objects.filter(sportsteam=sportsteam, position=position).exclude(fname=fname, lname=lname, dob=dob).values_list('fname', 'lname', 'dob')
 
-        # average = AthleteT.objects.filter(sportsteam=sportsteam, test_type=test).aggregate(avg_result=Avg('testresult'))
-        # team_radar_averages.append(average['avg_result'])
-
+        # Sportsteam (just returns athletes of the same team and position for now)
+        if "team_avg" in compare_avg:
+            teammates = AthleteT.objects.filter(sportsteam=sportsteam).exclude(Q(fname=fname) & Q(lname=lname) & Q(dob=dob)).values_list('fname', 'lname', 'dob')
 
         # Render the graph if more than 2 graphs were selected 
         if len(selected_radar_tests) > 2:
@@ -309,7 +306,7 @@ def AthleteProf(request, fname, lname, sportsteam, dob):
             Radar_chart = None
 
     else:
-        context += {
+        context = {
             "athleteProf": athleteProf,
         }
 
