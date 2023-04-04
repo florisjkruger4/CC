@@ -19,12 +19,12 @@ def LoginRegister(request):
     # if user is loged in... redirect to dashboard (prevents from double logging in)
     if request.user.is_authenticated:
         return redirect('dash/')
-    
+
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        try: 
+        try:
             user = User.objects.get(username=username)
         except:
             messages.error(request, 'User does not exist')
@@ -375,23 +375,33 @@ def TeamDash(request):
 
 @login_required(login_url='/')
 def recordKPI(request):
+
+    # Define teams
     teams = TeamT.objects.values("sport").order_by("sport").distinct()
 
+    # Initialise selectedSport and athletes to null and empty set respectively
     selectedSport = ""
     athletes = []
 
+    # If parameter "request" is an XML request (AJAX)...
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        # ...AND it's also a POST request...
         if request.method == "POST":
+            # Get the JSON data from the request
             data = json.load(request)
             selectedSport = data.get("sportsteam")
 
+            # Get the first names and last names of all the athletes whose team matches requested team
             athletes = AthleteT.objects.filter(sportsteam__exact=selectedSport).values(
                 "fname", "lname"
             )
 
+            # Return the list of athletes
             return JsonResponse({"athletes": list(athletes.values())})
         return JsonResponse({"status": "Invalid request"}, status=400)
 
+    # Other (non-AJAX) requests will recieve a response with a whole HTML document. This requires a page reload.
+    #      Is this still being used after we implemented AJAX on this page?
     context = {
         "athletes": athletes,
         "teams": teams,

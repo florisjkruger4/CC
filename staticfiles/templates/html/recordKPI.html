@@ -101,7 +101,7 @@
                   var sport_selected = document.getElementById("sportsteam").value
 
                   // Send "POST" AJAX request to url 'recordKPI'
-                  // This request will be handled by the Django backend -> see views.py AddKPI() for that code
+                  // This request will be handled by the Django backend -> see views.py recordKPI() for that code
                   $.ajax({
                     url: "{% url 'recordKPI' %}",
                     type: "POST",
