@@ -304,9 +304,14 @@ def AthleteProf(request, fname, lname, dob):
 
                 iter += 1
 
-            # Add KPI tuple to list of tuples
-            kpi_test_data.append(kpi_single)
-
+            return JsonResponse({
+                "test_types": list(test_type),
+                "Date1_results": list(Date1_results),
+                "Date2_results": list(Date2_results),
+                "changes": list(changes),
+                "kpi_bar": list(kpi_bar),
+                "kpi_line": list(kpi_line),
+            })
     else:
         context = {
             "athleteProf": athleteProf,
@@ -371,6 +376,12 @@ def AthleteProf(request, fname, lname, dob):
         "kpi_earliest": kpi_earliest,
         "kpi_most_recent": kpi_most_recent,
         "kpi_count": kpi_count,
+        "numOfWellnesReports": wellness_count,
+        "wellness": wellness,
+        "wellnessReportDates": wellness_dates,
+        "mostRecentWellnessReportDate": wellness_most_recent,
+        "wellness_date": wellness_date,
+        "mostRecentWellnessReport": mostRecentWellnessReport,
     }
 
     return render(request, "html/athleteProf.html", context)

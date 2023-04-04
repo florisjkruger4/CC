@@ -79,9 +79,6 @@
 
                         </div>
 
-                        <!-- Wellness Form -->
-                        <!-- Right now, this wellness form works by refreshing the page, which re-runs the code in the script below
-                        We need to get those values to update using AJAX -->
                         <form method="post" id="wellnessform">
                             {% csrf_token %}
                             <div class="d-flex justify-content-between">
@@ -205,6 +202,8 @@
                                 "X-CSRFToken": getCookie("csrftoken"),  // don't forget to include the 'getCookie' function
                               },
                               success: (response) => {
+
+                                console.log(response);
 
                                 document.getElementById("stat").style.color = "var(--green-accent)"
                                 document.getElementById("bor").style.border = "1px solid var(--green-accent)"
@@ -394,7 +393,7 @@
                                 })
                             }
 
-                            function dateUpdater() {
+                            //function dateUpdater() {
 
                                 let selection1 = document.getElementById('date1');
                                 let date1 = document.getElementById('resultone');
@@ -438,7 +437,7 @@
                                 selection3.addEventListener('change', () => {
                                     wellnessresult.innerText = selection3.options[selection3.selectedIndex].text;
                                 });
-                            }
+                            //}
 
                         </script>
                     </div>
