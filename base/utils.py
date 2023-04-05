@@ -1,9 +1,10 @@
+import random
 import matplotlib.pyplot as plt
 import base64
 from io import BytesIO
 import numpy as np
 import pandas as pd
-import plotly.express as px
+import plotly.graph_objects as go
 
 def get_graph():
 
@@ -69,16 +70,34 @@ def line_graph(x, y, change):
     graph = get_graph()
     return graph
 
-# Define a function that takes in two lists of data points and generates a radar chart
-def radar_chart(labels, results, date):
-    # Create a pandas DataFrame from the data
-    df = pd.DataFrame(dict(Result=results, Test=labels))
+# A dictionary of athlete tests and results, a list of nested dictionaries of averages for tests and results, and the selected date are passed
+def radar_chart(athlete_results, average_results, date):
+    # Create a pandas DataFrame from the athlete date
+    df = pd.DataFrame(dict(Result=athlete_results.values(), Test=athlete_results.keys()))
     
     # Create the radar chart with Plotly
-    fig = px.line_polar(df, r='Result', theta='Test', line_close=True)
+    fig = go.Figure()
+    fig.add_trace(go.Scatterpolar(r=df['Result'], theta=df['Test'], fill='toself', name='Athlete', line=dict(color='#96b7ff', width=2), 
+                                  # Customize the hover over info for each date point   
+                                  hovertemplate='<b>Result:</b> %{r}<br><b>Test Type:</b> %{theta}<extra></extra>'))
     
-    # Update the style of the chart
-    fig.update_traces(line=dict(color='#96b7ff', width=2))
+    # Colors for team, position, and gender respectively
+    average_colors = ['green', 'yellow', 'purple']
+    color_index = 0
+    for group_dict in average_results:
+        group_name = group_dict['group']
+        group_results = group_dict['results']
+        
+        # Create a pandas DataFrame from the group's data
+        group_df = pd.DataFrame(dict(Result=group_results.values(), Test=group_results.keys()))
+
+        # Add a trace for the group to the radar chart
+        fig.add_trace(go.Scatterpolar(r=group_df['Result'], theta=group_df['Test'], fill='toself', name=group_name, line=dict(color=average_colors[color_index], width=2), 
+                                      # Customize the hover over info for each date point  
+                                      hovertemplate='<b>Result:</b> %{r}<br><b>Test Type:</b> %{theta}<extra></extra>'))
+        # The next trace will have a new color
+        color_index += 1
+
     # Update the layout of the figure to set the background color and add a title
     fig.update_layout(
         # Set the title text, font color, and size
@@ -110,10 +129,7 @@ def radar_chart(labels, results, date):
         )
     )
     
-    # Set the config of the figure to make it non-interactive
-    # fig.update_config({'displayModeBar': False})
-    
     # Convert the figure to a HTML string and return it
-    # displayModeBar False gets rid of the menu (download as png, zoom)
-    graph = fig.to_html(full_html=False, config={'displayModeBar': False})
+    # displayModeBar shows the screenshot, zoom, box and lasso select tools
+    graph = fig.to_html(full_html=False, config={'displayModeBar': True})
     return graph
