@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Header -->
+    {% include 'html/header.html' %}
+</head>
+
+<body>
+    <!-- SideNavbar -->
+    {% include 'html/sidenav.html' %}
+
+    <div style="margin: auto; width: 60vh; height: 100vh;">
+        <h1>{{user}}'s Profile Page</h1>
+        <p>Register New User</p>
+        <div class="kpireport" style="text-align: center;"">
+            <div style="display: flex; flex-direction: column; justify-content: space-around; height: 100%; margin-bottom: 20%;">
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <div style="display: flex; flex-direction: column; margin: auto; width: 80%; height: 100%; justify-content: space-evenly;">
+                        {{ form.as_p }}
+                        <button class="submit" style="margin-bottom: 30px; height: 45px; width: 40%; margin: auto;">Register</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+</body>

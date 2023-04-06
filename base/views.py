@@ -44,7 +44,34 @@ def LoginRegister(request):
     }
     return render(request, 'html/loginRegister.html', context)
 
-# delets the session id token... meaning the user needs to log in once again to create a new session to be authenticated
+@login_required(login_url='/')
+def userProf(request, username):
+
+    user = User.objects.get(username=username)
+
+    form = UserCreationForm()
+
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            # do we care about case sensitive usernames??
+            user = form.save()
+            user.save()
+
+            # log in created user
+            login(request, user)
+            return redirect('/dash')
+        else:
+            messages.error(request, 'An error occured during registration')
+
+    context = {
+        'user':user,
+        'form':form,
+    }
+
+    return render(request, 'html/userProf.html', context)
+
+# deletes the session id token... meaning the user needs to log in once again to create a new session to be authenticated
 def LogoutUser(request):
 
     logout(request)

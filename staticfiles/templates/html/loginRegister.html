@@ -8,7 +8,6 @@
 
 <body>
     <div class="kpireport" style="display: flex; flex-direction: column; height: 90vh; width: 65vh; margin: auto; margin-top: 40px; text-align: center;">
-        {% if page == 'login' %}
         <form method="POST" action="">
             {% csrf_token %}
             <div style="margin-top: 10%;">
@@ -34,24 +33,6 @@
                 {% endif %} 
             </body>
         </form>
-        <p>Haven't registered yet?</p>
-        <a href="{% url 'Register' %}">Register</a>
-
-        {% else %}
-
-        <div style="display: flex; flex-direction: column; justify-content: space-around; height: 100%; margin-bottom: 20%;">
-            <form method="POST" action="">
-                {% csrf_token %}
-                <div style="display: flex; flex-direction: column; margin: auto; width: 80%; height: 100%; justify-content: space-evenly;">
-                    {{ form.as_p }}
-                    <button class="submit" style="margin-bottom: 30px; height: 45px; width: 40%; margin: auto;">Register</button>
-                </div>
-                <p>Already registered?</p>
-                <a href="{% url 'LoginRegister' %}">Login</a>
-            </form>
-            
-            {% endif %}
-        </div>
     </div>
 </body>
 

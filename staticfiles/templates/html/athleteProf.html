@@ -122,6 +122,8 @@
 
                                 console.log(wellness_count);
 
+                                console.log("testing for wellness on load func")
+
                                 if (wellness_count > 0)
                                     wellness_ajax();
 
@@ -261,6 +263,8 @@
 
                                 //only request data if there are kpis to display
                                 var kpi_count = "{{kpi_count}}";
+
+                                console.log("testing for kpi on load func")
 
                                 if (kpi_count > 0)
                                     kpi_ajax();
