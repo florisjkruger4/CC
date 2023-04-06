@@ -57,8 +57,44 @@
                             </div>
                         </div>
 
+                        <!-- KPI/Wellness Tabs-->
+                        <div class="d-flex" style="margin-top: var(--inner-padding);">
+                            <button id="kpi-tab" class="report-tab">KPI</button>
+                            <button id="wellness-tab" class="report-tab">Wellness</button>
+                        </div>
+
+                        <script>
+                            //jQuery for kpi and wellness "tabs", allowing only one or the other to be shown
+                            //at a given time
+                            $(document).ready(function () {
+
+                                //initially hide wellness report and show only kpi trends
+                                $("#wellnessreport").hide();
+                                document.getElementById("wellness-tab").style.backgroundColor = "#191A1C";
+
+                                //upon click of wellness tab, show wellnessreport div & hide kpireport div
+                                //swap color of tab
+                                $("#wellness-tab").click(function () {
+                                    $("#kpireport").hide();
+                                    $("#wellnessreport").show();
+                                    document.getElementById("wellness-tab").style.backgroundColor = "var(--med-gray-2)";
+                                    document.getElementById("kpi-tab").style.backgroundColor = "#191A1C";
+                                });
+
+                                //upon click of kpi tab, show kpireport div & hide wellnessreport div
+                                //swap color of tab
+                                $("#kpi-tab").click(function () {
+                                    $("#kpireport").show();
+                                    $("#wellnessreport").hide();
+                                    document.getElementById("kpi-tab").style.backgroundColor = "var(--med-gray-2)";
+                                    document.getElementById("wellness-tab").style.backgroundColor = "#191A1C";
+                                });
+                            });
+                        </script>
+
                         <!-- KPI Trends -->
-                        <div class="kpireport">
+                        <div id="kpireport" class="report">
+
                             <div class="d-flex justify-content-between align-items-center">
                                 <h3>KPI Trends</h3>
                                 <div class="text-end d-flex">
@@ -80,146 +116,92 @@
 
                         </div>
 
-                        <form method="post" id="wellnessform">
-                            {% csrf_token %}
+                        <div id="wellnessreport" class="report">
+
+                            <!-- Wellness Header & Date Selector -->
                             <div class="d-flex justify-content-between">
-                                <select id="wellnessdate" name="wellnessdate">
-                                    <option selected>{{ mostRecentWellnessReportDate }}</option>
-                                    {% for x in wellnessReportDates %}
-                                    <option>{{ x.date }}</option>
-                                    {% endfor %}
-                                </select>
-
-                                <p style="font-size: 16px" id="wellnessresult">DD/MM/YY</p>
+                                <h3>Wellness</h3>
+                                <form method="post" id="wellnessform">
+                                    {% csrf_token %}
+                                    <div class="d-flex justify-content-between">
+                                        <select id="wellnessdate" name="wellnessdate">
+                                            <option selected>{{ mostRecentWellnessReportDate }}</option>
+                                            {% for x in wellnessReportDates %}
+                                            <option>{{ x.date }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </form>
                             </div>
-                        </form>
 
-                        <!-- Wellness Display -->
-
-                        <div class="d-flex">
-                            <div class="w-100 wellness-status-display" style="margin-right: 12px;" id="bor">
-                                <h4 id="stat">Status: </h4>
-                            </div>
-                            <div class="w-100 wellness-status-display" style="margin-left: 12px; border: 1px solid white;">
-                                <div class="d-flex justify-content-center">
-                                    <h4 id="readiness">Readiness: </h4>
-                                    <h4 id="total"></h4>
+                            <!-- Wellness Display -->
+                            <div style="margin-top: var(--inner-padding);">
+                                <div class="d-flex">
+                                    <div class="w-100 wellness-status-display"
+                                        style="margin-right: calc(var(--inner-padding)/2);" id="bor">
+                                        <div class="d-flex justify-content-center">
+                                            <h4 id="stat"></h4>
+                                        </div>
+                                    </div>
+                                    <div class="w-100 wellness-status-display"
+                                        style="margin-left: calc(var(--inner-padding)/2); border: 1px solid white;">
+                                        <div class="d-flex justify-content-center">
+                                            <h4 id="total"></h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="margin-top: var(--inner-padding);">
+                                    <table class="table wellness-table"
+                                        style="border-color: rgba(255, 255, 255, 0.321); color: white;">
+                                        <tr>
+                                            <td>
+                                                <h6>Hours of Sleep</h6>
+                                                <h6 id="hrs_sleep"></h6>
+                                            </td>
+                                            <td>
+                                                <h6>Sleep Quality</h6>
+                                                <h6 id="sleep_qual"></h6>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <h6>Breakfast</h6>
+                                                <h6 id="breakfast"></h6>
+                                            </td>
+                                            <td>
+                                                <h6>Hydration</h6>
+                                                <h6 id="hydration"></h6>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <h6>Soreness</h6>
+                                                <h6 id="soreness"></h6>
+                                            </td>
+                                            <td>
+                                                <h6>Stress</h6>
+                                                <h6 id="stress"></h6>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-bottom: none;">
+                                                <h6>Mood</h6>
+                                                <h6 id="mood"></h6>
+                                            </td>
+                                            <td style="border-bottom: none;">
+                                                <h6><strong>Total</strong></h6>
+                                                <h6 id="wellness_total"></h6>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
                             </div>
+
+                            <a href="{% url 'AddWellness' athleteProf.fname athleteProf.lname athleteProf.dob %}">
+                                <button class="kpidatabtn" style="margin-top: 20px;">Add Wellness Report</button>
+                            </a>
+
                         </div>
-
-                        <a href="{% url 'AddWellness' athleteProf.fname athleteProf.lname athleteProf.dob %}">
-                            <button class="kpidatabtn" style="margin-top: 20px;">Add Wellness Report</button>
-                        </a>
-
-                        <script type="text/javascript">
-
-                            //on window load, call ajax to populate page with data
-                            window.onload = function () {
-
-                                //only request data if there are kpis to display
-                                var wellness_count = "{{ wellness_count }}";
-
-                                console.log(wellness_count);
-
-                                console.log("testing for wellness on load func")
-
-                                if (wellness_count > 0)
-                                    wellness_ajax();
-
-                            }
-                            // Code for Wellness AJAX Request:
-
-                            /* getCookie() function definition*/
-                            // Definition for "getCookie" function, which will return a cookie from the document matching the parameter "name".
-                            // This is a utility funciton utilized to send and AJAX request (see next code block)
-
-                            // Cookie is initialized to null
-                            // If there is are document cookies and they are NOT empty, the cookies in the document are fetched and placed in an array
-                            // This array is searched for a cookie that matches parameter "name"
-                            // If such a cookie is found, it is returned.
-                            function getCookie(name) {
-                                let cookieValue = null;
-                                if (document.cookie && document.cookie !== "") {
-                                    const cookies = document.cookie.split(";");
-                                    for (let i = 0; i < cookies.length; i++) {
-                                        const cookie = cookies[i].trim();
-                                        // Does this cookie string begin with the name we want?
-                                        if (cookie.substring(0, name.length + 1) === (name + "=")) {
-                                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                                            break;
-                                        }
-                                    }
-                                }
-
-                                return cookieValue;
-                            }
-                            /* End of getCookie() function definition*/
-
-                            //if a date selector changes, call ajax to update the page
-                            document.getElementById("wellnessdate").addEventListener("change", wellness_ajax);
-
-                            /* When the "#wellnessform" form is submitted, this function will send an AJAX request to fetch the new data. */
-                            function wellness_ajax(){
-
-                                // Get value of #sportsteam
-                                var date_selected = document.getElementById("wellnessdate").value
-                                //alert(date_selected);
-
-                                // Send "POST" AJAX request to url 'AthleteProf'
-                                // This request will be handled by the Django backend -> see views.py recordKPI() for that code
-                                $.ajax({
-                                    //URL needs to be fname, lname, DOB for athletes
-                                    url: "{% url 'AthleteProf' athleteProf.fname athleteProf.lname athleteProf.dob %}",
-                                    type: "POST",
-                                    dataType: "json",
-                                    data: JSON.stringify({ wellnessdate: date_selected, }),
-                                    headers: {
-                                        "X-Requested-With": "XMLHttpRequest",
-                                        "X-CSRFToken": getCookie("csrftoken"),  // don't forget to include the 'getCookie' function
-                                    },
-                                    success: (response) => {
-
-                                        console.log(response)
-
-                                        // Get individual values needed for wellness total and then sum them
-                                        var hoursofsleep = Number(response.wellness[0].hoursofsleep)
-                                        var sleepquality = Number(response.wellness[0].sleepquality)
-                                        var breakfast = Number(response.wellness[0].breakfast)
-                                        var hydration = Number(response.wellness[0].hydration)
-                                        var soreness = Number(response.wellness[0].soreness)
-                                        var stress = Number(response.wellness[0].stress)
-                                        var mood = Number(response.wellness[0].mood)
-
-                                        var total = hoursofsleep + sleepquality + breakfast + hydration + soreness + stress + mood
-                                        
-                                        // Update total in document
-                                        document.getElementById("total").innerHTML = total
-
-                                        var status = response.wellness[0].status
-
-                                        if (status == 'N') {
-                                            document.getElementById("stat").style.color = "var(--red-accent)"
-                                            document.getElementById("bor").style.border = "1px solid var(--red-accent)"
-                                        }
-                                        else if (status == 'Y') {
-                                            document.getElementById("stat").style.color = "var(--green-accent)"
-                                            document.getElementById("bor").style.border = "1px solid var(--green-accent)"
-                                        }
-
-                                        // Update wellness result
-                                        document.getElementById("wellnessresult").innerHTML = response.wellness[0].date
-
-                                    },
-                                    error: (error) => {
-
-                                        console.log(error);
-                                        alert("Pause");
-                                    }
-                                })
-                            }
-                        /* End of "#sportsteam" change function */
-                        </script>
                     </div>
                 </div>
 
@@ -245,10 +227,98 @@
                                 </select>
                             </form>
                             <div class="d-flex align-items-center" style="gap:var(--inner-padding);">
-                                <h4>Bar Graph</h4>
-                                <h4>Spider Graph</h4>
+                                <!-- Bar/Spider Chart Tabs-->
+                                <div class="d-flex" style="height: 100%; margin-top: 6px;">
+                                    <button id="bar-tab" class="report-tab" style="padding: 15px 25px;">Bar Chart</button>
+                                    <button id="spider-tab" class="report-tab" style="padding: 15px 25px;">Spider Chart</button>
+                                </div>
                                 <i class="fa-solid fa-gear"
                                     style="color: var(--yellow-accent); font-size: var(--icon-size);"></i>
+                            </div>
+                        </div>
+
+                        <script>
+                            //jQuery for kpi and wellness "tabs", allowing only one or the other to be shown
+                            //at a given time
+                            $(document).ready(function () {
+
+                                //initially hide wellness report and show only kpi trends
+                                $("#spider-graphs").hide();
+                                document.getElementById("spider-tab").style.backgroundColor = "#191A1C";
+
+                                //upon click of wellness tab, show wellnessreport div & hide kpireport div
+                                //swap color of tab
+                                $("#spider-tab").click(function () {
+                                    $("#spider-graphs").show();
+                                    $("#bar-graphs").hide();
+                                    document.getElementById("spider-tab").style.backgroundColor = "var(--med-gray-2)";
+                                    document.getElementById("bar-tab").style.backgroundColor = "#191A1C";
+                                });
+
+                                //upon click of kpi tab, show kpireport div & hide wellnessreport div
+                                //swap color of tab
+                                $("#bar-tab").click(function () {
+                                    $("#spider-graphs").hide();
+                                    $("#bar-graphs").show();
+                                    document.getElementById("bar-tab").style.backgroundColor = "var(--med-gray-2)";
+                                    document.getElementById("spider-tab").style.backgroundColor = "#191A1C";
+                                });
+                            });
+                        </script>
+
+                        <div id="spider-graphs">
+                            <!-- Radar/Spider Graph -->
+                            <div class="graphprof">
+                                <form method="post" id="kpi_radar_form">
+                                    {% csrf_token %}
+                                    <div class="d-flex justify-content-between">
+                                        <select id="radar_date" name="radar_date">
+                                            <option disabled hidden selected>Select Date</option>
+                                            <option selected>{{ kpi_most_recent }}</option>
+                                            {% for x in all_dates %}
+                                                <option>{{ x.datekpi }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <input type="submit" value="submit" class="submit">
+                                    </div>
+                                    <br>
+                                    <!-- If a date has been selected -->
+                                    {% if radar_date %}
+                                        <div>
+                                            <form method="post" id="selected_radar_tests">
+                                                {% csrf_token %}
+                                                <!-- Passing radar_date as a session variable -->
+                                                <input type="hidden" name="radar_date" id="radar_date_input" value="{{ radar_date }}">
+                                                <!-- Checkboxes for the test types -->
+                                                {% for test in all_tests %}
+                                                    <input type="checkbox" id="{{ test }}" name="selected_radar_tests" value="{{ test }}">
+                                                    <label for="{{ test }}">{{ test }}</label><br>
+                                                {% endfor %}
+                                                <hr> 
+                                                <!-- Checkboxes for the averages to compare to -->                            
+                                                <input type="checkbox" id="team_avg" name="compare_avg" value="team_avg">
+                                                <label for="team_avg">Team Avg</label><br>
+                                            
+                                                <input type="checkbox" id="position_avg" name="compare_avg" value="position_avg">
+                                                <label for="position_avg">Position Avg</label><br>
+                                            
+                                                <input type="checkbox" id="gender_avg" name="compare_avg" value="gender_avg">
+                                                <label for="gender_avg">Gender Avg</label><br>
+                                                <br>
+                                                <input type="submit" value="Submit" class="submit">
+                                            </form>                                            
+                                        </div>
+                                        <br>
+                                        <!-- Display the spider graph or not -->
+                                        {% if selected_radar_tests %}
+                                            {% if selected_radar_tests|length > 2 %}
+                                                {{ Radar_chart|safe }}
+                                            {% else %}
+                                                <p>Three tests are required to generate a spider graph.</p>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+                                </form>
                             </div>
                         </div>
 
@@ -261,18 +331,31 @@
                             //on window load, call ajax to populate page with data
                             window.onload = function () {
 
-                                //only request data if there are kpis to display
-                                var kpi_count = "{{kpi_count}}";
-
-                                console.log("testing for kpi on load func")
+                                //if there are kpis or wellness reports, submit an ajax request to get data on page load
+                                var kpi_count = "{{ kpi_count }}";
+                                var wellness_count = "{{ wellness_count }}";
 
                                 if (kpi_count > 0)
                                     kpi_ajax();
+                                if (wellness_count > 0)
+                                    wellness_ajax();
+
 
                                 dateUpdater();
+
+                                //set dates on kpi-report div to the ones initially selected
+                                document.getElementById("resultone").innerHTML = "{{ kpi_earliest }}";
+                                document.getElementById("resulttwo").innerHTML = "{{ kpi_most_recent }}";
                             }
 
-                            //django-provided code to assist ajax
+                            /* getCookie() function definition*/
+                            // Definition for "getCookie" function, which will return a cookie from the document matching the parameter "name".
+                            // This is a utility funciton utilized to send and AJAX request (see next code block)
+
+                            // Cookie is initialized to null
+                            // If there is are document cookies and they are NOT empty, the cookies in the document are fetched and placed in an array
+                            // This array is searched for a cookie that matches parameter "name"
+                            // If such a cookie is found, it is returned.
                             function getCookie(name) {
                                 let cookieValue = null;
                                 if (document.cookie && document.cookie !== "") {
@@ -365,38 +448,82 @@
                                 })
                             }
 
+                            //if a date selector changes, call ajax to update the page 
+                            document.getElementById("wellnessdate").addEventListener("change", wellness_ajax);
+
+                            /* When the "#wellnessform" form is submitted, this function will send an AJAX request to fetch the new data. */
+                            function wellness_ajax() {
+
+                                // Get value of #sportsteam
+                                var date_selected = document.getElementById("wellnessdate").value
+
+                                // Send "POST" AJAX request to url 'AthleteProf'
+                                // This request will be handled by the Django backend -> see views.py recordKPI() for that code
+                                $.ajax({
+                                    //URL needs to be fname, lname, DOB for athletes
+                                    url: "{% url 'AthleteProf' athleteProf.fname athleteProf.lname athleteProf.dob %}",
+                                    type: "POST",
+                                    dataType: "json",
+                                    data: JSON.stringify({ wellnessdate: date_selected, }),
+                                    headers: {
+                                        "X-Requested-With": "XMLHttpRequest",
+                                        "X-CSRFToken": getCookie("csrftoken"),  // don't forget to include the 'getCookie' function
+                                    },
+                                    success: (response) => {
+
+                                        console.log(response);
+
+                                        // Get individual values needed for wellness total and then sum them
+                                        var hoursofsleep = Number(response.wellness[0].hoursofsleep);
+                                        var sleepquality = Number(response.wellness[0].sleepquality);
+                                        var breakfast = Number(response.wellness[0].breakfast);
+                                        var hydration = Number(response.wellness[0].hydration);
+                                        var soreness = Number(response.wellness[0].soreness);
+                                        var stress = Number(response.wellness[0].stress);
+                                        var mood = Number(response.wellness[0].mood);
+
+                                        document.getElementById("hrs_sleep").innerText = hoursofsleep;
+                                        document.getElementById("sleep_qual").innerText = sleepquality;
+                                        document.getElementById("breakfast").innerText = breakfast;
+                                        document.getElementById("hydration").innerText = hydration;
+                                        document.getElementById("soreness").innerText = soreness;
+                                        document.getElementById("stress").innerText = stress;
+                                        document.getElementById("mood").innerText = mood;
+
+                                        var total = hoursofsleep + sleepquality + breakfast + hydration + soreness + stress + mood;
+                                        var status = response.wellness[0].status;
+
+                                        // Update total & readiness in document
+                                        document.getElementById("wellness_total").innerText = total;
+                                        document.getElementById("total").innerHTML = "Readiness: " + total;
+                                        document.getElementById("stat").innerHTML = "Status: " + status;
+
+                                        if (status == 'N') {
+                                            document.getElementById("stat").style.color = "var(--red-accent)";
+                                            document.getElementById("bor").style.border = "1px solid var(--red-accent)";
+                                        }
+                                        else if (status == 'Y') {
+                                            document.getElementById("stat").style.color = "var(--green-accent)";
+                                            document.getElementById("bor").style.border = "1px solid var(--green-accent)";
+                                        }
+
+                                        // Update wellness result
+                                        document.getElementById("wellnessresult").innerHTML = response.wellness[0].date;
+
+                                    },
+                                    error: (error) => {
+
+                                        console.log(error);
+                                        alert("Pause");
+                                    }
+                                })
+                            }
+                            /* End of "#sportsteam" change function */
+
                             function dateUpdater() {
 
                                 let selection1 = document.getElementById('date1');
-                                let date1 = document.getElementById('resultone');
-
-                                var date_one = "{{ date_one }}"
-                                document.getElementById("resultone").innerHTML = date_one
-                                if (date_one != "None")
-                                    document.getElementById("resultone").innerHTML = date_one
-                                else
-                                    document.getElementById("resultone").innerHTML = "None";
-
                                 let selection2 = document.getElementById('date2');
-                                let date2 = document.getElementById('resulttwo');
-
-                                var date_two = "{{ date_two }}"
-                                document.getElementById("resulttwo").innerHTML = date_two
-                                if (date_two != "None")
-                                    document.getElementById("resulttwo").innerHTML = date_two
-                                else
-                                    document.getElementById("resulttwo").innerHTML = "None";
-
-                                let selection3 = document.getElementById('wellnessdate');
-                                let date3 = document.getElementById('wellnessresult');
-
-                                var mostrecentdate = "{{ mostRecentWellnessReportDate }}"
-                                document.getElementById("wellnessresult").innerHTML = mostrecentdate
-                                var wellness_date = "{{ wellness_date }}"
-
-                                if (wellness_date != "None") {
-                                    document.getElementById("wellnessresult").innerHTML = wellness_date
-                                }
 
                                 selection1.addEventListener('change', () => {
                                     resultone.innerText = selection1.options[selection1.selectedIndex].text;
@@ -404,10 +531,6 @@
 
                                 selection2.addEventListener('change', () => {
                                     resulttwo.innerText = selection2.options[selection2.selectedIndex].text;
-                                });
-
-                                selection3.addEventListener('change', () => {
-                                    wellnessresult.innerText = selection3.options[selection3.selectedIndex].text;
                                 });
                             }
                         </script>

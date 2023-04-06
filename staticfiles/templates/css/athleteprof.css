@@ -7,12 +7,20 @@
     border-radius: var(--radius-big);
 }
 
-.kpireport {
+.report {
     width: 100%;
     background-color: var(--med-gray-2);
-    border-radius: var(--radius-big);
+    border-radius: 0 var(--radius-big) var(--radius-big) var(--radius-big);
     padding: var(--inner-padding);
-    margin-top: var(--inner-padding);
+    margin-bottom: var(--inner-padding);
+}
+
+.report-tab {
+    background-color: var(--med-gray-2); 
+    padding: 10px 25px; 
+    border: none; 
+    color: white; 
+    border-radius: var(--radius-big) var(--radius-big) 0 0;
 }
 
 .graphprof {
@@ -35,6 +43,11 @@
 }
 
 .wellnessrows {
+    display: flex;
+    justify-content: space-between;
+}
+
+.wellness-table td {
     display: flex;
     justify-content: space-between;
 }
