@@ -77,29 +77,6 @@ def LogoutUser(request):
     logout(request)
     return redirect('/')
 
-def RegisterUser(request):
-
-    form = UserCreationForm()
-
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            # do we care about case sensitive usernames??
-            user = form.save()
-            user.save()
-
-            # log in created user
-            login(request, user)
-            return redirect('/dash')
-        else:
-            messages.error(request, 'An error occured during registration')
-
-    context = {
-        'form':form,
-    }
-
-    return render(request, 'html/loginRegister.html', context)
-
 test_types = [
     "5m Sprint",
     "10m Sprint",
@@ -172,9 +149,22 @@ test_types = [
 @login_required(login_url='/')
 def Dashboard(request):
     athletes = AthleteT.objects.all()
+    teams = TeamT.objects.all()
+
+    # session stuff...
+    recentlyViewedAthletes = None
+    sessionLength = None
+
+    if 'recently_viewed' in request.session:
+        Athletes = AthleteT.objects.filter(id__in=request.session['recently_viewed'])
+        recentlyViewedAthletes = sorted(Athletes, key=lambda x: request.session['recently_viewed'].index(x.id))
+        sessionLength = len(request.session['recently_viewed'])
 
     context = {
-        "athletes": athletes,
+        'athletes': athletes,
+        'teams':teams,
+        'recentlyViewedAthletes':recentlyViewedAthletes,
+        'sessionLength':sessionLength
     }
 
     return render(request, "html/dashboard.html", context)
@@ -323,20 +313,17 @@ def wellnessAjax(fname, lname, dob, wellnessdate):
     # Return the list of athletes
     return JsonResponse({"wellness": list(wellness.values())})
 
-def spider(request, athleteProf):
-    # This code generates a radar/spider chart to display the latest KPI results for an athlete given a date 
-        # All tests the athlete has taken
-
-        fname = athleteProf.fname
-        lname = athleteProf.lname
-        dob = athleteProf.dob
         
 
-
 @login_required(login_url='/')
-def AthleteProf(request, fname, lname, dob,):
+def AthleteProf(request, fname, lname, dob, id):
 
     athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
+
+    Radar_chart = None
+    radar_date = None
+    all_tests = None
+    selected_radar_tests = None
 
     # If parameter "request" is an XML request (AJAX)...
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
@@ -361,6 +348,23 @@ def AthleteProf(request, fname, lname, dob,):
     # Init page will contain Athlete Profile info (fname, lname, sport, pos...) +
     # all kpi dates and all wellness dates. 
     else:
+
+        # session stuff...
+        recentlyViewedAthletes = None
+
+        if 'recently_viewed' in request.session:
+            Athletes = AthleteT.objects.filter(id__in=request.session['recently_viewed'])
+            recentlyViewedAthletes = sorted(Athletes, key=lambda x: request.session['recently_viewed'].index(x.id))
+
+            request.session['recently_viewed'].insert(0, id)
+            if (len(request.session['recently_viewed']) > 8):
+                request.session['recently_viewed'].pop()
+        else:
+            request.session['recently_viewed'] = [id]
+
+        request.session.modified = True
+        
+
         kpi_count = KpiT.objects.filter(fname=fname, lname=lname, dob=dob).count()
         wellness_count = int(
         WellnessT.objects.filter(fname=fname, lname=lname, dob=dob).count()
@@ -388,7 +392,6 @@ def AthleteProf(request, fname, lname, dob,):
             kpi_earliest = kpi_dates.first()["datekpi"]
             kpi_most_recent = kpi_dates.last()["datekpi"]
 
-        if kpi_count > 2:
             sportsteam = athleteProf.sportsteam
             gender = athleteProf.gender
             position = athleteProf.position
@@ -536,6 +539,8 @@ def AthleteProf(request, fname, lname, dob,):
         'radar_date': radar_date,
         'all_tests': all_tests,
         'selected_radar_tests': selected_radar_tests,
+
+        'recentlyViewedAthletes':recentlyViewedAthletes,
     }
 
     return render(request, "html/athleteProf.html", context)

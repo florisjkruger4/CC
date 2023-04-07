@@ -15,6 +15,14 @@
     margin-bottom: var(--inner-padding);
 }
 
+.basicreport {
+    width: 100%;
+    background-color: var(--med-gray-2);
+    border-radius: var(--radius-big);
+    padding: var(--inner-padding);
+    margin-bottom: var(--inner-padding);
+}
+
 .report-tab {
     background-color: var(--med-gray-2); 
     padding: 10px 25px; 

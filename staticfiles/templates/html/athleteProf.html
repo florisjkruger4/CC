@@ -15,10 +15,13 @@
             <div class="row">
                 <div class="col-lg-5 overflow-scroll">
                     <div class="col-scroll">
-
+                        
                         <!-- Athlete Info/Header -->
                         <div class="main-header justify-content-between">
-                            <h1>{{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
+                            <div style="display: flex;">
+                                <a href="/athletes"><i class="fa-solid fa-circle-arrow-left"></i></a>
+                                <h1>{{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
+                            </div>
                             <i class="fa-solid fa-pen"
                                 style="color: var(--yellow-accent); font-size: var(--icon-size);"></i>
                         </div>
@@ -393,7 +396,7 @@
                                 $("#bar-graphs").append("<div class=\"d-flex justify-content-center\"> <div id=\"loading-bar\" class=\"lds-dual-ring\"></div></div>");
 
                                 $.ajax({
-                                    url: "{% url 'AthleteProf' athleteProf.fname athleteProf.lname athleteProf.dob %}",
+                                    url: "{% url 'AthleteProf' athleteProf.fname athleteProf.lname athleteProf.dob athleteProf.id %}",
                                     type: "POST",
                                     dataType: "json",
                                     data: JSON.stringify({ date1: date_one, date2: date_two }),
@@ -461,7 +464,7 @@
                                 // This request will be handled by the Django backend -> see views.py recordKPI() for that code
                                 $.ajax({
                                     //URL needs to be fname, lname, DOB for athletes
-                                    url: "{% url 'AthleteProf' athleteProf.fname athleteProf.lname athleteProf.dob %}",
+                                    url: "{% url 'AthleteProf' athleteProf.fname athleteProf.lname athleteProf.dob athleteProf.id %}",
                                     type: "POST",
                                     dataType: "json",
                                     data: JSON.stringify({ wellnessdate: date_selected, }),
