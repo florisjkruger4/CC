@@ -72,7 +72,7 @@ class KpiT(models.Model):
     lname = models.CharField(db_column='Lname', max_length=30, blank=True, null=True)  # Field name made lowercase.
     dob = models.CharField(db_column='DOB', max_length=10, blank=True, null=True)  # Field name made lowercase.
     datekpi = models.CharField(db_column='DateKPI', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    testtype = models.CharField(db_column='TestType', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    testtype = models.CharField(db_column='TestType', max_length=60, blank=True, null=True)  # Field name made lowercase.
     testresult = models.FloatField(db_column='TestResult', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
@@ -83,11 +83,9 @@ class KpiT(models.Model):
         ]
 
 class TestTypeT(models.Model):
-    tname = models.CharField(db_column='Tname', primary_key=True, max_length=30)
-    minbetter = models.BooleanField(db_column="MinBetter")
+    tname = models.CharField(db_column='Tname', primary_key=True, max_length=60)
+    minbetter = models.BooleanField(db_column="MinBetter", blank=True, null=True)
     
     class Meta:
         managed = False
         db_table = 'TestType_T'
-
-    

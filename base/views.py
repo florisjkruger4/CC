@@ -1,7 +1,7 @@
 import json
 from django.shortcuts import render, redirect
 from django.db.models import Q
-from .models import AthleteT, TeamT, WellnessT, KpiT
+from .models import AthleteT, TeamT, WellnessT, KpiT, TestTypeT
 from .utils import bar_graph, line_graph, radar_chart
 from django.db.models import Count
 from django.http import JsonResponse
@@ -44,6 +44,7 @@ def LoginRegister(request):
     }
     return render(request, 'html/loginRegister.html', context)
 
+
 @login_required(login_url='/')
 def userProf(request, username):
 
@@ -71,79 +72,12 @@ def userProf(request, username):
 
     return render(request, 'html/userProf.html', context)
 
+
 # deletes the session id token... meaning the user needs to log in once again to create a new session to be authenticated
 def LogoutUser(request):
 
     logout(request)
     return redirect('/')
-
-test_types = [
-    "5m Sprint",
-    "10m Sprint",
-    "10m Fly",
-    "15m Sprint",
-    "15m Fly",
-    "20m Sprint",
-    "20m Fly",
-    "25m Sprint",
-    "30m Sprint",
-    "40m Sprint",
-    "60m Sprint",
-    "5yd Sprint",
-    "10yd Sprint",
-    "10yd Fly",
-    "15yd Sprint",
-    "15yd Fly",
-    "20yd Sprint",
-    "20yd Fly",
-    "25yd Sprint",
-    "30yd Sprint",
-    "40yd Sprint",
-    "60yd Sprint",
-    "110yd Sprint",
-    "Broad Jump",
-    "Double Broad Jump",
-    "Triple Broad Jump",
-    "Standing Triple Jump",
-    "Countermovement Jump (Hands-on-Hips Force Plate)",
-    "Countermovement Rebound Jump (Hands-on-Hips Force Plate)",
-    "Countermovement Jump (Vertec)",
-    "Approach Jump (Vertec)",
-    "10-5 RSI",
-    "5-0-5 Agility",
-    "5-10-5 Pro Agility",
-    "60yd Shuttle",
-    "300yd Shuttle",
-    "Beep Test (Traditional)",
-    "Beep Test (Yo-Yo Intermittent Recovery Test)",
-    "Max Aerobic Speed",
-    "Clean 1RM",
-    "Snatch 1RM",
-    "Jerk 1RM",
-    "Clean & Jerk 1RM",
-    "Barbell Bench Press 1RM",
-    "Barbell Bench Press Max Reps (135lbs)",
-    "Barbell Bench Press Max Reps (185lbs)",
-    "Barbell Bench Press Max Reps (225lbs)",
-    "Dumbbell Bench Press 1RM",
-    "Barbell Back Squat 1RM",
-    "Barbell Front Squat 1RM",
-    "Barbell Deadlift 1RM",
-    "Hex Bar Deadlift 1RM",
-    "Pull-Up 1RM",
-    "Pull-Up Max Reps (60 sec)",
-    "Push-Up Max Reps (60 sec)",
-    "Isometric Mid-Thigh Pull",
-    "Isometric Belt Squat",
-    "Bodyweight",
-    "Body Composition",
-    "Fat Mass",
-    "Fat Free Mass",
-    "Lean Body Mass",
-    "Braking RFD",
-    "Average Relative Propulsive Force",
-    "Propulsive Net Impulse",
-]
 
 
 @login_required(login_url='/')
@@ -169,6 +103,7 @@ def Dashboard(request):
 
     return render(request, "html/dashboard.html", context)
 
+
 @login_required(login_url='/')
 def AthletesDash(request):
     q = request.GET.get("q") if request.GET.get("q") != None else ""
@@ -187,6 +122,7 @@ def AthletesDash(request):
     }
 
     return render(request, "html/athletes.html", context)
+
 
 @login_required(login_url='/')
 def AddAthlete(request):
@@ -227,6 +163,8 @@ def kpiAjax(fname, lname, dob, date_one, date_two):
     Date1_results = []
     Date2_results = []
     changes = []
+    # List of True or False values indicating if a tests minimum score is better
+    minBetter_list = []
     iter = 0
 
     # Gets test types within selected date range
@@ -282,9 +220,14 @@ def kpiAjax(fname, lname, dob, date_one, date_two):
                     
             change = Date2_results[iter] - Date1_results[iter]
             changes.append(round(change, 2))
+        
+        # Checking if the current test type's min is better ([0][0] is just indexing the first element of the list, true or false)
+        minBetter = TestTypeT.objects.filter(tname=x).values_list('minbetter')[0][0]
+        # Append the current tests minBetter result to the list of minBetter results
+        minBetter_list.append(minBetter)
 
         # Calls matplotlib bar graph with above data
-        kpi_line.append(line_graph(results_x, results_y, changes[iter]))
+        kpi_line.append(line_graph(results_x, results_y, changes[iter], minBetter))
         kpi_bar.append(bar_graph(results_x, results_y))
 
         iter += 1
@@ -300,6 +243,8 @@ def kpiAjax(fname, lname, dob, date_one, date_two):
         "Date1_results": list(Date1_results),
         "Date2_results": list(Date2_results),
         "changes": list(changes),
+        # List of true or false values for each test type
+        "minBetter": list(minBetter_list),
         "kpi_bar": list(kpi_bar),
         "kpi_line": list(kpi_line),
     })
@@ -312,7 +257,6 @@ def wellnessAjax(fname, lname, dob, wellnessdate):
 
     # Return the list of athletes
     return JsonResponse({"wellness": list(wellness.values())})
-
         
 
 @login_required(login_url='/')
@@ -545,6 +489,7 @@ def AthleteProf(request, fname, lname, dob, id):
 
     return render(request, "html/athleteProf.html", context)
     
+
 @login_required(login_url='/')
 def TeamDash(request):
     athletes = TeamT.objects.all()
@@ -553,11 +498,15 @@ def TeamDash(request):
 
     return render(request, "html/teams.html", context)
 
+
 @login_required(login_url='/')
 def recordKPI(request):
 
     # Define teams
     teams = TeamT.objects.values("sport").order_by("sport").distinct()
+
+    # All test type names in the TestTypeT table
+    test_types = TestTypeT.objects.values_list('tname', flat=True)
 
     # Initialise selectedSport and athletes to null and empty set respectively
     selectedSport = ""
@@ -586,13 +535,16 @@ def recordKPI(request):
         "athletes": athletes,
         "teams": teams,
         "selectedSport": selectedSport,
+        # TestTypeT table tname's
         "test_types": test_types,
     }
 
     return render(request, "html/recordKPI.html", context)
 
+
 @login_required(login_url='/')
 def WellnessDash(request):
+
     athleteProf = AthleteT.objects.all()
 
     wellnessDates = WellnessT.objects.values("date").order_by("date").distinct()
@@ -616,9 +568,14 @@ def WellnessDash(request):
 
     return render(request, "html/wellness.html", context)
 
+
 @login_required(login_url='/')
 def AddKPI(request, fname, lname, dob):
+
     athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
+
+    # All test type names in the TestTypeT table
+    test_types = TestTypeT.objects.values_list('tname', flat=True)
 
     Fname = fname
     Lname = lname
@@ -643,13 +600,16 @@ def AddKPI(request, fname, lname, dob):
 
     context = {
         "athleteProf": athleteProf,
+        # TestTypeT table tname's
         "test_types": test_types,
     }
 
     return render(request, "html/addkpi.html", context)
 
+
 @login_required(login_url='/')
 def AddWellness(request, fname, lname, dob):
+
     athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
 
     Fname = fname

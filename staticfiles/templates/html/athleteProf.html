@@ -419,13 +419,35 @@
                                             var graphs = "<div>";
                                             report += "<div style=\"width: 25%\"> <p>" + response.test_types[key] + "</p></div>";
 
-                                            // add change
-                                            if (response.changes[key] > 0)
-                                                report += "<p style=\"color:var(--green-accent);\"> <i class=\"fa-solid fa-arrow-up\" style=\"color:var(--green-accent)\"></i> " + response.changes[key] + " </p>";
-                                            else if (response.changes[key] < 0)
-                                                report += "<p style=\"color:var(--red-accent);\"> <i class=\"fa-solid fa-arrow-down\" style=\"color:var(--red-accent)\"></i> " + response.changes[key] + " </p>";
-                                            else
-                                                report += "<p style\"=color:white;\"> " + response.changes[key] + " </p>";
+                                            // If the change is increasing
+                                            if (response.changes[key] > 0) {
+                                                // If a minimum score is better for a test, the change is increasing and is red
+                                                // (don't judge the === true and false, Ajax/JS didn't like the expression without them)
+                                                if (response.minBetter[key] === true) {
+                                                    report += "<p style=\"color:var(--red-accent);\"> <i class=\"fa-solid fa-arrow-up\" style=\"color:var(--red-accent)\"></i> " + response.changes[key] + " </p>";
+                                                    // If a minimum score is NOT better for a test, the change is increasing and is green
+                                                } else if (response.minBetter[key] === false) {
+                                                    report += "<p style=\"color:var(--green-accent);\"> <i class=\"fa-solid fa-arrow-up\" style=\"color:var(--green-accent)\"></i> " + response.changes[key] + " </p>";
+                                                    // minBetter is not defined, make it white/neutral (bodyweight, body composition, etc)
+                                                } else {
+                                                    report += "<p style=\"color:#FFFFFF;\"> <i class=\"fa-solid fa-arrow-up\" style=\"color:#FFFFFF\"></i> " + response.changes[key] + " </p>";
+                                                }
+                                                // If the change is decreasing
+                                            } else if (response.changes[key] < 0) {
+                                                // If a minimum score is better for a test, the change is decreasing and is green
+                                                if (response.minBetter[key] === true) {
+                                                    report += "<p style=\"color:var(--green-accent);\"> <i class=\"fa-solid fa-arrow-down\" style=\"color:var(--green-accent)\"></i> " + Math.abs(response.changes[key]) + " </p>";
+                                                    // If a minimum score is NOT better for a test, the change is decreasing and is red
+                                                } else if (response.minBetter[key] === false) {
+                                                    report += "<p style=\"color:var(--red-accent);\"> <i class=\"fa-solid fa-arrow-down\" style=\"color:var(--red-accent)\"></i> " + Math.abs(response.changes[key]) + " </p>";
+                                                    // minBetter is not defined, make it white/neutral (bodyweight, body composition, etc)
+                                                } else {
+                                                    report += "<p style=\"color:#FFFFFF;\"> <i class=\"fa-solid fa-arrow-down\" style=\"color:#FFFFFF\"></i> " + Math.abs(response.changes[key]) + " </p>";
+                                                }
+                                                // The change is 0, no arrow
+                                            } else {
+                                                report += "<p style=\"color:#FFFFFF;\"> " + response.changes[key] + " </p>";
+                                            }
 
                                             //add line graph with results below
                                             report += "<div style=\"width: 50%;\"> <img src=\"data:image/png;base64, " + response.kpi_line[key] + "\">";

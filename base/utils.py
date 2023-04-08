@@ -47,15 +47,34 @@ def bar_graph(x, y):
     graph = get_graph()
     return graph
 
-def line_graph(x, y, change):
+def line_graph(x, y, change, minBetter):
 
     plt.switch_backend('AGG')
     plt.figure(figsize=(2.5,.5), facecolor="#1F2126")
 
-    if change > 0:
-        plt.plot(x, y, color="#58E767")
+    # If minBetter is not defined, make it white (bodyweight, body composition, etc)
+    if minBetter is None:
+        plt.plot(x, y, color="#FFFFFF")
+
+    # Change is increasing
+    elif change > 0:
+        # If a minimum score is better for a test, make change red
+        if minBetter:
+            plt.plot(x, y, color="#FC5151")
+        # If a minimum score is NOT better for a test, make change green
+        elif not minBetter:
+            plt.plot(x, y, color="#58E767")
+
+    # Change is decreasing
     elif change < 0:
-        plt.plot(x, y, color="#FC5151")
+        # If a minimum score is better for a test, make change green
+        if minBetter:
+            plt.plot(x, y, color="#58E767")
+        # If a minimum score is NOT better for a test, make change red
+        elif not minBetter:
+            plt.plot(x, y, color="#FC5151")\
+
+    # If change = 0, make it white
     else:
         plt.plot(x, y, color="#FFFFFF")
         
