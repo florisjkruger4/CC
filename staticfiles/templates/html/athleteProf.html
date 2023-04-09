@@ -18,7 +18,7 @@
                         
                         <!-- Athlete Info/Header -->
                         <div class="main-header justify-content-between">
-                            <div style="display: flex; gap: 25px;">
+                            <div class="d-flex align-items-center" style="gap: 25px;">
                                 <a href="/athletes"><i class="fa-solid fa-circle-arrow-left"></i></a>
                                 <h1>{{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
                             </div>
@@ -39,7 +39,7 @@
                             {{ form.image }}  
                         </form>
 
-                        <div class="d-flex" style="height: 200px;">
+                        <div class="d-flex">
                             
                             <img class="athlete-pic" src="/media/{{ athleteProf.image }}" id="profileImg"></img>
 
@@ -102,13 +102,14 @@
                         </script>
 
                         <!-- KPI Trends -->
-                        <div id="kpireport" class="report tab-corner">
+                        <div id="kpireport" class="report tab-corner bottom-margin">
 
                             <div class="d-flex justify-content-between align-items-center">
-                                <h3>KPI Trends</h3>
-                                <div class="text-end d-flex">
+                                <div style="width: 50%">
+                                    <h3>KPI Trends</h3>
+                                </div>
+                                <div class="d-flex justify-content-between" style="width: 50%;">
                                     <p style="font-size: 16px" id="resultone"></p>
-                                    <p style="font-size: 16px">&nbsp; to &nbsp;</p>
                                     <p style="font-size: 16px" id="resulttwo"></p>
                                 </div>
                             </div>
@@ -241,8 +242,19 @@
                                     <button id="bar-tab" class="report-tab" style="padding: 15px 25px;">Bar Chart</button>
                                     <button id="spider-tab" class="report-tab" style="padding: 15px 25px;">Spider Chart</button>
                                 </div>
-                                <i class="fa-solid fa-gear"
-                                    style="color: var(--yellow-accent); font-size: var(--icon-size);"></i>
+                                <i class="fa-solid fa-gear" id="settings"
+                                    style="color: var(--yellow-accent); font-size: var(--icon-size); z-index: 2;"></i>
+
+                                <div id="options-card" class="options-card" style="display: none;">
+                                    <h4>Settings</h4>
+                                    <ul>
+                                        <li>Show Team Avg<input id="i-show_fullname" type="checkbox" checked="true"></li>
+                                        <li>Show Gender Avg<input id="i-show_trends" type="checkbox" checked="true"></li>
+                                        <li>Show Position Avg<input id="i-show_pos" type="checkbox" checked="true"></li>
+                                        <hr>
+                                        <li>Standard Deviation<input id="i-show_fullname" type="checkbox" checked="true"></li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
 
@@ -272,10 +284,21 @@
                                     document.getElementById("bar-tab").style.backgroundColor = "var(--med-gray-2)";
                                     document.getElementById("spider-tab").style.backgroundColor = "#191A1C";
                                 });
+
+                                // upon click of cog wheel "settings", show the options card
+                                // if it's already showing, close it. functions as a toggle
+                                $("#settings").click(function () {
+                                    if ($('#options-card').is(':hidden')) {
+                                        $("#options-card").show();
+                                    } else {
+                                        $("#options-card").hide();
+                                    }
+
+                                });
                             });
                         </script>
 
-                        <div id="spider-graphs">
+                        <div id="spider-graphs" style="display: none;">
                             <!-- Radar/Spider Graph -->
                             <div class="graphprof">
                                 <form method="post" id="kpi_radar_form">
@@ -412,8 +435,8 @@
                                 $("#bar-graphs").empty()
 
                                 //add loading circle
-                                $("#kpi-trend").append("<div class=\"d-flex justify-content-center\"> <div id=\"loading-line\" class=\"lds-dual-ring\"></div></div>");
-                                $("#bar-graphs").append("<div class=\"d-flex justify-content-center\"> <div id=\"loading-bar\" class=\"lds-dual-ring\"></div></div>");
+                                $("#kpi-trend").append("<div id=\"loading-line\" class=\"d-flex justify-content-center\"> <div class=\"lds-dual-ring\"></div></div>");
+                                $("#bar-graphs").append("<div id=\"loading-bar\" class=\"d-flex justify-content-center\"> <div class=\"lds-dual-ring\"></div></div>");
 
                                 $.ajax({
                                     url: "{% url 'AthleteProf' athleteProf.fname athleteProf.lname athleteProf.dob athleteProf.id %}",

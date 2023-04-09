@@ -19,7 +19,17 @@ def get_graph():
 def bar_graph(x, y):
 
     plt.switch_backend('AGG')
-    plt.figure(figsize=(9,4), facecolor="#1F2126")
+
+    if(len(x) > 7):
+        plt.figure(figsize=(9,4), facecolor="#1F2126")
+        plt.gcf().subplots_adjust(bottom=0.25)
+        plt.xticks(rotation=45)
+        
+    else:
+        plt.figure(figsize=(9,3.75), facecolor="#1F2126")
+        plt.xticks(rotation=0)
+
+    
     plt.bar(x, y, color="#96B7FF")
     plt.tight_layout()
     ax = plt.gca()
@@ -30,13 +40,6 @@ def bar_graph(x, y):
     ax.spines['right'].set_color("#1F2126")
     ax.tick_params(axis='x', colors='white')
     ax.tick_params(axis='y', colors='white')
-
-    if(len(x) > 20):
-        plt.xticks(rotation=45)
-    elif(len(x) > 40):
-        plt.xticks(rotation=90)
-    else:
-        plt.xticks(rotation=0)
 
     if (len(y) > 0):
         avg = sum(y)/len(y)

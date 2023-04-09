@@ -35,100 +35,99 @@
               </div>
             </form>
 
-                <!-- Data Entry Table -->
-                <div>
-                  <table id="data-table" class="table-dark table-striped">
-                    <thead>
-                      <tr id="theader">
-                        <th style="min-width: 80px;"></th>
-                      </tr>
-                    </thead>
-                    <tbody id="tvalues">
-                    </tbody>
-                  </table>
-                </div>
-                
-  
-                <input type="submit" value="Submit" class="submit">
-              </form>
+            <!-- Data Entry Table -->
+            <div>
+              <table id="data-table" class="table-dark table-striped">
+                <thead>
+                  <tr id="theader">
+                    <th style="min-width: 80px;"></th>
+                  </tr>
+                </thead>
+                <tbody id="tvalues">
+                </tbody>
+              </table>
             </div>
 
-            <!-- Script defining behavior for updating current date, getCookie() function, and sending an AJAX request for "#sportsteam"-->
-            <script>
-
-              /* This block of code sets the default date in the selector to today's date */
-              // Get today's date as a string in the format "yyyy-mm-dd"
-              var today = new Date().toISOString().substr(0, 10);
-                
-              // Set the value of the date input to today's date
-              document.getElementById("date-selector").value = today;
-
-              /* End of date block */
-
-              /* getCookie() function definition*/
-                // Definition for "getCookie" function, which will return a cookie from the document matching the parameter "name".
-                // This is a utility funciton utilized to send and AJAX request (see next code block)
-
-                // Cookie is initialized to null
-                // If there is are document cookies and they are NOT empty, the cookies in the document are fetched and placed in an array
-                // This array is searched for a cookie that matches parameter "name"
-                // If such a cookie is found, it is returned.
-                function getCookie(name) {
-                  let cookieValue = null;
-                  if (document.cookie && document.cookie !== "") {
-                    const cookies = document.cookie.split(";");
-                    for (let i = 0; i < cookies.length; i++) {
-                      const cookie = cookies[i].trim();
-                      // Does this cookie string begin with the name we want?
-                      if (cookie.substring(0, name.length + 1) === (name + "=")) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                      }
-                    }
-                  }
-
-                  return cookieValue;
-                }
-              /* End of getCookie() function definition*/
-
-              /* When the "#sportsteam" form is changed, this function will send an AJAX request to fetch the new team data. */
-                // When for "#sportsteam" is changed...
-                $("#sportsteam").change(function (event) {
-
-                  // Get value of #sportsteam
-                  var sport_selected = document.getElementById("sportsteam").value
-
-                $.ajax({
-                  url: "{% url 'recordKPI' %}",
-                  type: "POST",
-                  dataType: "json",
-                  data: JSON.stringify({ sportsteam: sport_selected, }),
-                  headers: {
-                    "X-Requested-With": "XMLHttpRequest",
-                    "X-CSRFToken": getCookie("csrftoken"),  // don't forget to include the 'getCookie' function
-                  },
-                  success: (response) => {
-                    $("#tvalues").empty();
-                    for (var key in response.athletes) {
-                      var athlete = response.athletes[key].fname + " " + response.athletes[key].lname;
-                      var html = "<tr><td>" + athlete + "</td></tr>";
-                      $("#tvalues").append(html);
-                    }
-                  },
-                  error: (error) => {
-                    alert(error);
-                  }
-                })
-              });
-
-            </script>
-
-
+            <input type="submit" value="Submit" class="submit">
+            </form>
+            
           </div>
 
+          <!-- Script defining behavior for updating current date, getCookie() function, and sending an AJAX request for "#sportsteam"-->
+          <script>
+
+            /* This block of code sets the default date in the selector to today's date */
+            // Get today's date as a string in the format "yyyy-mm-dd"
+            var today = new Date().toISOString().substr(0, 10);
+
+            // Set the value of the date input to today's date
+            document.getElementById("date-selector").value = today;
+
+            /* End of date block */
+
+            /* getCookie() function definition*/
+            // Definition for "getCookie" function, which will return a cookie from the document matching the parameter "name".
+            // This is a utility funciton utilized to send and AJAX request (see next code block)
+
+            // Cookie is initialized to null
+            // If there is are document cookies and they are NOT empty, the cookies in the document are fetched and placed in an array
+            // This array is searched for a cookie that matches parameter "name"
+            // If such a cookie is found, it is returned.
+            function getCookie(name) {
+              let cookieValue = null;
+              if (document.cookie && document.cookie !== "") {
+                const cookies = document.cookie.split(";");
+                for (let i = 0; i < cookies.length; i++) {
+                  const cookie = cookies[i].trim();
+                  // Does this cookie string begin with the name we want?
+                  if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                  }
+                }
+              }
+
+              return cookieValue;
+            }
+            /* End of getCookie() function definition*/
+
+            /* When the "#sportsteam" form is changed, this function will send an AJAX request to fetch the new team data. */
+            // When for "#sportsteam" is changed...
+            $("#sportsteam").change(function (event) {
+
+              // Get value of #sportsteam
+              var sport_selected = document.getElementById("sportsteam").value
+
+              $.ajax({
+                url: "{% url 'recordKPI' %}",
+                type: "POST",
+                dataType: "json",
+                data: JSON.stringify({ sportsteam: sport_selected, }),
+                headers: {
+                  "X-Requested-With": "XMLHttpRequest",
+                  "X-CSRFToken": getCookie("csrftoken"),  // don't forget to include the 'getCookie' function
+                },
+                success: (response) => {
+                  $("#tvalues").empty();
+                  for (var key in response.athletes) {
+                    var athlete = response.athletes[key].fname + " " + response.athletes[key].lname;
+                    var html = "<tr><td>" + athlete + "</td></tr>";
+                    $("#tvalues").append(html);
+                  }
+                },
+                error: (error) => {
+                  alert(error);
+                }
+              })
+            });
+
+          </script>
+
           <div class="col-lg-3" style="margin-top: var(--gutter); height: 85vh; padding: 0;">
-            <input type="text" id="test-search" onkeyup="listFilter()" placeholder="Search for tests..." style="margin-bottom: 0; border-radius: var(--radius-big) var(--radius-big) 0 0;">
-            <div class="overflow-auto" style="background-color: var(--med-gray-2); height: 100%; padding-top: var(--inner-padding); border-radius: 0 0 var(--radius-big) var(--radius-big);">
+            <input type="text" id="test-search" onkeyup="listFilter()" placeholder="Search for tests..."
+              style="margin-bottom: 0; border-radius: var(--radius-big) var(--radius-big) 0 0;">
+            <div class="overflow-auto"
+              style="background-color: var(--med-gray-2); height: 100%; padding-top: var(--inner-padding); border-radius: 0 0 var(--radius-big) var(--radius-big);">
               <ul id="test-list">
                 {% for x in test_types %}
                 <li>
@@ -271,6 +270,7 @@
                   /* Make it into a block element to fill the whole list */
                 }
               </style>
+
             </div>
           </div>
         </div>
