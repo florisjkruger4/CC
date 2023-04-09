@@ -10,8 +10,7 @@ class AthleteT(models.Model):
     year = models.CharField(db_column='Year', max_length=15, blank=True, null=True)  # Field name made lowercase.
     height = models.CharField(db_column='Height', max_length=15, blank=True, null=True)  # Field name made lowercase.
     gender = models.CharField(db_column='Gender', max_length=1, blank=True, null=True)  # Field name made lowercase.
-    #upload_to='staticfiles/images'
-    image = models.ImageField(db_column='Image', upload_to='images', blank=True, null=True)  # Field name made lowercase.
+    image = models.ImageField(db_column='Image', upload_to='', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -57,7 +56,7 @@ class WellnessT(models.Model):
         managed = False
         db_table = 'Wellness_T'
         constraints = [
-            models.UniqueConstraint(fields=['fname', 'lname', 'dob', 'status', 'date'], name = 'unique_constraints_wellness')
+            models.UniqueConstraint(fields=['fname', 'lname', 'dob', 'date'], name = 'unique_constraints_wellness')
         ]
 
     # Overriding the string representation of a Wellness survery to customize output when querying with the interactive shell

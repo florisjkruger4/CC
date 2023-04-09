@@ -11,8 +11,11 @@ urlpatterns = [
 
     path('dash/', views.Dashboard, name="Dashboard"),
     path('athletes/', views.AthletesDash, name="AthletesDash"),
+
     path('addathlete/', views.AddAthlete, name="AddAthlete"),
     path('<str:fname>/<str:lname>/<path:dob>/<int:id>', views.AthleteProf, name="AthleteProf"),
+    path('/editAthlete/<str:fname>/<str:lname>/<path:dob>/<int:id>', views.EditAthlete, name="EditAthlete"),
+    
     path('teams/', views.TeamDash, name="TeamDash"),
     path('recordKPI/', views.recordKPI, name="recordKPI"),
     path('wellness/', views.WellnessDash, name="WellnessDash"),

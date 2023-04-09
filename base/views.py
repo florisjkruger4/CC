@@ -10,6 +10,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
+from .forms import AthleteForm, ImageForm
 
 
 def LoginRegister(request):
@@ -99,7 +100,7 @@ def Dashboard(request):
         'teams':teams,
         'recentlyViewedAthletes':recentlyViewedAthletes,
         'sessionLength':sessionLength
-    }
+    } 
 
     return render(request, "html/dashboard.html", context)
 
@@ -127,32 +128,20 @@ def AthletesDash(request):
 @login_required(login_url='/')
 def AddAthlete(request):
     if request.method == "POST":
-        newFname = request.POST["fname"]
-        newLname = request.POST["lname"]
-        newGender = request.POST["gender"]
-        newYear = request.POST["year"]
-        newHeight = request.POST["height"]
-        newImage = request.POST["image"]
-        newDOB = request.POST["dob"]
-        newTeam = request.POST["sportsteam"]
-        newPosition = request.POST["position"]
+        form = AthleteForm(request.POST, request.FILES) 
 
-        newAthlete = AthleteT(
-            fname=newFname,
-            lname=newLname,
-            gender=newGender,
-            dob=newDOB,
-            sportsteam=newTeam,
-            position=newPosition,
-            year=newYear,
-            height=newHeight,
-            image=newImage,
-        )
+        if form.is_valid():  
+            #form.validate_constraints()
+            form.save() 
 
-        newAthlete.validate_constraints()
-        newAthlete.save()
+    else:  
+        form = AthleteForm()
 
-    return render(request, "html/addathlete.html")
+    context = {
+            'form': form,
+        }
+  
+    return render(request, "html/addathlete.html", context)
 
 
 def kpiAjax(fname, lname, dob, date_one, date_two):
@@ -264,6 +253,9 @@ def AthleteProf(request, fname, lname, dob, id):
 
     athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
 
+    # instance of an image in order to edit profile picture... (I have no idea what this means, it took me so long to get it working, if it works, it works. Django documentation says to use ._meta("field name") but that never worked for me)
+    instanceImg = AthleteT.objects.filter(id=id).only("image").first()
+
     Radar_chart = None
     radar_date = None
     all_tests = None
@@ -283,6 +275,7 @@ def AthleteProf(request, fname, lname, dob, id):
             # if we have data for "wellnessdate", we have a wellness update request
             elif data.get("wellnessdate"):
                 return wellnessAjax(fname, lname, dob, data.get("wellnessdate"))
+            
             else:
                 return JsonResponse({"status": "Invalid request"}, status=400)
         else:
@@ -307,7 +300,6 @@ def AthleteProf(request, fname, lname, dob, id):
             request.session['recently_viewed'] = [id]
 
         request.session.modified = True
-        
 
         kpi_count = KpiT.objects.filter(fname=fname, lname=lname, dob=dob).count()
         wellness_count = int(
@@ -317,8 +309,20 @@ def AthleteProf(request, fname, lname, dob, id):
         # We don't have any wellness or kpi data, so just return 
         if kpi_count == 0 and wellness_count == 0:
 
+            # Image handeling for if the is no data in an athletes profile (no kpi records or wellness records)
+            if request.method == 'POST':
+                form = ImageForm(request.POST, request.FILES, instance=instanceImg)
+                if form.is_valid():  
+                    #form.validate_constraints()
+                    form.save()
+                    newImgVal = AthleteT.objects.get(fname=fname, lname=lname, dob=dob).image
+                    WellnessT.objects.filter(fname=fname, lname=lname, dob=dob).update(image=newImgVal)
+            else:
+                form = ImageForm()
+
             context = {
                 "athleteProf": athleteProf,
+                "form":form
             }
 
             return render(request, "html/athleteProf.html", context)
@@ -454,6 +458,11 @@ def AthleteProf(request, fname, lname, dob, id):
                 Radar_chart = radar_chart(athlete_radar_results, average_radar_results, radar_date)
             else:
                 Radar_chart = None
+        else: #if there are no kpi records for this athlete but there are wellness records... still loads their page
+            kpi_dates = None
+            kpi_earliest = None
+            kpi_most_recent = None
+            kpi_count = None
                 
         if wellness_count > 0:
             #Access and store all dates
@@ -465,6 +474,20 @@ def AthleteProf(request, fname, lname, dob, id):
             )
 
             wellness_most_recent = wellness_dates.last()["date"]
+        else: #if there are no wellness records for this athlete but there are kpi records... still loads their page
+            wellness_dates = None
+            wellness_most_recent = None
+
+    # Image handeling 
+    if request.method == 'POST':
+        form = ImageForm(request.POST, request.FILES, instance=instanceImg)
+        if form.is_valid():  
+            #form.validate_constraints()
+            form.save()
+            newImgVal = AthleteT.objects.get(fname=fname, lname=lname, dob=dob).image
+            WellnessT.objects.filter(fname=fname, lname=lname, dob=dob).update(image=newImgVal)
+    else:
+        form = ImageForm()
 
     context = {
         "athleteProf": athleteProf,
@@ -484,12 +507,71 @@ def AthleteProf(request, fname, lname, dob, id):
         'all_tests': all_tests,
         'selected_radar_tests': selected_radar_tests,
 
+        # dashboardd session stuff
         'recentlyViewedAthletes':recentlyViewedAthletes,
+
+        # img form stuff
+        'form':form
     }
 
     return render(request, "html/athleteProf.html", context)
     
 
+@login_required(login_url='/')
+def EditAthlete(request, fname, lname, dob, id):
+    athlete = AthleteT.objects.get(id=id)
+
+    # deletes entire athlete from database... along with their wellness and kpi records 
+    if request.GET.get('delete') == 'delete':
+        AthleteT.objects.filter(id=id).delete()
+        WellnessT.objects.filter(fname=fname, lname=lname, dob=dob).delete()
+        KpiT.objects.filter(fname=fname, lname=lname, dob=dob).delete()
+
+        return redirect('/athletes')
+
+    # updates changes made to athlete across all tables
+    if request.method == "POST":
+        editFname = request.POST["fname"]
+        editLname = request.POST["lname"]
+        editGender = request.POST["gender"]
+        editYear = request.POST["year"]
+        editHeight = request.POST["height"]
+        editDOB = request.POST["dob"]
+        editTeam = request.POST["sportsteam"]
+        editPosition = request.POST["position"]
+
+        athlete = AthleteT.objects.filter(id=id).update(
+            fname=editFname,
+            lname=editLname,
+            gender=editGender,
+            dob=editDOB,
+            sportsteam=editTeam,
+            position=editPosition,
+            year=editYear,
+            height=editHeight,
+        )
+        WellnessT.objects.filter(fname=fname, lname=lname, dob=dob).update(
+            fname=editFname,
+            lname=editLname,
+            dob=editDOB,
+            sportsteam=editTeam,
+            position=editPosition,
+        )
+        KpiT.objects.filter(fname=fname, lname=lname, dob=dob).update(
+            fname=editFname,
+            lname=editLname,
+            dob=editDOB,
+        )
+
+        return redirect('/athletes')
+
+    context = {
+        "athlete": athlete
+        }
+
+    return render(request, "html/editathlete.html", context)
+
+    
 @login_required(login_url='/')
 def TeamDash(request):
     athletes = TeamT.objects.all()
@@ -530,7 +612,14 @@ def recordKPI(request):
         return JsonResponse({"status": "Invalid request"}, status=400)
 
     # Other (non-AJAX) requests will recieve a response with a whole HTML document. This requires a page reload.
-    #      Is this still being used after we implemented AJAX on this page?
+    # Is this still being used after we implemented AJAX on this page? - unknown
+    # Huh? Is what being used? lol - Floris
+
+
+    if request.method == 'POST':
+        print("test")
+
+
     context = {
         "athletes": athletes,
         "teams": teams,
