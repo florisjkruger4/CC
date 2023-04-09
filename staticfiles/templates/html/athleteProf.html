@@ -10,7 +10,7 @@
 
     <!-- SideNavbar -->
     {% include 'html/sidenav.html' %}
-    <main class="py-3" style="padding-top: 0 !important; padding-bottom: 0 !important;">
+    <main class="py-3 py-override">
         <div class="container" style="max-width: 1800px;">
             <div class="row">
                 <div class="col-lg-5 overflow-scroll">
@@ -93,7 +93,7 @@
                         </script>
 
                         <!-- KPI Trends -->
-                        <div id="kpireport" class="report">
+                        <div id="kpireport" class="report tab-corner">
 
                             <div class="d-flex justify-content-between align-items-center">
                                 <h3>KPI Trends</h3>
@@ -116,7 +116,7 @@
 
                         </div>
 
-                        <div id="wellnessreport" class="report">
+                        <div id="wellnessreport" class="report tab-corner">
 
                             <!-- Wellness Header & Date Selector -->
                             <div class="d-flex justify-content-between">
@@ -506,9 +506,6 @@
                                             document.getElementById("stat").style.color = "var(--green-accent)";
                                             document.getElementById("bor").style.border = "1px solid var(--green-accent)";
                                         }
-
-                                        // Update wellness result
-                                        document.getElementById("wellnessresult").innerHTML = response.wellness[0].date;
 
                                     },
                                     error: (error) => {

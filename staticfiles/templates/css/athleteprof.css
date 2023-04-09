@@ -7,12 +7,8 @@
     border-radius: var(--radius-big);
 }
 
-.report {
-    width: 100%;
-    background-color: var(--med-gray-2);
-    border-radius: 0 var(--radius-big) var(--radius-big) var(--radius-big);
-    padding: var(--inner-padding);
-    margin-bottom: var(--inner-padding);
+.tab-corner{
+    border-top-left-radius: 0;
 }
 
 .report-tab {
@@ -40,16 +36,6 @@
     justify-content: space-evenly;
     border-bottom: 10px;
     position: relative;
-}
-
-.wellnessrows {
-    display: flex;
-    justify-content: space-between;
-}
-
-.wellness-table td {
-    display: flex;
-    justify-content: space-between;
 }
 
 .wellness-status-display {

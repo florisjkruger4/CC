@@ -110,12 +110,24 @@ td {
   align-items: center;
 }
 
+.py-override {
+  padding-top: 0 !important; 
+  padding-bottom: 0 !important;
+}
+
 .admin {
   height: 100px;
   width: 100px;
   background-color: #bbb;
   border-radius: 50%;
   margin: auto;
+}
+
+.report {
+  width: 100%;
+  background-color: var(--med-gray-2);
+  border-radius: var(--radius-big);
+  padding: var(--inner-padding);
 }
 
 a:link,
@@ -137,6 +149,7 @@ a:active {
 /* Search bar */
 .input-box{
   position: relative;
+  max-width: 175px;
 }
 
 .input-box i {
@@ -152,7 +165,7 @@ a:active {
   border-color: var(--med-gray-1);
   color: white;
   box-shadow: none;
-  border-radius: 10px;
+  border-radius: var(--radius-big);
 }
 
 select {
@@ -190,7 +203,12 @@ input, textarea{
   height: 50px;
   margin-top: 50px;
   margin-bottom: 50px;
+}
 
+.lds-dual-ring-small {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
 }
 
 /* Loading Circle */
@@ -205,6 +223,18 @@ input, textarea{
   animation: lds-dual-ring 1.2s linear infinite;
 }
 
+/* Loading Circle */
+.lds-dual-ring-small:after {
+  content: " ";
+  display: block;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 6px solid;
+  border-color: var(--blue-accent) transparent var(--blue-accent) transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+}
+
 @keyframes lds-dual-ring {
   0% {
       transform: rotate(0deg);
@@ -213,4 +243,9 @@ input, textarea{
   100% {
       transform: rotate(360deg);
   }
+}
+
+/* Change color of calendar icon on input type=date to white */
+::-webkit-calendar-picker-indicator {
+  filter: invert(1);
 }
