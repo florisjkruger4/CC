@@ -53,7 +53,6 @@
 
         <form method="post" id="wellnessdisplayform">
           {% csrf_token %}
-          {% load static %}
           <div id="header" class="d-flex" style="gap: var(--inner-padding);">
             <input type="date" class="form-control input-box" id="wellnessdate" name="wellnessdate" value="Today">
             <select id="wellnesssport" name="sportsteam">
@@ -277,7 +276,6 @@
             //$("#header-text").innerText = "Wellness - " + sport_selected;
 
             // get "template" for card to be cloned for each athlete's wellness card
-            const STATIC_URL = "{% static '' %}";
             const template = document.getElementById("base");
 
             //clear form
@@ -305,8 +303,8 @@
 
               // get directory to athlete image and "slice" off the first character
               //first character is an unwanted '/' and creates an invalid file path
-              pic = response.athletes_img[key].slice(1);
-              picURL = `${STATIC_URL}${pic}`;
+              pic = response.athletes_img[key];//.slice(1);
+              picURL = pic;//`${STATIC_URL}${pic}`;
 
               // get individual values needed for wellness total and then sum them
               hoursofsleep = Number(response.wellness[key].hoursofsleep);

@@ -714,7 +714,7 @@ def WellnessDash(request):
                     wellness_trend_data_x.append(y.date)
 
                 if len(wellness_trend_data_x) > 1:
-                    wellness_trends.append(line_graph(wellness_trend_data_x, wellness_trend_data_y, 0))
+                    wellness_trends.append(line_graph(wellness_trend_data_x, wellness_trend_data_y, 0, None))
                 else:
                     wellness_trends.append(None)
                 
