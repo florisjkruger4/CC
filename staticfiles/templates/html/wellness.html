@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <!-- Header -->
   {% include 'html/header.html' %}
@@ -7,151 +8,404 @@
 
 <body>
 
-    <!-- SideNavbar -->
-    {% include 'html/sidenav.html' %}
-    
-    <main class="py-3">
-      <div class="col-md-9" style="margin: 10px;">
+  <!-- SideNavbar -->
+  {% include 'html/sidenav.html' %}
 
-        <div style="display: flex; width: 100%; justify-content: space-between;">
-          <h1 class="mainFont" style="padding-bottom: 10px; padding-right: 8%;">Wellness</h1>
+  <main class="py-3 py-override">
 
-          <form method="post" id="wellnessdisplayform">
-            {% csrf_token %}
-            <div style="display: flex; justify-content: space-between;">
+    <div style="padding-top: 1rem;">
+      <div style="margin-bottom: var(--gutter);">
 
-              <select id="wellnessdate" name="wellnessdate">
-                <option disabled hidden selected>Select Date</option>
-                {% for x in wellnessDates %}
-                <option>{{ x.date }}</option>
-                {% endfor %}
-              </select>
-              &nbsp;
-              &nbsp;
-              <select id="sportsteam" name="sportsteam">
-                <option disabled hidden selected>Select Sports Team</option>
-                {% for x in wellnessSportsTeams %}
-                <option>{{ x.sport }}</option>
-                {% endfor %}
-              </select>
-              &nbsp;
-              &nbsp;
-              <input type="submit" value="submit" class="submit">
+        <div class="d-flex justify-content-between align-items-center">
+          <h1 id="header-text">Wellness</h1>
+
+          <i id="settings" class="fa-solid fa-gear"
+            style="color: var(--yellow-accent); font-size: var(--icon-size); z-index: 2;"></i>
+
+          <div id="options-card" class="options-card" style="display: none;">
+            <h4>Settings</h4>
+            <ul>
+              <li>Show Full Name<input id="i-show_fullname" type="checkbox" checked="true"></li>
+              <li>Show Trend Graphs<input id="i-show_trends" type="checkbox" checked="true"></li>
+              <li>Show Positions<input id="i-show_pos" type="checkbox" checked="true"></li>
+            </ul>
+          </div>
+        </div>
+
+        <script>
+          $(document).ready(function () {
+
+            //initially hide options tab
+            $("#options-card").hide();
+
+            // upon click of cog wheel "settings", show the options card
+            // if it's already showing, close it. functions as a toggle
+            $("#settings").click(function () {
+              if ($('#options-card').is(':hidden')) {
+                $("#options-card").show();
+              } else {
+                $("#options-card").hide();
+              }
+
+            });
+          });
+        </script>
+
+        <form method="post" id="wellnessdisplayform">
+          {% csrf_token %}
+          <div id="header" class="d-flex" style="gap: var(--inner-padding);">
+            <input type="date" class="form-control input-box" id="wellnessdate" name="wellnessdate" value="Today">
+            <select id="wellnesssport" name="sportsteam">
+              <option disabled hidden selected>Select Sports Team</option>
+              {% for x in wellnessSportsTeams %}
+              <option>{{ x.sport }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </form>
+
+      </div>
+
+      <!-- "Template" to be cloned for each wellness report card -->
+      <div class="hide-template">
+        <div id="base" class="report wellness-card">
+
+          <div class="d-flex flex-column" style="justify-content: flex-end; height: 100%;">
+
+            <div class="d-flex justify-content-between align-items-center bottom-margin">
+              <h2 id="ath-name"></h2>
+              <h4 id="ath-pos"></h4>
             </div>
-          </form>
-        </div>
 
-        <div style="display: flex;">
-          <h2 id="selecteddate">DD/MM/YY</h2> 
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-          <h2 id="selectedsport">"Sports Team"</h2>
-        </div>
-        
-        <div style="display: flex; flex-wrap: wrap;">
-          {% for x in allWellnessReports %}
-            <div style="width: 33%; padding-right: 10px; padding-left: 10px; background-color: #1F2126;; border-radius: 7px;">
-              <div style="display: flex; justify-content: space-between;">
-                <p style="font-size: 30px;">{{ x.fname }} {{ x.lname }}</p>
-                <p style="font-size: 30px;">{{ x.position }}#</p>
-              </div>
+            <div class="d-flex justify-content-between bottom-margin">
+              <div style="width: 50%; margin-right: calc(var(--inner-padding)/2);">
+                <img class="bottom-margin-half" id="ath-img">
 
-              <div style="display: flex; justify-content: space-evenly;">
-                <div>
-                  <img style="width: 100px; height: 100px;" src="/media/{{ x.image }}"></img>
-
-                  <div style="display: flex; flex-direction: column; justify-content: space-between;">
-                    <div style="border-radius: 5px; width: 100%; text-align: center; padding: 5px; margin-right: 5px;" id="bor{{forloop.counter}}">
-                      <p style="font-size: smaller;" id="stat{{forloop.counter}}">Status:  {{ x.status }}</p>
-                    </div>
-                    <div style="border: 1px solid white; border-radius: 5px; width: 80%; text-align: center; padding: 5px; margin: auto; height: 35px">
-                        <div style="display: flex; justify-content: center; font-size: smaller;">
-                            <p>Readiness: &nbsp;</p>
-                            <p id="readiness{{forloop.counter}}"></p>
-                        </div>
-                    </div>
-                  </div>
+                <div class="wellness-status-display bottom-margin-half" id="status-box">
+                  <p id="status"></p>
                 </div>
 
-                <table class="table mainFont wellnesstable" style="border-radius: 10px; margin: auto; border-color: rgba(255, 255, 255, 0.321); color: white;">
-                   <tr>
-                      <td><div class="wellnessrows"><h6>Hours of Sleep</h6> <h6>{{ x.hoursofsleep }}</h6></div></td>
-                   </tr>
-                   <tr>
-                    <td><div class="wellnessrows"><h6>Sleep Quality</h6> <h6>{{ x.sleepquality }}</h6></div></td>
-                   </tr>
-                   <tr>
-                      <td><div class="wellnessrows"><h6>Breakfast</h6> <h6>{{ x.breakfast }}</h6></div></td>
-                   </tr>
-                   <tr>
-                    <td><div class="wellnessrows"><h6>Hydration</h6> <h6>{{ x.hydration }}</h6></div></td>
-                   </tr>
-                   <tr> 
-                      <td><div class="wellnessrows"><h6>Soreness</h6> <h6>{{ x.soreness }}</h6></div></td>
-                    </tr>
-                    <tr>
-                      <td><div class="wellnessrows"><h6>Stress</h6> <h6>{{ x.stress }}</h6></div></td>
-                    </tr>
-                    <tr>
-                      <td style="border-bottom: none;"><div class="wellnessrows"><h6>Mood</h6> <h6>{{ x.mood }}</h6></div></td>
-                    </tr>
-                  </table>
-                  <script type="text/javascript">
-                    var hoursofsleep = Number("{{ x.hoursofsleep }}")
-                    var sleepquality = Number("{{ x.sleepquality }}")
-                    var breakfast = Number("{{ x.breakfast }}")
-                    var hydration = Number("{{ x.hydration }}")
-                    var soreness = Number("{{ x.soreness }}")
-                    var stress = Number("{{ x.stress }}")
-                    var mood = Number("{{ x.mood }}")
-  
-                    var total = hoursofsleep + sleepquality + breakfast + hydration + soreness + stress + mood
-                    document.getElementById("readiness{{forloop.counter}}").innerHTML = total
+                <div class="wellness-status-display" id="readiness-box" style="border: 1px solid white;">
+                  <p id="readiness"></p>
+                </div>
 
-                    var status = "{{ x.status }}"
+              </div>
 
-                    if (status == 'N') {
-                        document.getElementById("stat{{forloop.counter}}").style.color = "#FC5151"
-                        document.getElementById("bor{{forloop.counter}}").style.border = "1px solid #FC5151"
-                    }
-                    else if (status == 'Y') {
-                        document.getElementById("stat{{forloop.counter}}").style.color = "#58E767"
-                        document.getElementById("bor{{forloop.counter}}").style.border = "1px solid #58E767"
-                    }
-                  </script>
+              <div class="wellness-table" style="width: 50%; margin-left: calc(var(--inner-padding)/2);">
+                <div class="wellnessrows">
+                  <h6>Hours of Sleep</h6>
+                  <h6 id="Hoursofsleep"></h6>
+                </div>
+                <hr>
+                <div class="wellnessrows">
+                  <h6>Sleep Quality</h6>
+                  <h6 id="Sleepquality"></h6>
+                </div>
+                <hr>
+                <div class="wellnessrows">
+                  <h6>Breakfast</h6>
+                  <h6 id="Breakfast"></h6>
+                </div>
+                <hr>
+                <div class="wellnessrows">
+                  <h6>Hydration</h6>
+                  <h6 id="Hydration"></h6>
+                </div>
+                <hr>
+                <div class="wellnessrows">
+                  <h6>Soreness</h6>
+                  <h6 id="Soreness"></h6>
+                </div>
+                <hr>
+                <div class="wellnessrows">
+                  <h6>Stress</h6>
+                  <h6 id="Stress"></h6>
+                </div>
+                <hr>
+                <div class="wellnessrows">
+                  <h6>Mood</h6>
+                  <h6 id="Mood"></h6>
+                </div>
               </div>
             </div>
-          {% endfor %}
+            <div style="margin-top: auto;">
+              <div id="trend-display" class="bottom-margin-half">
+                <div class="bottom-margin-half">
+                  <h4>Readiness Trend</h4>
+                </div>
+                <div class="trend-graph" id="trend-graph"></div>
+              </div>
+              <div style="text-align: right;">
+                <p id="date-recorded" style="opacity: 50%; font-style: italic;">No Data</p>
+              </div>
+            </div>
+          </div>
         </div>
-        
       </div>
-    </main>
 
-    <script type="text/javascript">
+      <p style="position: fixed;
+    top: 50%;
+    left: calc(50% + calc(var(--nav-width)/2)); 
+    transform: translate(-50%, -50%);" id="how-to">Select a Team & Date to Show Wellness</p>
+      <div id="forms" class="forms"></div>
+    </div>
+    <script>
 
-      let selection1 = document.getElementById('wellnessdate');
-      let date = document.getElementById('selecteddate');
-      var chosendate = "{{ selectedDate }}"
-      document.getElementById("selecteddate").innerHTML = chosendate
-      if (chosendate != "None"){
-          document.getElementById("selecteddate").innerHTML = chosendate
+      // Get today's date as a string in the format "yyyy-mm-dd"
+      var today = new Date().toISOString().substr(0, 10);
+
+      // Set the value of the date input to today's date
+      document.getElementById("wellnessdate").value = today;
+      document.getElementById("wellnessdate").ariaValueMax = today;
+      /* getCookie() function definition*/
+      // Definition for "getCookie" function, which will return a cookie from the document matching the parameter "name".
+      // This is a utility funciton utilized to send and AJAX request (see next code block)
+
+      // Cookie is initialized to null
+      // If there is are document cookies and they are NOT empty, the cookies in the document are fetched and placed in an array
+      // This array is searched for a cookie that matches parameter "name"
+      // If such a cookie is found, it is returned.
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+          const cookies = document.cookie.split(";");
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + "=")) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+
+        return cookieValue;
       }
 
-      selection1.addEventListener('change', () => {
-          selecteddate.innerText = selection1.options[selection1.selectedIndex].text;
-      });
+      // control variables for display settings
+      var show_fullname = true;
+      var show_pos = true;
+      var show_trends = true;
 
-      let selection2 = document.getElementById('sportsteam');
-      let sport = document.getElementById('selectedsport');
-      var chosensport = "{{ selectedSport }}"
-      document.getElementById("selectedsport").innerHTML = chosensport
-      if (chosensport != "None"){
-          document.getElementById("selectedsport").innerHTML = chosensport
+      // checks for a date or team change
+      document.getElementById("wellnessdate").addEventListener("change", check_both_inputs);
+      document.getElementById("wellnesssport").addEventListener("change", check_both_inputs);
+
+      // checks for settings updates
+      document.getElementById("i-show_fullname").addEventListener("change", update_name_display);
+      document.getElementById("i-show_trends").addEventListener("change", update_trends_display);
+      document.getElementById("i-show_pos").addEventListener("change", update_pos_display);
+
+      // update athlete names by setting "show_fullname" to true or false depending on
+      // user checkbox selection. upon change of a checkbox, submit another
+      // ajax request to update the page
+      function update_name_display() {
+        if (document.getElementById("i-show_fullname").checked)
+          show_fullname = true;
+        else
+          show_fullname = false;
+
+        console.log(show_fullname);
+
+        check_both_inputs();
       }
 
-      selection2.addEventListener('change', () => {
-        selectedsport.innerText = selection2.options[selection2.selectedIndex].text;
-      });
-                        
+      // update trend graphs by setting "show_trends" to true or false depending on
+      // user checkbox selection. upon change of a checkbox, submit another
+      // ajax request to update the page
+      function update_trends_display() {
+        if (document.getElementById("i-show_trends").checked)
+          show_trends = true;
+        else
+          show_trends = false;
+
+        console.log(show_trends);
+
+        check_both_inputs();
+      }
+
+      // update position by setting "show_pos" to true or false depending on
+      // user checkbox selection. upon change of a checkbox, submit another
+      // ajax request to update the page
+      function update_pos_display() {
+        if (document.getElementById("i-show_pos").checked)
+          show_pos = true;
+        else
+          show_pos = false;
+
+        console.log(show_pos);
+
+        check_both_inputs();
+      }
+
+      //checks that both a team and a date are selected before submitting an ajax request
+      function check_both_inputs() {
+        if (document.getElementById("wellnessdate").value && document.getElementById("wellnesssport").value)
+          wellness_ajax();
+      }
+
+      /* When the "#wellnessform" form is submitted, this function will send an AJAX request to fetch the new data. */
+      function wellness_ajax() {
+        // Get value of #sportsteam
+        var date_selected = document.getElementById("wellnessdate").value
+        var sport_selected = document.getElementById("wellnesssport").value
+
+        //add loading circle
+        $("#header").append("<div id=\"loading\" class=\"lds-dual-ring-small\"></div>");
+
+        // Send "POST" AJAX request to url 'AthleteProf'
+        // This request will be handled by the Django backend -> see views.py recordKPI() for that code
+        $.ajax({
+          //URL needs to be fname, lname, DOB for athletes
+          url: "{% url 'WellnessDash' %}",
+          type: "POST",
+          dataType: "json",
+          data: JSON.stringify({ wellnessdate: date_selected, sportsteam: sport_selected }),
+          headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": getCookie("csrftoken"),  // don't forget to include the 'getCookie' function
+          },
+          success: (response) => {
+
+            console.log(response);
+
+            // hide how-to message and remove loading animation
+            $("#how-to").hide();
+            $("#loading").remove()
+
+            //$("#header-text").innerText = "Wellness - " + sport_selected;
+
+            // get "template" for card to be cloned for each athlete's wellness card
+            const template = document.getElementById("base");
+
+            //clear form
+            document.getElementById("forms").innerHTML = "";
+
+            // loop thru all athletes on specified team
+            for (var key in response.athletes) {
+
+              //declare athlete info
+              var name = "", pos = "", pic = "", picURL = "";
+
+              //declare athlete wellness info
+              var hoursofsleep = 0, sleepquality = 0, breakfast = 0,
+                hydration = 0, soreness = 0, stress = 0, mood = 0;
+              var status = "None", total = 0, trend = "", trend_src = "", date = "";
+
+              // get athlete name, position, and photo
+              // only show last name unless "show_fullname" is true
+              if (show_fullname)
+                name = response.athletes[key].fname + " " + response.athletes[key].lname;
+              else
+                name = response.athletes[key].lname;
+
+              pos = response.athletes[key].position;
+
+              // get directory to athlete image and "slice" off the first character
+              //first character is an unwanted '/' and creates an invalid file path
+              pic = response.athletes_img[key];//.slice(1);
+              picURL = pic;//`${STATIC_URL}${pic}`;
+
+              // get individual values needed for wellness total and then sum them
+              hoursofsleep = Number(response.wellness[key].hoursofsleep);
+              sleepquality = Number(response.wellness[key].sleepquality);
+              breakfast = Number(response.wellness[key].breakfast);
+              hydration = Number(response.wellness[key].hydration);
+              soreness = Number(response.wellness[key].soreness);
+              stress = Number(response.wellness[key].stress);
+              mood = Number(response.wellness[key].mood);
+
+              total = hoursofsleep + sleepquality + breakfast +
+                hydration + soreness + stress + mood;
+
+              // get status
+              status = response.wellness[key].status;
+
+              // inject name, pos, and image into template
+              template.querySelector("#ath-name").innerText = name;
+
+              // show position if one exists, and if the option is checked
+              if (pos && show_pos)
+                template.querySelector("#ath-pos").innerText = pos;
+              else
+                template.querySelector("#ath-pos").innerText = " ";
+
+              template.querySelector("#ath-img").setAttribute("src", picURL);
+
+              // inject wellness stats into template
+              template.querySelector("#Hoursofsleep").innerText = hoursofsleep;
+              template.querySelector("#Sleepquality").innerText = sleepquality;
+              template.querySelector("#Breakfast").innerText = breakfast;
+              template.querySelector("#Hydration").innerText = hydration;
+              template.querySelector("#Soreness").innerText = soreness;
+              template.querySelector("#Stress").innerText = stress;
+              template.querySelector("#Mood").innerText = mood;
+
+              // inject the date of this wellness date into te plate
+              date = response.wellness[key].date;
+              if (date)
+                template.querySelector("#date-recorded").innerText = date;
+              else
+                template.querySelector("#date-recorded").innerText = "No Date";
+
+
+              // change color of "status" depending on if an athlete is "good" (in) or "out" (out, obviously...)
+              if (status == 'N') {
+                template.querySelector("#status").style.color = "black";
+                template.querySelector("#status").innerText = "Out";
+                template.querySelector("#status-box").style.backgroundColor = "var(--red-accent)";
+              }
+              else if (status == 'Y') {
+                template.querySelector("#status").style.color = "black";
+                template.querySelector("#status").innerText = "Good";
+                template.querySelector("#status-box").style.backgroundColor = "var(--green-accent)";
+              }
+              //if there is no status, set it to gray
+              else {
+                template.querySelector("#status").innerText = "None";
+                template.querySelector("#status-box").style.backgroundColor = "var(--med-gray-1)";
+              }
+
+              template.querySelector("#readiness").innerText = "Readiness: " + total;
+
+              // by default, do not show trend block
+              template.querySelector("#trend-display").style.display = "none";
+
+              // if the user would like to display trends...
+              if (show_trends) {
+                // make trends section visible (hidden if show_trends is false)
+                template.querySelector("#trend-display").style.display = "block";
+
+                // reset innerhtml and innertext of trend graph to avoid past
+                // data interferring with new requests
+                template.querySelector("#trend-graph").innerHTML = "";
+                template.querySelector("#trend-graph").innerText = "";
+
+                // get trend graph (will be null if there isn't one)
+                trend = response.wellness_trends[key];
+
+                if (trend)
+                  template.querySelector("#trend-graph").innerHTML += "<img src=\"data:image/png;base64, " + trend + "\">";
+                else
+                  template.querySelector("#trend-graph").innerText = "No Trend Data";
+              }
+
+              // clone the template and add it to the list of forms
+              document.getElementById("forms").append(template.cloneNode(true));
+            }
+          },
+          error: (error) => {
+
+            console.log(error);
+            alert("Error processing Ajax Request");
+          }
+        })
+      }
+                      /* End of "#sportsteam" change function */
     </script>
+
+  </main>
+
 </body>
+
 </html>

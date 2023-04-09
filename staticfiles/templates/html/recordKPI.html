@@ -11,7 +11,7 @@
     <!-- SideNavbar -->
     {% include 'html/sidenav.html' %}
 
-    <main class="py-3" style="padding-top: 0 !important; padding-bottom: 0 !important;">
+    <main class="py-3 py-override">
       <div class="container" style="max-width: 1800px;">
         <div class="row">
           <div class="col-lg-9" style="height: 100vh; padding: 1rem 0 0 0;">
@@ -22,17 +22,18 @@
             </div>
 
             <!-- Date & Team Selectors -->
-            <div class="d-flex">
-
-              <form method="post" id="kpiform">
-                {% csrf_token %}
-                <input type="date" id="date-selector" value="Today" style="background-color: var(--dark-gray); color: white; border: 0;">
+            <form method="post" id="kpiform">
+              {% csrf_token %}
+              <div class="d-flex" style="gap: var(--inner-padding);">
+                <input type="date" id="date-selector" class="form-control input-box">
                 <select id="sportsteam" name="sportsteam">
                   <option disabled hidden selected>Select Team</option>
                   {% for x in teams %}
                   <option>{{ x.sport }}</option>
                   {% endfor %}
                 </select>
+              </div>
+            </form>
 
                 <!-- Data Entry Table -->
                 <div>
@@ -56,27 +57,12 @@
             <script>
 
               /* This block of code sets the default date in the selector to today's date */
-                // Set date form to the current day by default
-                const date = new Date();
+              // Get today's date as a string in the format "yyyy-mm-dd"
+              var today = new Date().toISOString().substr(0, 10);
+                
+              // Set the value of the date input to today's date
+              document.getElementById("date-selector").value = today;
 
-                let day = date.getDate();
-                let month = date.getMonth() + 1;
-                let year = date.getFullYear();
-
-                if (month < 10)
-                  month = "0" + month;
-
-                if (day < 10)
-                  month = "0" + month;
-
-                let currentDate = `${year}-${month}-${day}`;
-
-                // Log result of date calculation to console
-                //  Do we still need this?
-                console.log(document.getElementById("date-selector").value);
-
-                // Update date selector in document
-                document.getElementById("date-selector").value = currentDate;
               /* End of date block */
 
               /* getCookie() function definition*/

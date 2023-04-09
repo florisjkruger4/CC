@@ -246,7 +246,7 @@ def wellnessAjax(fname, lname, dob, wellnessdate):
 
     # Return the list of athletes
     return JsonResponse({"wellness": list(wellness.values())})
-        
+    
 
 @login_required(login_url='/')
 def AthleteProf(request, fname, lname, dob, id):
@@ -634,25 +634,110 @@ def recordKPI(request):
 @login_required(login_url='/')
 def WellnessDash(request):
 
-    athleteProf = AthleteT.objects.all()
-
     wellnessDates = WellnessT.objects.values("date").order_by("date").distinct()
     wellnessSportsTeams = TeamT.objects.values("sport").order_by("sport").distinct()
 
-    selectedDate = request.POST.get("wellnessdate")
-    selectedSport = request.POST.get("sportsteam")
+    # If parameter "request" is an XML request (AJAX)...
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        # ...AND it's also a POST request...
+        if request.method == "POST":
 
-    allWellnessReports = WellnessT.objects.filter(
-        date__exact=selectedDate, sportsteam__exact=selectedSport
-    )
+            data = json.load(request)
+            selectedDate = data.get("wellnessdate")
+            selectedSport = data.get("sportsteam")
+            
+            athletes = AthleteT.objects.filter(sportsteam__exact=selectedSport)
 
+            all_wellness = {}
+            athletes_img = []
+            wellness_trends = []
+
+            iter = 0
+            for x in athletes:
+                wellness_latest = {}
+
+                wellness_relevant = WellnessT.objects.filter(
+                    fname=x.fname,
+                    lname=x.lname,
+                    dob=x.dob,
+                    sportsteam=selectedSport,
+                    date__lte=selectedDate
+                )
+
+                result = wellness_relevant.order_by("date").last()
+
+                athletes_img.append(x.image.url)
+
+                if wellness_relevant:
+                    wellness_latest["hoursofsleep"] = result.hoursofsleep
+                    wellness_latest["sleepquality"] = result.sleepquality
+                    wellness_latest["breakfast"] = result.breakfast
+                    wellness_latest["hydration"] = result.hydration
+                    wellness_latest["soreness"] = result.soreness
+                    wellness_latest["stress"] = result.stress
+                    wellness_latest["mood"] = result.mood
+
+                    wellness_latest["status"] = result.status
+                    wellness_latest["date"] = result.date
+
+                    all_wellness[iter] = wellness_latest
+
+                else:
+                    wellness_latest["hoursofsleep"] = 0
+                    wellness_latest["sleepquality"] = 0
+                    wellness_latest["breakfast"] = 0
+                    wellness_latest["hydration"] = 0
+                    wellness_latest["soreness"] = 0
+                    wellness_latest["stress"] = 0
+                    wellness_latest["mood"] = 0
+
+                    wellness_latest["status"] = None
+                    wellness_latest["date"] = None
+
+                    all_wellness[iter] = wellness_latest
+
+                iter += 1
+
+                wellness_trend_data_x = []
+                wellness_trend_data_y = []
+
+                for y in wellness_relevant:
+                    total = y.hoursofsleep
+                    total += y.sleepquality
+                    total += y.breakfast
+                    total += y.hydration
+                    total += y.soreness
+                    total += y.stress
+                    total += y.mood
+
+                    wellness_trend_data_y.append(total)
+                    wellness_trend_data_x.append(y.date)
+
+                if len(wellness_trend_data_x) > 1:
+                    wellness_trends.append(line_graph(wellness_trend_data_x, wellness_trend_data_y, 0, None))
+                else:
+                    wellness_trends.append(None)
+                
+            """
+            query = "SELECT * FROM Wellness_T WHERE sportsteam = \"Men\'s Swimming\""
+            query += " AND (fname, lname, dob, date) IN (SELECT fname, lname, dob, MAX(date)"
+            query += " FROM Wellness_T WHERE sportsteam = \"Men\'s Swimming\" GROUP BY fname, lname, dob)"
+
+            results = WellnessT.objects.raw(query)
+            """
+
+            return JsonResponse({
+                "athletes_img": list(athletes_img),
+                "athletes": list(athletes.values("fname", "lname", "dob", "position")),
+                "wellness": list(all_wellness.values()),
+                "wellness_trends": list(wellness_trends),             
+            })
+        
+        return JsonResponse({"status": "Invalid request"}, status=400)
+        
     context = {
-        "athleteProf": athleteProf,
         "wellnessDates": wellnessDates,
         "wellnessSportsTeams": wellnessSportsTeams,
-        "allWellnessReports": allWellnessReports,
-        "selectedDate": selectedDate,
-        "selectedSport": selectedSport,
     }
 
     return render(request, "html/wellness.html", context)
