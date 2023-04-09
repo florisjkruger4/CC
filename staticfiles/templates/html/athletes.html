@@ -43,9 +43,9 @@
         </thead>
         <tbody>
           {% for AthleteT in athletes %}
-          <tr class="clickable-row" data-href="{% url 'AthleteProf' AthleteT.fname AthleteT.lname AthleteT.dob %}">
-            <td><a href="{% url 'AthleteProf' AthleteT.fname AthleteT.lname AthleteT.dob %}">{{ AthleteT.fname }}</a></td>
-            <td><a href="{% url 'AthleteProf' AthleteT.fname AthleteT.lname AthleteT.dob %}">{{ AthleteT.lname }}</a></td>
+          <tr class="clickable-row" data-href="{% url 'AthleteProf' AthleteT.fname AthleteT.lname AthleteT.dob AthleteT.id %}">
+            <td><a href="{% url 'AthleteProf' AthleteT.fname AthleteT.lname AthleteT.dob AthleteT.id %}">{{ AthleteT.fname }}</a></td>
+            <td><a href="{% url 'AthleteProf' AthleteT.fname AthleteT.lname AthleteT.dob AthleteT.id %}">{{ AthleteT.lname }}</a></td>
             <td>{{ AthleteT.sportsteam }}</td>
             <td>{{ AthleteT.position }}</td>
             <td>{{ AthleteT.year }}</td>

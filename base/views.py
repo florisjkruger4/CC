@@ -1,7 +1,7 @@
 import json
 from django.shortcuts import render, redirect
 from django.db.models import Q
-from .models import AthleteT, TeamT, WellnessT, KpiT
+from .models import AthleteT, TeamT, WellnessT, KpiT, TestTypeT
 from .utils import bar_graph, line_graph, radar_chart
 from django.db.models import Count
 from django.http import JsonResponse
@@ -10,6 +10,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
+from .forms import AthleteForm, ImageForm
 
 
 def LoginRegister(request):
@@ -44,6 +45,7 @@ def LoginRegister(request):
     }
     return render(request, 'html/loginRegister.html', context)
 
+
 @login_required(login_url='/')
 def userProf(request, username):
 
@@ -71,113 +73,37 @@ def userProf(request, username):
 
     return render(request, 'html/userProf.html', context)
 
+
 # deletes the session id token... meaning the user needs to log in once again to create a new session to be authenticated
 def LogoutUser(request):
 
     logout(request)
     return redirect('/')
 
-def RegisterUser(request):
-
-    form = UserCreationForm()
-
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            # do we care about case sensitive usernames??
-            user = form.save()
-            user.save()
-
-            # log in created user
-            login(request, user)
-            return redirect('/dash')
-        else:
-            messages.error(request, 'An error occured during registration')
-
-    context = {
-        'form':form,
-    }
-
-    return render(request, 'html/loginRegister.html', context)
-
-test_types = [
-    "5m Sprint",
-    "10m Sprint",
-    "10m Fly",
-    "15m Sprint",
-    "15m Fly",
-    "20m Sprint",
-    "20m Fly",
-    "25m Sprint",
-    "30m Sprint",
-    "40m Sprint",
-    "60m Sprint",
-    "5yd Sprint",
-    "10yd Sprint",
-    "10yd Fly",
-    "15yd Sprint",
-    "15yd Fly",
-    "20yd Sprint",
-    "20yd Fly",
-    "25yd Sprint",
-    "30yd Sprint",
-    "40yd Sprint",
-    "60yd Sprint",
-    "110yd Sprint",
-    "Broad Jump",
-    "Double Broad Jump",
-    "Triple Broad Jump",
-    "Standing Triple Jump",
-    "Countermovement Jump (Hands-on-Hips Force Plate)",
-    "Countermovement Rebound Jump (Hands-on-Hips Force Plate)",
-    "Countermovement Jump (Vertec)",
-    "Approach Jump (Vertec)",
-    "10-5 RSI",
-    "5-0-5 Agility",
-    "5-10-5 Pro Agility",
-    "60yd Shuttle",
-    "300yd Shuttle",
-    "Beep Test (Traditional)",
-    "Beep Test (Yo-Yo Intermittent Recovery Test)",
-    "Max Aerobic Speed",
-    "Clean 1RM",
-    "Snatch 1RM",
-    "Jerk 1RM",
-    "Clean & Jerk 1RM",
-    "Barbell Bench Press 1RM",
-    "Barbell Bench Press Max Reps (135lbs)",
-    "Barbell Bench Press Max Reps (185lbs)",
-    "Barbell Bench Press Max Reps (225lbs)",
-    "Dumbbell Bench Press 1RM",
-    "Barbell Back Squat 1RM",
-    "Barbell Front Squat 1RM",
-    "Barbell Deadlift 1RM",
-    "Hex Bar Deadlift 1RM",
-    "Pull-Up 1RM",
-    "Pull-Up Max Reps (60 sec)",
-    "Push-Up Max Reps (60 sec)",
-    "Isometric Mid-Thigh Pull",
-    "Isometric Belt Squat",
-    "Bodyweight",
-    "Body Composition",
-    "Fat Mass",
-    "Fat Free Mass",
-    "Lean Body Mass",
-    "Braking RFD",
-    "Average Relative Propulsive Force",
-    "Propulsive Net Impulse",
-]
-
 
 @login_required(login_url='/')
 def Dashboard(request):
     athletes = AthleteT.objects.all()
+    teams = TeamT.objects.all()
+
+    # session stuff...
+    recentlyViewedAthletes = None
+    sessionLength = None
+
+    if 'recently_viewed' in request.session:
+        Athletes = AthleteT.objects.filter(id__in=request.session['recently_viewed'])
+        recentlyViewedAthletes = sorted(Athletes, key=lambda x: request.session['recently_viewed'].index(x.id))
+        sessionLength = len(request.session['recently_viewed'])
 
     context = {
-        "athletes": athletes,
-    }
+        'athletes': athletes,
+        'teams':teams,
+        'recentlyViewedAthletes':recentlyViewedAthletes,
+        'sessionLength':sessionLength
+    } 
 
     return render(request, "html/dashboard.html", context)
+
 
 @login_required(login_url='/')
 def AthletesDash(request):
@@ -198,35 +124,24 @@ def AthletesDash(request):
 
     return render(request, "html/athletes.html", context)
 
+
 @login_required(login_url='/')
 def AddAthlete(request):
     if request.method == "POST":
-        newFname = request.POST["fname"]
-        newLname = request.POST["lname"]
-        newGender = request.POST["gender"]
-        newYear = request.POST["year"]
-        newHeight = request.POST["height"]
-        newImage = request.POST["image"]
-        newDOB = request.POST["dob"]
-        newTeam = request.POST["sportsteam"]
-        newPosition = request.POST["position"]
+        form = AthleteForm(request.POST, request.FILES) 
 
-        newAthlete = AthleteT(
-            fname=newFname,
-            lname=newLname,
-            gender=newGender,
-            dob=newDOB,
-            sportsteam=newTeam,
-            position=newPosition,
-            year=newYear,
-            height=newHeight,
-            image=newImage,
-        )
+        if form.is_valid():  
+            #form.validate_constraints()
+            form.save() 
 
-        newAthlete.validate_constraints()
-        newAthlete.save()
+    else:  
+        form = AthleteForm()
 
-    return render(request, "html/addathlete.html")
+    context = {
+            'form': form,
+        }
+  
+    return render(request, "html/addathlete.html", context)
 
 
 def kpiAjax(fname, lname, dob, date_one, date_two):
@@ -237,6 +152,8 @@ def kpiAjax(fname, lname, dob, date_one, date_two):
     Date1_results = []
     Date2_results = []
     changes = []
+    # List of True or False values indicating if a tests minimum score is better
+    minBetter_list = []
     iter = 0
 
     # Gets test types within selected date range
@@ -292,9 +209,14 @@ def kpiAjax(fname, lname, dob, date_one, date_two):
                     
             change = Date2_results[iter] - Date1_results[iter]
             changes.append(round(change, 2))
+        
+        # Checking if the current test type's min is better ([0][0] is just indexing the first element of the list, true or false)
+        minBetter = TestTypeT.objects.filter(tname=x).values_list('minbetter')[0][0]
+        # Append the current tests minBetter result to the list of minBetter results
+        minBetter_list.append(minBetter)
 
         # Calls matplotlib bar graph with above data
-        kpi_line.append(line_graph(results_x, results_y, changes[iter]))
+        kpi_line.append(line_graph(results_x, results_y, changes[iter], minBetter))
         kpi_bar.append(bar_graph(results_x, results_y))
 
         iter += 1
@@ -310,6 +232,8 @@ def kpiAjax(fname, lname, dob, date_one, date_two):
         "Date1_results": list(Date1_results),
         "Date2_results": list(Date2_results),
         "changes": list(changes),
+        # List of true or false values for each test type
+        "minBetter": list(minBetter_list),
         "kpi_bar": list(kpi_bar),
         "kpi_line": list(kpi_line),
     })
@@ -322,12 +246,20 @@ def wellnessAjax(fname, lname, dob, wellnessdate):
 
     # Return the list of athletes
     return JsonResponse({"wellness": list(wellness.values())})
-
+    
 
 @login_required(login_url='/')
-def AthleteProf(request, fname, lname, dob,):
+def AthleteProf(request, fname, lname, dob, id):
 
     athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
+
+    # instance of an image in order to edit profile picture... (I have no idea what this means, it took me so long to get it working, if it works, it works. Django documentation says to use ._meta("field name") but that never worked for me)
+    instanceImg = AthleteT.objects.filter(id=id).only("image").first()
+
+    Radar_chart = None
+    radar_date = None
+    all_tests = None
+    selected_radar_tests = None
 
     # If parameter "request" is an XML request (AJAX)...
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
@@ -343,6 +275,7 @@ def AthleteProf(request, fname, lname, dob,):
             # if we have data for "wellnessdate", we have a wellness update request
             elif data.get("wellnessdate"):
                 return wellnessAjax(fname, lname, dob, data.get("wellnessdate"))
+            
             else:
                 return JsonResponse({"status": "Invalid request"}, status=400)
         else:
@@ -352,6 +285,22 @@ def AthleteProf(request, fname, lname, dob,):
     # Init page will contain Athlete Profile info (fname, lname, sport, pos...) +
     # all kpi dates and all wellness dates. 
     else:
+
+        # session stuff...
+        recentlyViewedAthletes = None
+
+        if 'recently_viewed' in request.session:
+            Athletes = AthleteT.objects.filter(id__in=request.session['recently_viewed'])
+            recentlyViewedAthletes = sorted(Athletes, key=lambda x: request.session['recently_viewed'].index(x.id))
+
+            request.session['recently_viewed'].insert(0, id)
+            if (len(request.session['recently_viewed']) > 8):
+                request.session['recently_viewed'].pop()
+        else:
+            request.session['recently_viewed'] = [id]
+
+        request.session.modified = True
+
         kpi_count = KpiT.objects.filter(fname=fname, lname=lname, dob=dob).count()
         wellness_count = int(
         WellnessT.objects.filter(fname=fname, lname=lname, dob=dob).count()
@@ -360,8 +309,20 @@ def AthleteProf(request, fname, lname, dob,):
         # We don't have any wellness or kpi data, so just return 
         if kpi_count == 0 and wellness_count == 0:
 
+            # Image handeling for if the is no data in an athletes profile (no kpi records or wellness records)
+            if request.method == 'POST':
+                form = ImageForm(request.POST, request.FILES, instance=instanceImg)
+                if form.is_valid():  
+                    #form.validate_constraints()
+                    form.save()
+                    newImgVal = AthleteT.objects.get(fname=fname, lname=lname, dob=dob).image
+                    WellnessT.objects.filter(fname=fname, lname=lname, dob=dob).update(image=newImgVal)
+            else:
+                form = ImageForm()
+
             context = {
                 "athleteProf": athleteProf,
+                "form":form
             }
 
             return render(request, "html/athleteProf.html", context)
@@ -379,7 +340,6 @@ def AthleteProf(request, fname, lname, dob,):
             kpi_earliest = kpi_dates.first()["datekpi"]
             kpi_most_recent = kpi_dates.last()["datekpi"]
 
-        if kpi_count > 2:
             sportsteam = athleteProf.sportsteam
             gender = athleteProf.gender
             position = athleteProf.position
@@ -498,6 +458,11 @@ def AthleteProf(request, fname, lname, dob,):
                 Radar_chart = radar_chart(athlete_radar_results, average_radar_results, radar_date)
             else:
                 Radar_chart = None
+        else: #if there are no kpi records for this athlete but there are wellness records... still loads their page
+            kpi_dates = None
+            kpi_earliest = None
+            kpi_most_recent = None
+            kpi_count = None
                 
         if wellness_count > 0:
             #Access and store all dates
@@ -509,6 +474,20 @@ def AthleteProf(request, fname, lname, dob,):
             )
 
             wellness_most_recent = wellness_dates.last()["date"]
+        else: #if there are no wellness records for this athlete but there are kpi records... still loads their page
+            wellness_dates = None
+            wellness_most_recent = None
+
+    # Image handeling 
+    if request.method == 'POST':
+        form = ImageForm(request.POST, request.FILES, instance=instanceImg)
+        if form.is_valid():  
+            #form.validate_constraints()
+            form.save()
+            newImgVal = AthleteT.objects.get(fname=fname, lname=lname, dob=dob).image
+            WellnessT.objects.filter(fname=fname, lname=lname, dob=dob).update(image=newImgVal)
+    else:
+        form = ImageForm()
 
     context = {
         "athleteProf": athleteProf,
@@ -527,9 +506,71 @@ def AthleteProf(request, fname, lname, dob,):
         'radar_date': radar_date,
         'all_tests': all_tests,
         'selected_radar_tests': selected_radar_tests,
+
+        # dashboardd session stuff
+        'recentlyViewedAthletes':recentlyViewedAthletes,
+
+        # img form stuff
+        'form':form
     }
 
     return render(request, "html/athleteProf.html", context)
+    
+
+@login_required(login_url='/')
+def EditAthlete(request, fname, lname, dob, id):
+    athlete = AthleteT.objects.get(id=id)
+
+    # deletes entire athlete from database... along with their wellness and kpi records 
+    if request.GET.get('delete') == 'delete':
+        AthleteT.objects.filter(id=id).delete()
+        WellnessT.objects.filter(fname=fname, lname=lname, dob=dob).delete()
+        KpiT.objects.filter(fname=fname, lname=lname, dob=dob).delete()
+
+        return redirect('/athletes')
+
+    # updates changes made to athlete across all tables
+    if request.method == "POST":
+        editFname = request.POST["fname"]
+        editLname = request.POST["lname"]
+        editGender = request.POST["gender"]
+        editYear = request.POST["year"]
+        editHeight = request.POST["height"]
+        editDOB = request.POST["dob"]
+        editTeam = request.POST["sportsteam"]
+        editPosition = request.POST["position"]
+
+        athlete = AthleteT.objects.filter(id=id).update(
+            fname=editFname,
+            lname=editLname,
+            gender=editGender,
+            dob=editDOB,
+            sportsteam=editTeam,
+            position=editPosition,
+            year=editYear,
+            height=editHeight,
+        )
+        WellnessT.objects.filter(fname=fname, lname=lname, dob=dob).update(
+            fname=editFname,
+            lname=editLname,
+            dob=editDOB,
+            sportsteam=editTeam,
+            position=editPosition,
+        )
+        KpiT.objects.filter(fname=fname, lname=lname, dob=dob).update(
+            fname=editFname,
+            lname=editLname,
+            dob=editDOB,
+        )
+
+        return redirect('/athletes')
+
+    context = {
+        "athlete": athlete
+        }
+
+    return render(request, "html/editathlete.html", context)
+
     
 @login_required(login_url='/')
 def TeamDash(request):
@@ -539,11 +580,15 @@ def TeamDash(request):
 
     return render(request, "html/teams.html", context)
 
+
 @login_required(login_url='/')
 def recordKPI(request):
 
     # Define teams
     teams = TeamT.objects.values("sport").order_by("sport").distinct()
+
+    # All test type names in the TestTypeT table
+    test_types = TestTypeT.objects.values_list('tname', flat=True)
 
     # Initialise selectedSport and athletes to null and empty set respectively
     selectedSport = ""
@@ -567,15 +612,24 @@ def recordKPI(request):
         return JsonResponse({"status": "Invalid request"}, status=400)
 
     # Other (non-AJAX) requests will recieve a response with a whole HTML document. This requires a page reload.
-    #      Is this still being used after we implemented AJAX on this page?
+    # Is this still being used after we implemented AJAX on this page? - unknown
+    # Huh? Is what being used? lol - Floris
+
+
+    if request.method == 'POST':
+        print("test")
+
+
     context = {
         "athletes": athletes,
         "teams": teams,
         "selectedSport": selectedSport,
+        # TestTypeT table tname's
         "test_types": test_types,
     }
 
     return render(request, "html/recordKPI.html", context)
+
 
 @login_required(login_url='/')
 def WellnessDash(request):
@@ -688,9 +742,14 @@ def WellnessDash(request):
 
     return render(request, "html/wellness.html", context)
 
+
 @login_required(login_url='/')
 def AddKPI(request, fname, lname, dob):
+
     athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
+
+    # All test type names in the TestTypeT table
+    test_types = TestTypeT.objects.values_list('tname', flat=True)
 
     Fname = fname
     Lname = lname
@@ -715,13 +774,16 @@ def AddKPI(request, fname, lname, dob):
 
     context = {
         "athleteProf": athleteProf,
+        # TestTypeT table tname's
         "test_types": test_types,
     }
 
     return render(request, "html/addkpi.html", context)
 
+
 @login_required(login_url='/')
 def AddWellness(request, fname, lname, dob):
+
     athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
 
     Fname = fname

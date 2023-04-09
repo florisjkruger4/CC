@@ -11,6 +11,14 @@
     border-top-left-radius: 0;
 }
 
+.basicreport {
+    width: 100%;
+    background-color: var(--med-gray-2);
+    border-radius: var(--radius-big);
+    padding: var(--inner-padding);
+    margin-bottom: var(--inner-padding);
+}
+
 .report-tab {
     background-color: var(--med-gray-2); 
     padding: 10px 25px; 
@@ -95,4 +103,18 @@
         padding: 1rem 0 0 calc(var(--gutter)/2);
         height: 100vh;
     }
+}
+
+.delbtn {
+    transition: transform 0.3s;
+    border-radius: var(--radius-small);
+    border: none;
+    align-self: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 10px;
+}
+.delbtn:hover {
+    border: 1px solid #FC5151;
+    transform: (1.2);
 }

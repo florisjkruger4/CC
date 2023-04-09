@@ -15,34 +15,27 @@
 
         <div class="main-header" style="gap: 25px;">
             <a href="/athletes"><i class="fa-solid fa-circle-arrow-left"></i></a>
-            <h1>Add Athlete</h1>
+            <h1>Edit Athlete: {{athlete.fname}} {{athlete.lname}}</h1>
         </div>
 
-        <form method="post" enctype="multipart/form-data">  
-            {% csrf_token %}  
-            {{ form.as_p }}  
-            <button type="submit">Submit</button>  
-        </form> 
-
-        <!--
         <form method="post" id="addathleteform">
             {% csrf_token %}
             <div class="basicreport" style="width: 100%; max-width: 500px; height: auto;">
                 <div class="d-flex" style="gap: var(--inner-padding); padding-bottom: var(--inner-padding);">
                     <div>
                         <p>First Name</p>
-                        <input type="text" class="form-control" name="fname">
+                        <input type="text" class="form-control" name="fname" value="{{athlete.fname}}">
                     </div>
                     <div>
                         <p>Last Name</p>
-                        <input type="text" class="form-control" name="lname">
+                        <input type="text" class="form-control" name="lname" value="{{athlete.lname}}">
                     </div>
                 </div>
                 <div class="d-flex" style="gap: var(--inner-padding); padding-bottom: var(--inner-padding);">
                     <div>
                         <p>Year</p>
                         <select name="year" class="form-control">
-                            <option disabled hidden selected></option>
+                            <option selected>{{athlete.year}}</option>
                             <option>Freshman</option>
                             <option>Sophmore</option>
                             <option>Junior</option>
@@ -51,31 +44,29 @@
                     </div>
                     <div>
                         <p>Date of Birth</p>
-                        <input type="date" class="form-control" name="dob">
+                        <input type="date" class="form-control" name="dob" value="{{athlete.dob}}">
                     </div>
                 </div>
                 <div class="d-flex" style="gap: var(--inner-padding); padding-bottom: var(--inner-padding);"> 
                     <div>
                         <p>Height (in.)</p>
-                        <input type="text" class="form-control" name="height">
+                        <input type="text" class="form-control" name="height" value="{{athlete.height}}">
                     </div>
                     <div>
                         <p>Gender</p>
                         <select class="form-control" name="gender">
-                            <option disabled hidden selected></option>
+                            <option selected>{{athlete.gender}}</option>
                             <option>M</option>
                             <option>F</option>
                         </select>
                     </div>
                 </div>
 
-                <input type="file" id="img" name="image" accept="image/*" class="upload-img-frame">
-
                 <div class="d-flex" style="gap: var(--inner-padding); padding-top: var(--inner-padding); padding-bottom: var(--inner-padding);">
                     <div>
                         <p>Team</p>
                         <select name="sportsteam" class="form-control">
-                            <option disabled hidden selected></option>
+                            <option selected>{{athlete.sportsteam}}</option>
                             <option>Field Hockey</option>
                             <option>Football</option>
                             <option>Men's Ice Hockey</option>
@@ -89,14 +80,16 @@
                     </div>
                     <div>
                         <p>Position</p>
-                        <input type="text" class="form-control" name="position">
+                        <input type="text" class="form-control" name="position" value="{{athlete.position}}">
                     </div>
                 </div>
                 <div class="d-flex justify-content-between">
                     <button class="kpidatabtn" style="width: 25%;" type="submit" value="Submit">Submit</button>
+                </form>
+                    <form method="get">
+                        <button class="delbtn" style="color:var(--red-accent); background-color: #fc515100; margin-bottom: 20px;" onclick="return confirm('Are you sure?');" type="submit" name="delete" value="delete">Delete Student &nbsp; <i class="fa-solid fa-trash-can"></i></button>
+                    </form>
                 </div>
             </div>
-        </form>
-        -->
     </main>
 </body>

@@ -14,12 +14,12 @@
     <main class="py-3">
 
         <div class="main-header" style="gap: 25px;">
-            <a href="{{request.META.HTTP_REFERER}}"><button type="button" class="kpidatabtn">Go Back</button></a>
+            <a href="/athletes"><i class="fa-solid fa-circle-arrow-left"></i></a>
             <h1>Add KPI: {{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
         </div>
         <form method="post" id="addkpiform">
             {% csrf_token %}
-            <div class="kpireport"
+            <div class="basicreport"
                 style="width: 50vh; height: 40vh; display: flex; flex-direction: column; justify-content: space-between;">
                 <select id="testtype" name="testtype">
                     <option disabled hidden selected>Select Test</option>

@@ -15,20 +15,34 @@
             <div class="row">
                 <div class="col-lg-5 overflow-scroll">
                     <div class="col-scroll">
-
+                        
                         <!-- Athlete Info/Header -->
                         <div class="main-header justify-content-between">
-                            <h1>{{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
-                            <i class="fa-solid fa-pen"
-                                style="color: var(--yellow-accent); font-size: var(--icon-size);"></i>
+                            <div style="display: flex; gap: 25px;">
+                                <a href="/athletes"><i class="fa-solid fa-circle-arrow-left"></i></a>
+                                <h1>{{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
+                            </div>
+                            <div class="justify-content-between">
+                                <label for="id_image">
+                                    <i class="fa-solid fa-camera" style="color: var(--yellow-accent); font-size: var(--icon-size); cursor: pointer;"></i>
+                                </label>
+                                &nbsp;
+                                <a href="{% url 'EditAthlete' athleteProf.fname athleteProf.lname athleteProf.dob athleteProf.id %}">
+                                    <i class="fa-solid fa-pen" style="color: var(--yellow-accent); font-size: var(--icon-size);"></i>
+                                </a>
+                            </div>
                         </div>
 
+                        <!-- Hidden Input Field to change an image -->
+                        <form method="post" enctype="multipart/form-data" style="display: none;" id="imgForm">  
+                            {% csrf_token %}  
+                            {{ form.image }}  
+                        </form>
+
                         <div class="d-flex" style="height: 200px;">
-                            {% if testType %}
-                            <img class="athlete-pic" src="/staticfiles/images/{{ athleteProf.image }}"></img>
-                            {% else %}
-                            <img class="athlete-pic" src="/staticfiles/images/{{ athleteProf.image }}"></img>
-                            {% endif %}
+                            
+                            <img class="athlete-pic" src="/media/{{ athleteProf.image }}" id="profileImg"></img>
+
                             <div class="w-100" style="margin-left: var(--inner-padding);">
                                 <div class="d-flex justify-content-between">
                                     <h6>Sport</h6>
@@ -49,11 +63,6 @@
                                     <h6>Height</h6>
                                     <h6 class="text-end">{{ athleteProf.height }}</h6>
                                 </div>
-
-                                <!--<div class="line-2"></div>
-                                <div style="display: flex; justify-content: space-between;">
-                                    <h6>DOB</h6> <h6>{{ athleteProf.DOB }}</h6>
-                                </div> -->
                             </div>
                         </div>
 
@@ -373,6 +382,20 @@
                                 return cookieValue;
                             }
 
+                            // if img upload changes... 
+                            document.getElementById("id_image").addEventListener("change", imgChange);
+                            // stops form from resubmitting when page is refreshed to show 
+                            if ( window.history.replaceState ) {
+                                window.history.replaceState( null, null, window.location.href );
+                            }
+
+                            function imgChange() {
+                                // submit the form to change database, and refresh the page to show new profile image
+                                document.getElementById("imgForm").submit();
+                                document.getElementById("imgForm").reset();
+                                console.log("submit form")
+                            }
+
                             //if a date selector changes, call ajax to update the page
                             document.getElementById("date1").addEventListener("change", kpi_ajax);
                             document.getElementById("date2").addEventListener("change", kpi_ajax);
@@ -393,7 +416,7 @@
                                 $("#bar-graphs").append("<div class=\"d-flex justify-content-center\"> <div id=\"loading-bar\" class=\"lds-dual-ring\"></div></div>");
 
                                 $.ajax({
-                                    url: "{% url 'AthleteProf' athleteProf.fname athleteProf.lname athleteProf.dob %}",
+                                    url: "{% url 'AthleteProf' athleteProf.fname athleteProf.lname athleteProf.dob athleteProf.id %}",
                                     type: "POST",
                                     dataType: "json",
                                     data: JSON.stringify({ date1: date_one, date2: date_two }),
@@ -416,13 +439,35 @@
                                             var graphs = "<div>";
                                             report += "<div style=\"width: 25%\"> <p>" + response.test_types[key] + "</p></div>";
 
-                                            // add change
-                                            if (response.changes[key] > 0)
-                                                report += "<p style=\"color:var(--green-accent);\"> <i class=\"fa-solid fa-arrow-up\" style=\"color:var(--green-accent)\"></i> " + response.changes[key] + " </p>";
-                                            else if (response.changes[key] < 0)
-                                                report += "<p style=\"color:var(--red-accent);\"> <i class=\"fa-solid fa-arrow-down\" style=\"color:var(--red-accent)\"></i> " + response.changes[key] + " </p>";
-                                            else
-                                                report += "<p style\"=color:white;\"> " + response.changes[key] + " </p>";
+                                            // If the change is increasing
+                                            if (response.changes[key] > 0) {
+                                                // If a minimum score is better for a test, the change is increasing and is red
+                                                // (don't judge the === true and false, Ajax/JS didn't like the expression without them)
+                                                if (response.minBetter[key] === true) {
+                                                    report += "<p style=\"color:var(--red-accent);\"> <i class=\"fa-solid fa-arrow-up\" style=\"color:var(--red-accent)\"></i> " + response.changes[key] + " </p>";
+                                                    // If a minimum score is NOT better for a test, the change is increasing and is green
+                                                } else if (response.minBetter[key] === false) {
+                                                    report += "<p style=\"color:var(--green-accent);\"> <i class=\"fa-solid fa-arrow-up\" style=\"color:var(--green-accent)\"></i> " + response.changes[key] + " </p>";
+                                                    // minBetter is not defined, make it white/neutral (bodyweight, body composition, etc)
+                                                } else {
+                                                    report += "<p style=\"color:#FFFFFF;\"> <i class=\"fa-solid fa-arrow-up\" style=\"color:#FFFFFF\"></i> " + response.changes[key] + " </p>";
+                                                }
+                                                // If the change is decreasing
+                                            } else if (response.changes[key] < 0) {
+                                                // If a minimum score is better for a test, the change is decreasing and is green
+                                                if (response.minBetter[key] === true) {
+                                                    report += "<p style=\"color:var(--green-accent);\"> <i class=\"fa-solid fa-arrow-down\" style=\"color:var(--green-accent)\"></i> " + Math.abs(response.changes[key]) + " </p>";
+                                                    // If a minimum score is NOT better for a test, the change is decreasing and is red
+                                                } else if (response.minBetter[key] === false) {
+                                                    report += "<p style=\"color:var(--red-accent);\"> <i class=\"fa-solid fa-arrow-down\" style=\"color:var(--red-accent)\"></i> " + Math.abs(response.changes[key]) + " </p>";
+                                                    // minBetter is not defined, make it white/neutral (bodyweight, body composition, etc)
+                                                } else {
+                                                    report += "<p style=\"color:#FFFFFF;\"> <i class=\"fa-solid fa-arrow-down\" style=\"color:#FFFFFF\"></i> " + Math.abs(response.changes[key]) + " </p>";
+                                                }
+                                                // The change is 0, no arrow
+                                            } else {
+                                                report += "<p style=\"color:#FFFFFF;\"> " + response.changes[key] + " </p>";
+                                            }
 
                                             //add line graph with results below
                                             report += "<div style=\"width: 50%;\"> <img src=\"data:image/png;base64, " + response.kpi_line[key] + "\">";
@@ -461,7 +506,7 @@
                                 // This request will be handled by the Django backend -> see views.py recordKPI() for that code
                                 $.ajax({
                                     //URL needs to be fname, lname, DOB for athletes
-                                    url: "{% url 'AthleteProf' athleteProf.fname athleteProf.lname athleteProf.dob %}",
+                                    url: "{% url 'AthleteProf' athleteProf.fname athleteProf.lname athleteProf.dob athleteProf.id %}",
                                     type: "POST",
                                     dataType: "json",
                                     data: JSON.stringify({ wellnessdate: date_selected, }),

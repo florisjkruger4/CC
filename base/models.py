@@ -10,8 +10,7 @@ class AthleteT(models.Model):
     year = models.CharField(db_column='Year', max_length=15, blank=True, null=True)  # Field name made lowercase.
     height = models.CharField(db_column='Height', max_length=15, blank=True, null=True)  # Field name made lowercase.
     gender = models.CharField(db_column='Gender', max_length=1, blank=True, null=True)  # Field name made lowercase.
-    #upload_to='staticfiles/images'
-    image = models.ImageField(db_column='Image', upload_to='images', blank=True, null=True)  # Field name made lowercase.
+    image = models.ImageField(db_column='Image', upload_to='', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -57,7 +56,7 @@ class WellnessT(models.Model):
         managed = False
         db_table = 'Wellness_T'
         constraints = [
-            models.UniqueConstraint(fields=['fname', 'lname', 'dob', 'status', 'date'], name = 'unique_constraints_wellness')
+            models.UniqueConstraint(fields=['fname', 'lname', 'dob', 'date'], name = 'unique_constraints_wellness')
         ]
 
     # Overriding the string representation of a Wellness survery to customize output when querying with the interactive shell
@@ -72,7 +71,7 @@ class KpiT(models.Model):
     lname = models.CharField(db_column='Lname', max_length=30, blank=True, null=True)  # Field name made lowercase.
     dob = models.CharField(db_column='DOB', max_length=10, blank=True, null=True)  # Field name made lowercase.
     datekpi = models.CharField(db_column='DateKPI', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    testtype = models.CharField(db_column='TestType', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    testtype = models.CharField(db_column='TestType', max_length=60, blank=True, null=True)  # Field name made lowercase.
     testresult = models.FloatField(db_column='TestResult', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
@@ -83,11 +82,9 @@ class KpiT(models.Model):
         ]
 
 class TestTypeT(models.Model):
-    tname = models.CharField(db_column='Tname', primary_key=True, max_length=30)
-    minbetter = models.BooleanField(db_column="MinBetter")
+    tname = models.CharField(db_column='Tname', primary_key=True, max_length=60)
+    minbetter = models.BooleanField(db_column="MinBetter", blank=True, null=True)
     
     class Meta:
         managed = False
         db_table = 'TestType_T'
-
-    

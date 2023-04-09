@@ -15,32 +15,61 @@
             <div style="display: flex;">
               <h1 class="mainFont" style="padding-bottom: 10px; padding-right: 4%;">Recently Viewed</h1>
             </div>
-            <div class="kpireport" style="display: flex; flex-direction: column; justify-content: space-evenly;">
-              <!--
-              {% for x in athletes %}
-              <div>
-                {{ x.fname }}
-                {{ x.lname }}
+            <div class="basicreport" style="display: flex; flex-direction: column; justify-content: space-evenly;">
+
+              {% if sessionLength > 0 %}
+
+              {% for x in recentlyViewedAthletes %}
+              <div style="display: flex;">
+                <img style="width: 100px; height: 100px;" src="/media/{{ x.image }}"></img>
+                &nbsp;
+                &nbsp;
+                <div>
+                  <a href="{% url 'AthleteProf' x.fname x.lname x.dob x.id %}"><p>{{x.fname}} {{x.lname}}</p></a>
+                  <p style="font-size: x-small;">{{x.position}}</p>
+                  <p style="font-size: x-small;">{{x.year}}</p>
+                </div>
               </div>
+              &nbsp;
               {% endfor %}
-              -->
+
+              {% else %}
+
+              <p>No Data in Session</p>
+
+              {% endif %}
+
             </div>
           </div>
           <div class="col-md-3" style="padding-top: 20px">
             <div style="display: flex;">
               <h1 class="mainFont" style="padding-bottom: 10px; padding-right: 8%;">Teams</h1>
             </div>
-            <div class="kpireport" style="display: flex; flex-direction: column; justify-content: space-evenly;">
-
-            </div>
+            <table class="table table-dark table-striped table-hover table-customs">
+              {% for TeamT in teams %}
+              <tr style="height: 50px; vertical-align:middle;">
+                <td>{{ TeamT.sport }}</td>
+              </tr>
+              {% endfor %}
+            </table>
           </div>
           <div class="col-md-2" style="padding-top: 20px">
             <div style="display: flex;">
               <h1 class="mainFont" style="padding-bottom: 10px; padding-right: 8%;">Quick Actions</h1>
             </div>
+            <a href="/recordKPI">
+              <button class="kpidatabtn" style="margin-top: 20px;">New KPI</button>
+            </a>
             
+            <a href="/addathlete">
+              <button class="kpidatabtn" style="margin-top: 20px;">New Athlete</button>
+            </a>
+            
+            <a href="/commingSoon">  
+              <button class="kpidatabtn" style="margin-top: 20px;">New Test</button>
+            </a>
           </div>
-       </div>
+       </div> 
     </main>
 </body>
 </html>
