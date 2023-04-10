@@ -25,7 +25,7 @@
   --inner-padding: 1.5rem; /* Bootstrap Default */
   --radius-big: 10px;
   --radius-small: 5px;
-  
+
   --icon-size: 25px;
 }
 
@@ -111,7 +111,7 @@ td {
 }
 
 .py-override {
-  padding-top: 0 !important; 
+  padding-top: 0 !important;
   padding-bottom: 0 !important;
 }
 
@@ -169,7 +169,8 @@ a:active {
 }
 
 select {
-  background-color: transparent;
+  background-color: var(--dark-gray);
+  border-radius: 10px;
   border: none;
   font-family: inherit;
   color: var(--white-text);
