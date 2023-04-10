@@ -100,7 +100,7 @@ def Dashboard(request):
         'teams':teams,
         'recentlyViewedAthletes':recentlyViewedAthletes,
         'sessionLength':sessionLength
-    } 
+    }
 
     return render(request, "html/dashboard.html", context)
 
@@ -128,19 +128,19 @@ def AthletesDash(request):
 @login_required(login_url='/')
 def AddAthlete(request):
     if request.method == "POST":
-        form = AthleteForm(request.POST, request.FILES) 
+        form = AthleteForm(request.POST, request.FILES)
 
-        if form.is_valid():  
+        if form.is_valid():
             #form.validate_constraints()
-            form.save() 
+            form.save()
 
-    else:  
+    else:
         form = AthleteForm()
 
     context = {
             'form': form,
         }
-  
+
     return render(request, "html/addathlete.html", context)
 
 
@@ -169,7 +169,7 @@ def kpiAjax(fname, lname, dob, date_one, date_two):
         .distinct()
     )
 
-    # Get kpi results for each test type 
+    # Get kpi results for each test type
     for x in test_type:
         # Gets the rows for this test for specific athlete
         kpi_results = KpiT.objects.filter(
@@ -187,7 +187,7 @@ def kpiAjax(fname, lname, dob, date_one, date_two):
         # Date 1 test score result
         if date_one:
             Date1_result = kpi_results.order_by("datekpi").first()
-                    
+
             if Date1_result:
                 Date1_results.append(Date1_result.testresult)
 
@@ -206,10 +206,10 @@ def kpiAjax(fname, lname, dob, date_one, date_two):
 
         # If both give values (not null), calculate difference betweeen them
         if Date1_results[iter] and Date2_results[iter]:
-                    
+
             change = Date2_results[iter] - Date1_results[iter]
             changes.append(round(change, 2))
-        
+
         # Checking if the current test type's min is better ([0][0] is just indexing the first element of the list, true or false)
         minBetter = TestTypeT.objects.filter(tname=x).values_list('minbetter')[0][0]
         # Append the current tests minBetter result to the list of minBetter results
@@ -223,10 +223,10 @@ def kpiAjax(fname, lname, dob, date_one, date_two):
 
     # Objects returned to frontend:
     # test_types = list of all test types for this athlete
-    # Date1_results = list of floating point values of kpis on first date selected 
-    # Date2_results = list of floating point values of kpis on second date selected 
+    # Date1_results = list of floating point values of kpis on first date selected
+    # Date2_results = list of floating point values of kpis on second date selected
     # changes = list of floating point values of difference between date1 and date2 results
-    # kpi_bar and kpi_line: bar and line graphs respectively 
+    # kpi_bar and kpi_line: bar and line graphs respectively
     return JsonResponse({
         "test_types": list(test_type),
         "Date1_results": list(Date1_results),
@@ -238,19 +238,21 @@ def kpiAjax(fname, lname, dob, date_one, date_two):
         "kpi_line": list(kpi_line),
     })
 
-    
+
 def wellnessAjax(fname, lname, dob, wellnessdate):
-    
+
     # Get the appropriate wellness report
     wellness = WellnessT.objects.filter(fname=fname, lname=lname, dob=dob, date=wellnessdate).values()
 
     # Return the list of athletes
     return JsonResponse({"wellness": list(wellness.values())})
-    
+
 
 @login_required(login_url='/')
 def AthleteProf(request, fname, lname, dob, id):
 
+    #Test
+    
     athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
 
     # instance of an image in order to edit profile picture... (I have no idea what this means, it took me so long to get it working, if it works, it works. Django documentation says to use ._meta("field name") but that never worked for me)
@@ -265,25 +267,25 @@ def AthleteProf(request, fname, lname, dob, id):
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
         # ...AND it's also a POST request...
         if request.method == "POST":
-            # load data from AJAX 
+            # load data from AJAX
             data = json.load(request)
 
             # if we have data for "date1" and "date2", we have a kpi update request
             if data.get("date1") and data.get("date2"):
                 return kpiAjax(fname, lname, dob, data.get("date1"), data.get("date2"))
-            
+
             # if we have data for "wellnessdate", we have a wellness update request
             elif data.get("wellnessdate"):
                 return wellnessAjax(fname, lname, dob, data.get("wellnessdate"))
-            
+
             else:
                 return JsonResponse({"status": "Invalid request"}, status=400)
         else:
             return JsonResponse({"status": "Invalid request"}, status=400)
-        
+
     # Not an AJAX call... page is likely initially loading
     # Init page will contain Athlete Profile info (fname, lname, sport, pos...) +
-    # all kpi dates and all wellness dates. 
+    # all kpi dates and all wellness dates.
     else:
 
         # session stuff...
@@ -306,13 +308,13 @@ def AthleteProf(request, fname, lname, dob, id):
         WellnessT.objects.filter(fname=fname, lname=lname, dob=dob).count()
         )
 
-        # We don't have any wellness or kpi data, so just return 
+        # We don't have any wellness or kpi data, so just return
         if kpi_count == 0 and wellness_count == 0:
 
             # Image handeling for if the is no data in an athletes profile (no kpi records or wellness records)
             if request.method == 'POST':
                 form = ImageForm(request.POST, request.FILES, instance=instanceImg)
-                if form.is_valid():  
+                if form.is_valid():
                     #form.validate_constraints()
                     form.save()
                     newImgVal = AthleteT.objects.get(fname=fname, lname=lname, dob=dob).image
@@ -368,7 +370,7 @@ def AthleteProf(request, fname, lname, dob, id):
             # List to hold nested dictionaries of averages test data
             average_radar_results = []
 
-            # Sportsteam: generate averages in each selected test for athletes of the same Sportsteam 
+            # Sportsteam: generate averages in each selected test for athletes of the same Sportsteam
             if "team_avg" in compare_avg:
                 same_team_athletes = AthleteT.objects.filter(sportsteam=sportsteam).exclude(fname=fname, lname=lname, dob=dob).values_list('fname', 'lname', 'dob')
                 # Queryset of KPI data for each athlete of the same team where test type is in the selected tests and datekpi is less than or equal to the specified radar date
@@ -396,7 +398,7 @@ def AthleteProf(request, fname, lname, dob, id):
                 # Append the test_type and average result key:value pair to the result
                 average_radar_results.append({'group': 'team', 'results': test_results})
 
-            # Position: generate averages in each selected test for athletes of the same position 
+            # Position: generate averages in each selected test for athletes of the same position
             if "position_avg" in compare_avg:
                 same_position_athletes = AthleteT.objects.filter(sportsteam=sportsteam, position=position).exclude(fname=fname, lname=lname, dob=dob).values_list('fname', 'lname', 'dob')
                 # Queryset of KPI data for each athlete of the same position where test type is in the selected tests and datekpi is less than or equal to the specified radar date
@@ -424,7 +426,7 @@ def AthleteProf(request, fname, lname, dob, id):
                 # Append the test_type and average result key:value pair to the result
                 average_radar_results.append({'group': 'position', 'results': test_results})
 
-            # Gender: generate averages in each selected test for athletes of the same gender 
+            # Gender: generate averages in each selected test for athletes of the same gender
             if "gender_avg" in compare_avg:
                 # Queryset of athletes of the same gender not including the current athlete
                 same_gender_athletes = AthleteT.objects.filter(gender=gender).exclude(fname=fname, lname=lname, dob=dob).values_list('fname', 'lname', 'dob')
@@ -453,7 +455,7 @@ def AthleteProf(request, fname, lname, dob, id):
                 # Append the test_type and average result key:value pair to the result
                 average_radar_results.append({'group': 'gender', 'results': test_results})
 
-            # Render the graph if 3 or more tests were selected 
+            # Render the graph if 3 or more tests were selected
             if len(selected_radar_tests) >= 3:
                 Radar_chart = radar_chart(athlete_radar_results, average_radar_results, radar_date)
             else:
@@ -463,7 +465,7 @@ def AthleteProf(request, fname, lname, dob, id):
             kpi_earliest = None
             kpi_most_recent = None
             kpi_count = None
-                
+
         if wellness_count > 0:
             #Access and store all dates
             wellness_dates = (
@@ -478,10 +480,10 @@ def AthleteProf(request, fname, lname, dob, id):
             wellness_dates = None
             wellness_most_recent = None
 
-    # Image handeling 
+    # Image handeling
     if request.method == 'POST':
         form = ImageForm(request.POST, request.FILES, instance=instanceImg)
-        if form.is_valid():  
+        if form.is_valid():
             #form.validate_constraints()
             form.save()
             newImgVal = AthleteT.objects.get(fname=fname, lname=lname, dob=dob).image
@@ -496,7 +498,7 @@ def AthleteProf(request, fname, lname, dob, id):
         "kpi_earliest": kpi_earliest,
         "kpi_most_recent": kpi_most_recent,
         "kpi_count": kpi_count,
-        
+
         "wellnessReportDates": wellness_dates,
         "mostRecentWellnessReportDate": wellness_most_recent,
         "wellness_count": wellness_count,
@@ -515,13 +517,13 @@ def AthleteProf(request, fname, lname, dob, id):
     }
 
     return render(request, "html/athleteProf.html", context)
-    
+
 
 @login_required(login_url='/')
 def EditAthlete(request, fname, lname, dob, id):
     athlete = AthleteT.objects.get(id=id)
 
-    # deletes entire athlete from database... along with their wellness and kpi records 
+    # deletes entire athlete from database... along with their wellness and kpi records
     if request.GET.get('delete') == 'delete':
         AthleteT.objects.filter(id=id).delete()
         WellnessT.objects.filter(fname=fname, lname=lname, dob=dob).delete()
@@ -571,7 +573,7 @@ def EditAthlete(request, fname, lname, dob, id):
 
     return render(request, "html/editathlete.html", context)
 
-    
+
 @login_required(login_url='/')
 def TeamDash(request):
     athletes = TeamT.objects.all()
@@ -645,7 +647,7 @@ def WellnessDash(request):
             data = json.load(request)
             selectedDate = data.get("wellnessdate")
             selectedSport = data.get("sportsteam")
-            
+
             athletes = AthleteT.objects.filter(sportsteam__exact=selectedSport)
 
             all_wellness = {}
@@ -717,7 +719,7 @@ def WellnessDash(request):
                     wellness_trends.append(line_graph(wellness_trend_data_x, wellness_trend_data_y, 0, None))
                 else:
                     wellness_trends.append(None)
-                
+
             """
             query = "SELECT * FROM Wellness_T WHERE sportsteam = \"Men\'s Swimming\""
             query += " AND (fname, lname, dob, date) IN (SELECT fname, lname, dob, MAX(date)"
@@ -730,11 +732,11 @@ def WellnessDash(request):
                 "athletes_img": list(athletes_img),
                 "athletes": list(athletes.values("fname", "lname", "dob", "position")),
                 "wellness": list(all_wellness.values()),
-                "wellness_trends": list(wellness_trends),             
+                "wellness_trends": list(wellness_trends),
             })
-        
+
         return JsonResponse({"status": "Invalid request"}, status=400)
-        
+
     context = {
         "wellnessDates": wellnessDates,
         "wellnessSportsTeams": wellnessSportsTeams,
