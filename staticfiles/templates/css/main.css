@@ -1,11 +1,16 @@
 /* CSS Directory
-    1. Recent Stylings
-    2. Old Stylings
+    1. Root Stylings
+    2. Responsiveness
+    3. Universal Element Modifications
+    4. Athletes Table
+    5. KPI Table
+    6. Custom Layout Classes
+    7. Custom Elements
+    8. Animations
 */
 
-/* 1. Recent Stylings
+/* 1. Root Stylings
    ********************************** */
-
 /* These some colors fr */
 :root {
 
@@ -40,7 +45,11 @@
   --icon-size: 25px;
 }
 
-/* Responsive layout variables */
+/* 2. Responsiveness
+   **********************************
+   For reference (CSS vars cant be used for mediaqueries):
+   Medium (MD) breakpoint: 768
+*/
 @media screen and (max-width:768px) { /* Bootstrap's md breakpoint */
   :root {
     --nav-width: 60px;
@@ -48,8 +57,8 @@
   }
 }
 
-/* Universal Element Modifications */
-
+/* 3. Universal Element Modifications
+   ********************************** */
 main {
   /* Respond to the navbar's fixed width */
   width: calc(100vw - (var(--nav-width)) - var(--gutter)*2 ); /* Remainder of navbar and 2 gutters */
@@ -123,7 +132,8 @@ input, textarea{
   filter: invert(1);
 }
 
-/* Athletes Table */
+/* 4. Athletes Table
+   ********************************** */
 .table-customs {
   --bs-table-bg: var(--med-gray-1) !important;
   --bs-table-striped-bg: var(--med-gray-2) !important;
@@ -146,18 +156,22 @@ input, textarea{
   height: 200px;
 }
 
-/* Record KPI Table Header
-     - Set empty height to height of element with content */
-     #data-table #theader {
-      height: calc(1rem + 1rem * 1.5); /* Sum of vertical padding and (font-size * line height) */
-    }
-    
-    .table-container {
-      max-width: 100%;
-      overflow-x: scroll;
-    }
+/* 5. KPI Table
+   ********************************** */
 
-/* Custom Layout Classes */
+/* Record KPI Table Header
+  - Set empty height to height of element with content */
+  #data-table #theader {
+  height: calc(1rem + 1rem * 1.5); /* Sum of vertical padding and (font-size * line height) */
+}
+
+.table-container {
+  max-width: 100%;
+  overflow-x: scroll;
+}
+
+/* 6. Custom Layout Classes
+   ********************************** */
 
 .main-header {
   height: 60px;
@@ -170,7 +184,8 @@ input, textarea{
   padding-bottom: 0 !important;
 }
 
-/* Custom Elements */
+/* 7. Custom Elements
+   ********************************** */
 
 .report {
   width: 100%;
@@ -235,7 +250,8 @@ select {
   cursor: pointer;
 }
 
-/* Animations */
+/* 8. Animations
+   ********************************** */
 
 /* Loading Circle */
 .lds-dual-ring:after {
