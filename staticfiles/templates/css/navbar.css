@@ -9,11 +9,34 @@
   }
 }
 
+/* Set width of nav and font size */
 nav {
   width: var(--nav-width);
-  padding-left: var(--nav-padding);   /* No shorthand since we're using Bootstrap for the y-axis */
-  padding-right: var(--nav-padding);
   font-size: 20;
+}
+
+/* Override default nav-pill color to our accent color */
+.nav-pills {
+  --bs-nav-link-hover-color: #99C7FF !important;
+}
+
+/* Separate from the user nav header */
+.nav-container {
+  padding-left: var(--nav-padding);  
+  padding-right: var(--nav-padding);
+}
+
+/* Circle containing user initials */
+.user-initials {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--yellow-accent);
+  color: black;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
   
 /* Old stylings kept for WIP references */

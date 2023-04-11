@@ -131,9 +131,9 @@
               <ul id="test-list">
                 {% for x in test_types %}
                 <li>
-                  <div><a>{{ x }}</a><input id="{{ forloop.counter }}" type="checkbox"></div>
+                  <div><div style="width: 80%; padding-left: 0;"><a>{{ x }}</a></div><input id="{{ forloop.counter }}" type="checkbox"></div>
+                  <hr style="margin-left: var(--inner-padding); margin-right: var(--inner-padding);">
                 </li>
-                <hr style="margin-left: var(--inner-padding); margin-right: var(--inner-padding);">
                 {% endfor %}
               </ul>
 
@@ -207,69 +207,6 @@
                 })
 
               </script>
-
-              <style>
-                #test-search {
-                  background-image: url('https://fontawesome.com/icons/magnifying-glass?f=classic&s=solid');
-                  background-color: var(--dark-gray);
-                  /* Add a search icon to input */
-                  background-position: 10px 12px;
-                  /* Position the search icon */
-                  background-repeat: no-repeat;
-                  /* Do not repeat the icon image */
-                  width: 100%;
-                  /* Full-width */
-                  font-size: 16px;
-                  /* Increase font-size */
-                  padding: 12px 20px 12px 40px;
-                  /* Add some padding */
-                  border: 2px solid var(--med-gray-1);
-                  border-radius: var(--radius-big);
-                  /* Add a grey border */
-                  margin-bottom: 12px;
-                  /* Add some space below the input */
-
-                  color: black;
-                }
-
-                #test-list {
-                  /* Remove default list styling */
-                  list-style-type: none;
-                  padding: 0;
-                  margin: 0;
-                }
-
-                #test-list input {
-                  width: 25px;
-                  border: 2px solid var(--yellow-accent);
-                  background-color: var(--med-gray-1);
-                }
-
-                /* When the checkbox is checked, add a blue background */
-                .container input:checked~.checkmark {
-                  background-color: var(--yellow-accent);
-                }
-
-                #test-list div {
-                  /* Add a border to all links */
-                  margin-top: -1px;
-                  /* Prevent double borders */
-                  /* Grey background color */
-                  padding: 0 var(--inner-padding) 0 var(--inner-padding);
-                  /* Add some padding */
-                  text-decoration: none;
-                  /* Remove default text underline */
-                  font-size: 18px;
-                  /* Increase the font-size */
-                  color: white;
-                  /* Add a black text color */
-                  display: flex;
-                  justify-content: space-between;
-                  gap: var(--inner-padding);
-
-                  /* Make it into a block element to fill the whole list */
-                }
-              </style>
 
             </div>
           </div>

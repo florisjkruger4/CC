@@ -1,56 +1,85 @@
-<nav class="position-fixed bg-dark min-vh-100" style="padding-top: var(--gutter);"> <!-- class="col-auto col-md-2 col-xl-2 px-sm-2 px-0 bg-dark min-vh-100" -->
+<script>
 
+  function user_initials() {
+    const fname = "{{ user.first_name}}";
+    const lname = "{{ user.last_name}}";
 
-  <div class="d-flex justify-content-center mb-4"> <!-- justify-content-between  -->
-    <!-- <i class="fs-4 fa-solid fa-user "></i> <span class="d-none d-md-inline">User</span> -->
-    <div style="background-color: var(--med-gray-2); width: 100%; padding: var(--inner-padding); border-radius: var(--radius-big);">
-      {% if request.user.is_authenticated %}
-      <a href="{% url 'userProf' user.username %}" class="nav-link px-0 align-middle">
-        <i class="fs-4 fa-solid fa-user fa-fw"></i><span class="ms-1 d-none d-md-inline">{{ request.user }}</span>
-      </a>
-      {% endif %}
-    </div>
+    // Formats first name with uppercase first letter
+    form_fname = fname.charAt(0).toUpperCase() + fname.slice(1);
+
+    // Gets just the first character from first and last names 
+    // Makes them uppercase
+    var f_init = fname.charAt(0).toUpperCase();
+    var l_init = lname.charAt(0).toUpperCase();
+
+    // Injects initials and names into HTML
+    document.getElementById("user-initials").innerText = f_init + l_init;
+    document.getElementById("username").innerText = form_fname + " " + l_init + ".";
+  }
+
+</script>
+
+<nav class="position-fixed bg-dark min-vh-100">
+
+  <div class="d-flex align-items-center mb-4" style="background-color: var(--med-gray-1); width: 100%; height: 100px;">
+    {% if request.user.is_authenticated %}
+
+    <a href="{% url 'userProf' user.username %}" class="nav-link px-0 align-middle">
+      <div class="d-flex justify-content-center align-items-center"
+        style="gap: var(--inner-padding); padding-left: var(--gutter); padding-right: var(--inner-padding);">
+        <div id="user-initials" class="user-initials"></div>
+        <span id="username"></span>
+      </div>
+    </a>
+    <script>user_initials()</script>
+
+    {% endif %}
   </div>
 
-  <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-md-start" id="menu"> <!-- align-items-sm-start -->
-    <li class="nav-item">
+  <div class="nav-container">
+    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-md-start" id="menu">
+      <!-- align-items-sm-start -->
+      <li class="nav-item">
         <a href="/dash" class="nav-link align-middle px-0">
-            <i class="fs-4 fa-solid fa-house fa-fw"></i> <span class="ms-1 d-none d-md-inline">Home</span>
+          <i class="fs-4 fa-solid fa-house fa-fw"></i> <span class="ms-1 d-none d-md-inline">Home</span>
         </a>
-    </li>
-    <hr class="w-100 my-2 d-none d-md-inline" />
-    <li>
+      </li>
+      <hr class="w-100 my-2 d-none d-md-inline" />
+      <li>
         <a href="/athletes" class="nav-link px-0 align-middle">
-            <i class="fs-4 fa-solid fa-person-running fa-fw"></i> <span class="ms-1 d-none d-md-inline">Athletes</span> <!-- d-md-inline -->
+          <i class="fs-4 fa-solid fa-person-running fa-fw"></i> <span class="ms-1 d-none d-md-inline">Athletes</span>
+          <!-- d-md-inline -->
         </a>
-    </li>
-    <hr class="w-100 my-2 d-none d-md-inline" />
-    <li>
-      <a href="/teams" class="nav-link px-0 align-middle">
+      </li>
+      <hr class="w-100 my-2 d-none d-md-inline" />
+      <li>
+        <a href="/teams" class="nav-link px-0 align-middle">
           <i class="fs-4 fa-solid fa-people-group fa-fw"></i> <span class="ms-1 d-none d-md-inline">Teams</span>
-      </a>
-    </li>
-    <hr class="w-100 my-2 d-none d-md-inline" />
-    <li>
-      <a href="/recordKPI" class="nav-link px-0 align-middle">
+        </a>
+      </li>
+      <hr class="w-100 my-2 d-none d-md-inline" />
+      <li>
+        <a href="/recordKPI" class="nav-link px-0 align-middle">
           <i class="fs-4 fa-solid fa-pen-to-square fa-fw"></i> <span class="ms-1 d-none d-md-inline">Record KPI</span>
-      </a>
-    </li>
-    <hr class="w-100 my-2 d-none d-md-inline" />
-    <li>
-      <a href="/wellness" class="nav-link px-0 align-middle">
-        <i class="fs-4 fa-solid fa-heart fa-fw"></i> <span class="ms-1 d-none d-md-inline">Wellness</span>
-      </a>
-    </li>
-    {% if request.user.is_authenticated %}
-    <hr class="w-100 my-2 d-none d-md-inline" />
-    <li>
-      <a href="{% url 'LogoutUser' %}" class="nav-link px-0 align-middle">
-        <i class="fs-4 fa-solid fa-arrow-right-from-bracket fa-fw"></i> <span class="ms-1 d-none d-md-inline">Logout</span>
-      </a>
-    </li>
-    {% endif %}
-  </ul>
+        </a>
+      </li>
+      <hr class="w-100 my-2 d-none d-md-inline" />
+      <li>
+        <a href="/wellness" class="nav-link px-0 align-middle">
+          <i class="fs-4 fa-solid fa-heart fa-fw"></i> <span class="ms-1 d-none d-md-inline">Wellness</span>
+        </a>
+      </li>
+      {% if request.user.is_authenticated %}
+      <hr class="w-100 my-2 d-none d-md-inline" />
+      <li>
+        <a href="{% url 'LogoutUser' %}" class="nav-link px-0 align-middle">
+          <i class="fs-4 fa-solid fa-arrow-right-from-bracket fa-fw"></i> <span
+            class="ms-1 d-none d-md-inline">Logout</span>
+        </a>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
 
   <!--
   <div class="nav-footer">
@@ -58,30 +87,3 @@
   </div>
   -->
 </nav>
-
-<!-- Old nav kept for WIP references -->
-<!--
-<nav class="side-nav">
-  <div class="nav-user nav-links">
-    {% if request.user.is_authenticated %}
-    <i class="fa-solid fa-user"></i>{{ request.user }}
-    {% endif %}
-  </div>
-  <div class="nav-links"> 
-    <a href="/dash" class="nav-list-item"><i class="fa-solid fa-house"></i>Dashboard</a>
-    <div class="line-1"></div>
-    <a href="/athletes" class="nav-list-item"><i class="fa-solid fa-person-running"></i>Athletes</a>
-    <div class="line-1"></div>
-    <a href="/teams" class="nav-list-item"><i class="fa-solid fa-people-group"></i>Teams</a>
-    <div class="line-1"></div>
-    <a href="/recordKPI" class="nav-list-item"><i class="fa-solid fa-pen-to-square"></i>Record KPI</a>
-    <div class="line-1"></div>
-    <a href="/wellness" class="nav-list-item"><i class="fa-solid fa-heart"></i>Wellness</a>
-    <div class="line-1"></div>
-    {% if request.user.is_authenticated %}
-    <a href="{% url 'LogoutUser' %}" class="nav-list-item"><i class="fa-solid fa-arrow-right-from-bracket"></i>Logout</a>
-    {% endif %}
-  </div>
-  <div class="nav-footer"><small>Coach's Corner v1.0</small></div>
-</nav>
--->

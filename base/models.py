@@ -39,10 +39,10 @@ class WellnessT(models.Model):
     fname = models.CharField(db_column='Fname', max_length=30)  # Field name made lowercase.
     lname = models.CharField(db_column='Lname', max_length=30)  # Field name made lowercase.
     dob = models.CharField(db_column='DOB', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    status = models.CharField(db_column='Status', max_length=1, blank=True, null=True)  # Field name made lowercase.
-    sportsteam = models.CharField(db_column='SportsTeam', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    status = models.CharField(db_column='Status', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    #sportsteam = models.CharField(db_column='SportsTeam', max_length=30, blank=True, null=True)  # Field name made lowercase.
     date = models.CharField(db_column='Date', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    position = models.CharField(db_column='Position', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    #position = models.CharField(db_column='Position', max_length=30, blank=True, null=True)  # Field name made lowercase.
     hoursofsleep = models.IntegerField(db_column='HoursOfSleep', blank=True, null=True)  # Field name made lowercase.
     sleepquality = models.IntegerField(db_column='SleepQuality', blank=True, null=True)  # Field name made lowercase.
     breakfast = models.IntegerField(db_column='Breakfast', blank=True, null=True)  # Field name made lowercase.
@@ -50,7 +50,7 @@ class WellnessT(models.Model):
     soreness = models.IntegerField(db_column='Soreness', blank=True, null=True)  # Field name made lowercase.
     stress = models.IntegerField(db_column='Stress', blank=True, null=True)  # Field name made lowercase.
     mood = models.IntegerField(db_column='Mood', blank=True, null=True)  # Field name made lowercase.
-    image = models.CharField(db_column='Image', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    #image = models.CharField(db_column='Image', max_length=50, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -61,7 +61,7 @@ class WellnessT(models.Model):
 
     # Overriding the string representation of a Wellness survery to customize output when querying with the interactive shell
     def __str__(self):
-        return (f"Name:{self.fname} {self.lname} | DOB:{self.dob} | Status:{self.status} | Team:{self.sportsteam} | Date:{self.date} | Position:{self.position} | "
+        return (f"Name:{self.fname} {self.lname} | DOB:{self.dob} | Status:{self.status} | Date:{self.date} | "
                 f"HoursSleep:{self.hoursofsleep} | SleepQuality:{self.sleepquality} | Breakfast:{self.breakfast} | Hydration:{self.hydration} | soreness:{self.soreness} | "
                 f"Stress:{self.stress} | Mood:{self.mood} ") 
 

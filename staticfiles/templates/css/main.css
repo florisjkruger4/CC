@@ -8,16 +8,28 @@
 
 /* These some colors fr */
 :root {
-  --blue-accent: #99C7FF;
-  --yellow-accent: #FFCE54;
+
+  /* Dark Theme */
   --med-gray-1: #31363D;
   --med-gray-2: #1F2126;
   --dark-gray: #101214;
   --separator-gray: #404245;
+
+  /* Light Theme */
+  --white-bg: #F5F6FA;
+  --light-gray-1: #DAE0ED;
+  --light-gray-2: #BCC1CC;
+
+  /* Text Colors */
   --white-text: white;
   --black-text: black;
+
+  /* Accent Colors */
   --red-accent: #FC5151;
   --green-accent: #58E767;
+  --blue-accent: #99C7FF;
+  --dark-blue-accent: #587598;
+  --yellow-accent: #FFCE54;
 
   /* Layout affecting vars */
   --nav-width: 225px;
@@ -25,7 +37,6 @@
   --inner-padding: 1.5rem; /* Bootstrap Default */
   --radius-big: 10px;
   --radius-small: 5px;
-  
   --icon-size: 25px;
 }
 
@@ -37,7 +48,8 @@
   }
 }
 
-/* Main content area positioning */
+/* Universal Element Modifications */
+
 main {
   /* Respond to the navbar's fixed width */
   width: calc(100vw - (var(--nav-width)) - var(--gutter)*2 ); /* Remainder of navbar and 2 gutters */
@@ -47,9 +59,6 @@ main {
 img {
   max-width: 100%;  /* Broadly apply to prevent overflow */
 }
-
-/* 2. Old Stylings
-   ---------------------------------- */
 
 body {
   font-family: 'Titillium Web', sans-serif;
@@ -85,24 +94,59 @@ hr {
   background: var(--separator-gray);
 }
 
-/* For tables */
 td {
   font-size: 16;
   font-weight: 400;
+}
+
+a:link,
+a:visited,
+a:hover,
+a:active {
+  text-decoration: none;
+  color: var(--white-text);
+}
+
+select {
+  background-color: transparent;
+  border: none;
+  font-family: inherit;
+  color: var(--white-text);
+}
+
+input, textarea{
+  color: #000000;
+}
+
+/* Change color of calendar icon on input type=date to white */
+::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+/* Athletes Table */
+.table-customs {
+  --bs-table-bg: var(--med-gray-1) !important;
+  --bs-table-striped-bg: var(--med-gray-2) !important;
+  --bs-table-hover-bg: var(--blue-accent) !important;
+}
+
+.table-customs th {
+  background-color: var(--dark-gray);
+}
+
+.table-customs tr:hover td{
+  color:black;
+}
+
+.table-customs tr:hover td a{
+  color:black;
 }
 
 .teams-table tr {
   height: 200px;
 }
 
-.table-customs {
-  --bs-table-bg: var(--med-gray-1) !important;
-  --bs-table-striped-bg: var(--med-gray-2) !important;
-}
-
-.table-customs th {
-  background-color: var(--dark-gray);
-}
+/* Custom Layout Classes */
 
 .main-header {
   height: 60px;
@@ -115,27 +159,13 @@ td {
   padding-bottom: 0 !important;
 }
 
-.admin {
-  height: 100px;
-  width: 100px;
-  background-color: #bbb;
-  border-radius: 50%;
-  margin: auto;
-}
+/* Custom Elements */
 
 .report {
   width: 100%;
   background-color: var(--med-gray-2);
   border-radius: var(--radius-big);
   padding: var(--inner-padding);
-}
-
-a:link,
-a:visited,
-a:hover,
-a:active {
-  text-decoration: none;
-  color: var(--white-text);
 }
 
 .toggle {
@@ -168,13 +198,6 @@ a:active {
   border-radius: var(--radius-big);
 }
 
-select {
-  background-color: transparent;
-  border: none;
-  font-family: inherit;
-  color: var(--white-text);
-}
-
 .submit {
   background-color: var(--yellow-accent);
   border-radius: 10px;
@@ -193,23 +216,7 @@ select {
   cursor: pointer;
 }
 
-input, textarea{
-  color: #000000;
-}
-
-.lds-dual-ring {
-  display: inline-block;
-  width: 50px;
-  height: 50px;
-  margin-top: 50px;
-  margin-bottom: 50px;
-}
-
-.lds-dual-ring-small {
-  display: inline-block;
-  width: 40px;
-  height: 40px;
-}
+/* Animations */
 
 /* Loading Circle */
 .lds-dual-ring:after {
@@ -223,7 +230,21 @@ input, textarea{
   animation: lds-dual-ring 1.2s linear infinite;
 }
 
-/* Loading Circle */
+.lds-dual-ring {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+/* Loading Circle Small  */
+.lds-dual-ring-small {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+}
+
 .lds-dual-ring-small:after {
   content: " ";
   display: block;
@@ -243,9 +264,4 @@ input, textarea{
   100% {
       transform: rotate(360deg);
   }
-}
-
-/* Change color of calendar icon on input type=date to white */
-::-webkit-calendar-picker-indicator {
-  filter: invert(1);
 }

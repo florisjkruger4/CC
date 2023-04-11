@@ -18,8 +18,8 @@
                         
                         <!-- Athlete Info/Header -->
                         <div class="main-header justify-content-between">
-                            <div class="d-flex align-items-center" style="gap: 25px;">
-                                <a href="/athletes"><i class="fa-solid fa-circle-arrow-left"></i></a>
+                            <div class="d-flex align-items-center" style="gap: 15px;">
+                                <a href="/athletes"><i class="fa-solid fa-chevron-left" style="color: var(--yellow-accent);"></i></a>
                                 <h1>{{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
                             </div>
                             <div class="justify-content-between">
@@ -126,7 +126,7 @@
 
                         </div>
 
-                        <div id="wellnessreport" class="report tab-corner">
+                        <div id="wellnessreport" class="report tab-corner" style="display: none;">
 
                             <!-- Wellness Header & Date Selector -->
                             <div class="d-flex justify-content-between">
@@ -264,7 +264,6 @@
                             $(document).ready(function () {
 
                                 //initially hide wellness report and show only kpi trends
-                                $("#spider-graphs").hide();
                                 document.getElementById("spider-tab").style.backgroundColor = "#191A1C";
 
                                 //upon click of wellness tab, show wellnessreport div & hide kpireport div
