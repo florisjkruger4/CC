@@ -146,6 +146,17 @@ input, textarea{
   height: 200px;
 }
 
+/* Record KPI Table Header
+     - Set empty height to height of element with content */
+     #data-table #theader {
+      height: calc(1rem + 1rem * 1.5); /* Sum of vertical padding and (font-size * line height) */
+    }
+    
+    .table-container {
+      max-width: 100%;
+      overflow-x: scroll;
+    }
+
 /* Custom Layout Classes */
 
 .main-header {
