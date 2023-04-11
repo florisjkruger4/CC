@@ -15,7 +15,7 @@
             <div class="row">
                 <div class="col-lg-5 overflow-scroll">
                     <div class="col-scroll">
-                        
+
                         <!-- Athlete Info/Header -->
                         <div class="main-header justify-content-between">
                             <div class="d-flex align-items-center" style="gap: 15px;">
@@ -34,13 +34,13 @@
                         </div>
 
                         <!-- Hidden Input Field to change an image -->
-                        <form method="post" enctype="multipart/form-data" style="display: none;" id="imgForm">  
-                            {% csrf_token %}  
-                            {{ form.image }}  
+                        <form method="post" enctype="multipart/form-data" style="display: none;" id="imgForm">
+                            {% csrf_token %}
+                            {{ form.image }}
                         </form>
 
                         <div class="d-flex">
-                            
+
                             <img class="athlete-pic" src="/media/{{ athleteProf.image }}" id="profileImg"></img>
 
                             <div class="w-100" style="margin-left: var(--inner-padding);">
@@ -134,7 +134,7 @@
                                 <form method="post" id="wellnessform">
                                     {% csrf_token %}
                                     <div class="d-flex justify-content-between">
-                                        <select id="wellnessdate" name="wellnessdate">
+                                        <select id="wellnessdate" name="wellnessdate" style="background-color: var(--med-gray-2)">
                                             <option selected>{{ mostRecentWellnessReportDate }}</option>
                                             {% for x in wellnessReportDates %}
                                             <option>{{ x.date }}</option>
@@ -325,19 +325,19 @@
                                                     <input type="checkbox" id="{{ test }}" name="selected_radar_tests" value="{{ test }}">
                                                     <label for="{{ test }}">{{ test }}</label><br>
                                                 {% endfor %}
-                                                <hr> 
-                                                <!-- Checkboxes for the averages to compare to -->                            
+                                                <hr>
+                                                <!-- Checkboxes for the averages to compare to -->
                                                 <input type="checkbox" id="team_avg" name="compare_avg" value="team_avg">
                                                 <label for="team_avg">Team Avg</label><br>
-                                            
+
                                                 <input type="checkbox" id="position_avg" name="compare_avg" value="position_avg">
                                                 <label for="position_avg">Position Avg</label><br>
-                                            
+
                                                 <input type="checkbox" id="gender_avg" name="compare_avg" value="gender_avg">
                                                 <label for="gender_avg">Gender Avg</label><br>
                                                 <br>
                                                 <input type="submit" value="Submit" class="submit">
-                                            </form>                                            
+                                            </form>
                                         </div>
                                         <br>
                                         <!-- Display the spider graph or not -->
@@ -404,9 +404,9 @@
                                 return cookieValue;
                             }
 
-                            // if img upload changes... 
+                            // if img upload changes...
                             document.getElementById("id_image").addEventListener("change", imgChange);
-                            // stops form from resubmitting when page is refreshed to show 
+                            // stops form from resubmitting when page is refreshed to show
                             if ( window.history.replaceState ) {
                                 window.history.replaceState( null, null, window.location.href );
                             }
@@ -429,7 +429,7 @@
                                 var date_one = document.getElementById("date1").value
                                 var date_two = document.getElementById("date2").value
 
-                                //clear trends and graphs 
+                                //clear trends and graphs
                                 $("#kpi-trend").empty()
                                 $("#bar-graphs").empty()
 
@@ -515,7 +515,7 @@
                                 })
                             }
 
-                            //if a date selector changes, call ajax to update the page 
+                            //if a date selector changes, call ajax to update the page
                             document.getElementById("wellnessdate").addEventListener("change", wellness_ajax);
 
                             /* When the "#wellnessform" form is submitted, this function will send an AJAX request to fetch the new data. */

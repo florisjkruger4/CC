@@ -155,7 +155,7 @@ input, textarea{
 }
 
 .py-override {
-  padding-top: 0 !important; 
+  padding-top: 0 !important;
   padding-bottom: 0 !important;
 }
 
@@ -196,6 +196,14 @@ input, textarea{
   color: white;
   box-shadow: none;
   border-radius: var(--radius-big);
+}
+
+select {
+  background-color: var(--dark-gray);
+  border-radius: 10px;
+  border: none;
+  font-family: inherit;
+  color: var(--white-text);
 }
 
 .submit {
