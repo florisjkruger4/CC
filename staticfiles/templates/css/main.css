@@ -54,6 +54,8 @@ main {
   /* Respond to the navbar's fixed width */
   width: calc(100vw - (var(--nav-width)) - var(--gutter)*2 ); /* Remainder of navbar and 2 gutters */
   margin-left: calc(var(--nav-width) + var(--gutter));        /* Sum of navbar and a gutter */
+  overflow-y: hidden; /* Hide vertical scrollbar */
+  overflow-x: hidden; /* Hide horizontal scrollbar */
 }
 
 img {
@@ -104,13 +106,6 @@ a:visited,
 a:hover,
 a:active {
   text-decoration: none;
-  color: var(--white-text);
-}
-
-select {
-  background-color: transparent;
-  border: none;
-  font-family: inherit;
   color: var(--white-text);
 }
 
