@@ -10,7 +10,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
-from .forms import AthleteForm, ImageForm
+from .forms import AthleteForm, ImageForm, RegisterForm
 
 
 def LoginRegister(request):
@@ -49,10 +49,10 @@ def LoginRegister(request):
 def userProf(request, username):
     user = User.objects.get(username=username)
 
-    form = UserCreationForm()
+    form = RegisterForm()
 
-    if request.method == "POST":
-        form = UserCreationForm(request.POST)
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
         if form.is_valid():
             # do we care about case sensitive usernames??
             user = form.save()
@@ -609,21 +609,52 @@ def recordKPI(request):
                 "fname", "lname"
             )
 
+            # Gets the JSON data to hold info containig all tests selected
+            if data.get("InputCellArray"):
+                
+                date = data.get("date_selector")
+                print(date)
+                
+                testType = data.get("TestTypeArray")
+
+                selectedSport = data.get("sportsteam")
+                athletes = AthleteT.objects.filter(sportsteam__exact=selectedSport).values_list("fname", "lname", "dob")
+
+                testResult = data.get("InputCellArray")
+
+                index = 0
+                for x in testType:
+                    for y in athletes:
+                        newKPI = KpiT(
+                            fname=y[0],
+                            lname=y[1],
+                            dob=y[2],
+                            datekpi=date,
+                            testtype=x,
+                            testresult=testResult[index],
+                        )
+                        if (testResult[index] != "-1"):
+                            print(y[0] + " " + y[1] + " " + y[2] + " " + date + " " + x + " " + testResult[index])
+                            newKPI.validate_constraints()
+                            newKPI.save()
+                        index+=1
+
+
             # Return the list of athletes
             return JsonResponse({"athletes": list(athletes.values())})
         return JsonResponse({"status": "Invalid request"}, status=400)
 
     # Other (non-AJAX) requests will recieve a response with a whole HTML document. This requires a page reload.
-    # Is this still being used after we implemented AJAX on this page? - unknown
-    # Huh? Is what being used? lol - Floris
 
-    if request.method == "POST":
+    
+    if request.method == 'POST':
         print("test")
 
     context = {
         "athletes": athletes,
         "teams": teams,
         "selectedSport": selectedSport,
+
         # TestTypeT table tname's
         "test_types": test_types,
     }

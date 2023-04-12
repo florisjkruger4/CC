@@ -12,9 +12,15 @@
     {% include 'html/sidenav.html' %}
 
     <main class="py-3 py-override">
+      <!-- Definitly not responsive... sorry-->
+      <p style="position: fixed;
+      top: 50%;
+      left: calc(40% + calc(var(--nav-width)/2)); 
+      transform: translate(-50%, -50%);" id="how-to">Select a Sports Team To Start KPI Recording</p>
+
       <div class="container" style="max-width: 1800px;">
         <div class="row">
-          <div class="col-lg-9" style="height: 100vh; padding: 1rem 0 0 0;">
+          <div class="col-lg-9" style="height: 100vh; padding: 1rem 1.5rem 0 0">
 
             <!-- Title Header -->
             <div class="main-header justify-content-between">
@@ -22,10 +28,8 @@
             </div>
 
             <!-- Date & Team Selectors -->
-            <form method="post" id="kpiform">
-              {% csrf_token %}
               <div class="d-flex" style="gap: var(--inner-padding);">
-                <input type="date" id="date-selector" class="form-control input-box">
+                <input type="date" id="date_selector" class="form-control input-box">
                 <select id="sportsteam" name="sportsteam">
                   <option disabled hidden selected>Select Team</option>
                   {% for x in teams %}
@@ -33,14 +37,13 @@
                   {% endfor %}
                 </select>
               </div>
-            </form>
 
             <!-- Data Entry Table -->
-            <div>
-              <table id="data-table" class="table-dark table-striped">
+            <div class="table-container">
+              <table id="data-table" class="table table-dark table-striped">
                 <thead>
                   <tr id="theader">
-                    <th style="min-width: 80px;"></th>
+                    <th style="min-width: 80px;;"></th>
                   </tr>
                 </thead>
                 <tbody id="tvalues">
@@ -48,8 +51,8 @@
               </table>
             </div>
 
-            <input type="submit" value="Submit" class="submit">
-            </form>
+            <input type="submit" value="Submit" class="submit" id="submitbtn">
+            <input type="submit" value="Clear Table" class="submit" id="clearbtn">
             
           </div>
 
@@ -61,7 +64,7 @@
             var today = new Date().toISOString().substr(0, 10);
 
             // Set the value of the date input to today's date
-            document.getElementById("date-selector").value = today;
+            document.getElementById("date_selector").value = today;
 
             /* End of date block */
 
@@ -110,8 +113,9 @@
                 success: (response) => {
                   $("#tvalues").empty();
                   for (var key in response.athletes) {
+                    var id = response.athletes[key].fname + response.athletes[key].lname + response.athletes[key].dob;
                     var athlete = response.athletes[key].fname + " " + response.athletes[key].lname;
-                    var html = "<tr><td>" + athlete + "</td></tr>";
+                    var html = "<tr id=" + id + " ><td>" + athlete + "</td></tr>";
                     $("#tvalues").append(html);
                   }
                 },
@@ -125,21 +129,24 @@
 
           <div class="col-lg-3" style="margin-top: var(--gutter); height: 85vh; padding: 0;">
             <input type="text" id="test-search" onkeyup="listFilter()" placeholder="Search for tests..."
-              style="margin-bottom: 0; border-radius: var(--radius-big) var(--radius-big) 0 0;">
+              style="margin-bottom: 0; border-radius: var(--radius-big) var(--radius-big) 0 0; color: white;">
             <div class="overflow-auto"
               style="background-color: var(--med-gray-2); height: 100%; padding-top: var(--inner-padding); border-radius: 0 0 var(--radius-big) var(--radius-big);">
               <ul id="test-list">
                 {% for x in test_types %}
                 <li>
-                  <div><div style="width: 80%; padding-left: 0;"><a>{{ x }}</a></div><input id="{{ forloop.counter }}" type="checkbox"></div>
-                  <hr style="margin-left: var(--inner-padding); margin-right: var(--inner-padding);">
+                  <div><a>{{ x }}</a><input id="{{ forloop.counter }}" type="checkbox" disabled="true"></div>
                 </li>
+                <hr style="margin-left: var(--inner-padding); margin-right: var(--inner-padding);">
                 {% endfor %}
               </ul>
             
             </div>
 
               <script>
+                var columnCount = 0;
+                let addcol = true;
+
                 function listFilter() {
                   // Declare variables
                   var input, filter, ul, li, a, i, txtValue;
@@ -160,55 +167,249 @@
                   }
                 }
 
-                //add a column to the table with new test type as header and 
-                //input boxes for each athlete
-                function addColumn(value, id) {
-                  var tblHeadObj = document.getElementById("data-table").tHead;
-                  for (var h = 0; h < tblHeadObj.rows.length; h++) {
-                    var newTH = document.createElement('th');
+                // initialize array to hold all the testtypes
+                var TestTypeArray = []
+                // initialize array to hold all the input cells
+                var InputCellArray = []
+                // array to hold parent id's
+                var ParentIDarray = []
+                // sport selected 
+                var sport_selected = ''
+                // date selected
+                var date_selector = document.getElementById("date_selector").value
 
-                    //attach id of test type from list to this header cell so that it
-                    //can be removed/tracked later
-                    newTH.setAttribute('id', id);
-                    tblHeadObj.rows[h].appendChild(newTH);
-                    newTH.innerHTML = value;
-                  }
+                  //add a column to the table with new test type as header and 
+                  //input boxes for each athlete
+                  function addColumn(value, id) {
 
-                  var tblBodyObj = document.getElementById("data-table").tBodies[0];
-                  for (var i = 0; i < tblBodyObj.rows.length; i++) {
-                    var newCell = tblBodyObj.rows[i].insertCell(-1);
-                    //attach id of test type from list to this body cell so that it
-                    //can be removed/tracked later
-                    newCell.setAttribute('id', id);
+                    //console.log(addcol);
+                    
+                    var tblHeadObj = document.getElementById("data-table").tHead;
 
-                    //add text field input to cell
-                    newCell.innerHTML = "<input class=\"test-list\" type=\"text\"></input>";
-                  }
+                    for (var h = 0; h < tblHeadObj.rows.length; h++) {
+                      var newTH = document.createElement('th');
+
+                      //attach id of test type from list to this header cell so that it
+                      //can be removed/tracked later
+                      newTH.setAttribute('id', id);
+                      tblHeadObj.rows[h].appendChild(newTH);
+                      newTH.innerHTML = value;
+
+                      // add testtype to array
+                      TestTypeArray.push(value)
+                    }
+
+                    var tblBodyObj = document.getElementById("data-table").tBodies[0];
+
+                    for (var i = 0; i < tblBodyObj.rows.length; i++) {
+                      var newCell = tblBodyObj.rows[i].insertCell(-1);
+                      //attach id of test type from list to this body cell so that it
+                      //can be removed/tracked later
+
+                      // newcell parent element id
+                      parentID = newCell.parentElement.id
+                      newCell.setAttribute('id', id);
+
+                      // populates parent id array
+                      ParentIDarray.push(id + parentID)
+
+                      //add text field input to cell
+                      newCell.innerHTML = "<input class=\"test-list\" type=\"text\" id=" + id + parentID + "></input>";
+                    }
+
+                    console.log('test type arr: ' + TestTypeArray)
+                    console.log('parent arr: ' + ParentIDarray)
+
                 }
 
-                //deletes a column when test type is unchecked
-                function deleteColumn(id) {
-                  //find all headers with desired id and remove
-                  $("#data-table").find("th#" + id).remove();
-
-                  //find all cells with desired id and remove
-                  $("#data-table").find("td#" + id).remove();
-                }
-
-                //listen for updated checkbox input in list of test types
-                //if checked, add a column to table
-                //if unchecked, remove the column
-                document.querySelectorAll("[type=checkbox]").forEach(checkbox => {
-                  checkbox.addEventListener("click", function (e) {
-                    if (this.checked)
-                      addColumn(this.previousSibling.innerText, this.id);
-                    else
-                      deleteColumn(this.id);
-                    e.stopPropagation();
+                document.getElementById("sportsteam").addEventListener("change", function(e) {
+                  $("#how-to").hide();
+                  document.querySelectorAll("[type=checkbox]").forEach(checkbox => {
+                    checkbox.disabled = false; 
+                    })
                   })
-                })
+
+                  //listen for updated checkbox input in list of test types
+                  //if checked, add a column to table
+                  //if unchecked, remove the column
+                  // array to hold all input cell id numbers
+                  var cellIdentifier = []
+                  document.querySelectorAll("[type=checkbox]").forEach(checkbox => {
+                    checkbox.addEventListener("click", function (e) {
+                      id = this.id
+                      cellIdentifier.push(this.id)
+                      document.getElementById("submitbtn").onclick = function() {
+                        sendData(cellIdentifier, ParentIDarray, id)
+                      }
+                      document.getElementById("clearbtn").onclick = function() {
+                        clearTable(ParentIDarray)
+                      }
+                      viewArr(this.id)
+                      if (this.checked)
+                        addColumn(this.previousSibling.innerText, this.id);
+                      else
+                        deleteColumn(this.previousSibling.innerText, this.id, ParentIDarray);
+                      e.stopPropagation();
+                    })
+                  })
+
+                  //deletes a column when test type is unchecked
+                  function deleteColumn(value, id, ParentIDarray) {
+
+                    // find index of testype wanting to be removed
+                    var index = TestTypeArray.indexOf(value)
+                    // remove that index using splice
+                    if (index > -1) { // only splice array when item is found
+                      TestTypeArray.splice(index, 1); // 2nd parameter means remove one item only
+                      ParentIDarray.splice(index, 1);
+                    }
+
+                    //find all headers with desired id and remove
+                    $("#data-table").find("th#" + id).remove();
+
+                    //find all cells with desired id and remove
+                    $("#data-table").find("td#" + id).remove();
+
+                    console.log('test type arr: ' + TestTypeArray)
+                    console.log('parent arr: ' + ParentIDarray)
+                  }
+
+                  function sendData(idArr, ParentIDarray, id) {
+                    for (var i = 0; i<ParentIDarray.length; i++) {
+                      x = document.getElementById(ParentIDarray[i]).value
+                      if (!x){
+                        x = "-1"
+                      }
+                      console.log("id of cell: " + ParentIDarray[i] + ", value of cell: " + x)
+                      InputCellArray.push(x)
+                    }
+
+                    console.log("id array value: " + idArr)
+                    console.log("parent array value: " + ParentIDarray)
+
+                    viewArr(id)
+                    alert("data logged successfully")
+                    
+                    clearTable(ParentIDarray)
+
+                  }
+
+                  function clearTable(ParentIDarray){
+                    for (var i = 0; i<ParentIDarray.length; i++) {
+                      x = document.getElementById(ParentIDarray[i]).value = ""
+                      InputCellArray.push(x)
+                    }
+                    console.log(InputCellArray)
+                    console.log('test type arr: ' + TestTypeArray)
+                    console.log('parent arr: ' + ParentIDarray)
+                  }
+
+                  // get sports team selected
+                  $("#sportsteam").change(function (event) {
+                    // Get value of #sportsteam
+                    sport_selected = document.getElementById("sportsteam").value
+                  })
+                  // get date selected
+                  $("#date_selector").change(function (event) {
+                    // Get value of #date-selector
+                    date_selector = document.getElementById("date_selector").value
+                  })
+
+                  function viewArr(id) {
+                    //console.log(id)
+                    $.ajax({
+                        url: "{% url 'recordKPI' %}",
+                        type: "POST",
+                        dataType: "json",
+                        data: JSON.stringify({ 
+                          TestTypeArray: TestTypeArray, 
+                          InputCellArray: InputCellArray,
+                          sportsteam: sport_selected,
+                          date_selector:date_selector,
+                        }),
+                        headers: {
+                          "X-Requested-With": "XMLHttpRequest",
+                          "X-CSRFToken": getCookie("csrftoken"),  // don't forget to include the 'getCookie' function
+                        },
+                        success: (response) => {
+                          //console.log(response);
+                        },
+                        error: (error) => {
+                          alert(error);
+                        }
+                      })
+
+                      // empty out array
+                      InputCellArray = []
+                  }
+                
 
               </script>
+
+              <!--
+              <style>
+                #test-search {
+                  background-image: url('https://fontawesome.com/icons/magnifying-glass?f=classic&s=solid');
+                  background-color: var(--dark-gray);
+                  /* Add a search icon to input */
+                  background-position: 10px 12px;
+                  /* Position the search icon */
+                  background-repeat: no-repeat;
+                  /* Do not repeat the icon image */
+                  width: 100%;
+                  /* Full-width */
+                  font-size: 16px;
+                  /* Increase font-size */
+                  padding: 12px 20px 12px 40px;
+                  /* Add some padding */
+                  border: 2px solid var(--med-gray-1);
+                  border-radius: var(--radius-big);
+                  /* Add a grey border */
+                  margin-bottom: 12px;
+                  /* Add some space below the input */
+
+                  color: black;
+                }
+
+                #test-list {
+                  /* Remove default list styling */
+                  list-style-type: none;
+                  padding: 0;
+                  margin: 0;
+                }
+
+                #test-list input {
+                  width: 25px;
+                  border: 2px solid var(--yellow-accent);
+                  background-color: var(--med-gray-1);
+                }
+
+                /* When the checkbox is checked, add a blue background */
+                .container input:checked~.checkmark {
+                  background-color: var(--yellow-accent);
+                }
+
+                #test-list div {
+                  /* Add a border to all links */
+                  margin-top: -1px;
+                  /* Prevent double borders */
+                  /* Grey background color */
+                  padding: 0 var(--inner-padding) 0 var(--inner-padding);
+                  /* Add some padding */
+                  text-decoration: none;
+                  /* Remove default text underline */
+                  font-size: 18px;
+                  /* Increase the font-size */
+                  color: white;
+                  /* Add a black text color */
+                  display: flex;
+                  justify-content: space-between;
+                  gap: var(--inner-padding);
+
+                  /* Make it into a block element to fill the whole list */
+                }
+              </style>
+              -->
 
             </div>
           </div>
