@@ -232,14 +232,11 @@
                   //listen for updated checkbox input in list of test types
                   //if checked, add a column to table
                   //if unchecked, remove the column
-                  // array to hold all input cell id numbers
-                  var cellIdentifier = []
                   document.querySelectorAll("[type=checkbox]").forEach(checkbox => {
                     checkbox.addEventListener("click", function (e) {
                       id = this.id
-                      cellIdentifier.push(this.id)
                       document.getElementById("submitbtn").onclick = function() {
-                        sendData(cellIdentifier, ParentIDarray, id)
+                        sendData(ParentIDarray, id)
                       }
                       document.getElementById("clearbtn").onclick = function() {
                         clearTable(ParentIDarray)
@@ -274,7 +271,7 @@
                     console.log('parent arr: ' + ParentIDarray)
                   }
 
-                  function sendData(idArr, ParentIDarray, id) {
+                  function sendData(ParentIDarray, id) {
                     for (var i = 0; i<ParentIDarray.length; i++) {
                       x = document.getElementById(ParentIDarray[i]).value
                       if (!x){
@@ -284,11 +281,12 @@
                       InputCellArray.push(x)
                     }
 
-                    console.log("id array value: " + idArr)
+                    console.log('test type arr: ' + TestTypeArray)
+                    console.log('input cell array: ' + InputCellArray)
                     console.log("parent array value: " + ParentIDarray)
 
-                    viewArr(id)
-                    alert("data logged successfully")
+                    viewArr(id, InputCellArray)
+                    //alert("data logged successfully")
                     
                     clearTable(ParentIDarray)
 
@@ -297,10 +295,12 @@
                   function clearTable(ParentIDarray){
                     for (var i = 0; i<ParentIDarray.length; i++) {
                       x = document.getElementById(ParentIDarray[i]).value = ""
-                      InputCellArray.push(x)
+                      //InputCellArray.push(x)
                     }
-                    console.log(InputCellArray)
+                    // empty out array
+                    InputCellArray = []
                     console.log('test type arr: ' + TestTypeArray)
+                    console.log('input cell array: ' + InputCellArray)
                     console.log('parent arr: ' + ParentIDarray)
                   }
 
@@ -315,7 +315,7 @@
                     date_selector = document.getElementById("date_selector").value
                   })
 
-                  function viewArr(id) {
+                  function viewArr(id, InputCellArray) {
                     //console.log(id)
                     $.ajax({
                         url: "{% url 'recordKPI' %}",
@@ -333,16 +333,15 @@
                         },
                         success: (response) => {
                           //console.log(response);
+                          if (InputCellArray.length != 0){
+                            alert("data logged successfully")
+                          }
                         },
                         error: (error) => {
-                          alert(error);
+                          alert("Conflicting KPI Date Selected... Please Select a Different Date");
                         }
                       })
-
-                      // empty out array
-                      InputCellArray = []
                   }
-                
 
               </script>
 
