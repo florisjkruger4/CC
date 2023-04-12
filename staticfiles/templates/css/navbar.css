@@ -7,6 +7,14 @@
   :root {
     --nav-padding: 0;
   }
+
+  /* Adjust username and initials icon */
+  .username {
+    display: none;
+  }
+  .user-display {
+    padding-left: 10px !important;
+  }
 }
 
 /* Set width of nav and font size */
@@ -37,6 +45,12 @@ nav {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.user-display{
+  gap: var(--inner-padding); 
+  padding-left: var(--gutter); 
+  padding-right: var(--inner-padding);
 }
   
 /* Old stylings kept for WIP references */
