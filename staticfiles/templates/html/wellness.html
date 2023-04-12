@@ -357,12 +357,12 @@
 
 
               // change color of "status" depending on if an athlete is "good" (in) or "out" (out, obviously...)
-              if (status == 'N') {
+              if (status == 'Out') {
                 template.querySelector("#status").style.color = "black";
                 template.querySelector("#status").innerText = "Out";
                 template.querySelector("#status-box").style.backgroundColor = "var(--red-accent)";
               }
-              else if (status == 'Y') {
+              else if (status == 'Good') {
                 template.querySelector("#status").style.color = "black";
                 template.querySelector("#status").innerText = "Good";
                 template.querySelector("#status-box").style.backgroundColor = "var(--green-accent)";

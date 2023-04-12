@@ -564,11 +564,11 @@
                                         document.getElementById("total").innerHTML = "Readiness: " + total;
                                         document.getElementById("stat").innerHTML = "Status: " + status;
 
-                                        if (status == 'N') {
+                                        if (status == 'Out') {
                                             document.getElementById("stat").style.color = "var(--red-accent)";
                                             document.getElementById("bor").style.border = "1px solid var(--red-accent)";
                                         }
-                                        else if (status == 'Y') {
+                                        else if (status == 'Good') {
                                             document.getElementById("stat").style.color = "var(--green-accent)";
                                             document.getElementById("bor").style.border = "1px solid var(--green-accent)";
                                         }
