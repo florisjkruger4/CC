@@ -82,7 +82,7 @@ def LogoutUser(request):
 @login_required(login_url="/")
 def Dashboard(request):
     athletes = AthleteT.objects.all()
-    teams = TeamT.objects.all()
+    addedKPIs = KpiT.objects.all().order_by('-id')[0:8]
 
     # session stuff...
     recentlyViewedAthletes = None
@@ -97,13 +97,19 @@ def Dashboard(request):
 
     context = {
         "athletes": athletes,
-        "teams": teams,
+        "addedKPIs":addedKPIs,
         "recentlyViewedAthletes": recentlyViewedAthletes,
         "sessionLength": sessionLength,
     }
 
     return render(request, "html/dashboard.html", context)
 
+@login_required(login_url="/")
+def DeleteKPI_Dash(request, id):
+    kpi_to_delete = KpiT.objects.get(id=id)
+    kpi_to_delete.delete()
+
+    return redirect(Dashboard)
 
 @login_required(login_url="/")
 def AthletesDash(request):
@@ -310,7 +316,7 @@ def AthleteProf(request, fname, lname, dob, id):
             )
 
             request.session["recently_viewed"].insert(0, id)
-            if len(request.session["recently_viewed"]) > 8:
+            if len(request.session["recently_viewed"]) > 6:
                 request.session["recently_viewed"].pop()
         else:
             request.session["recently_viewed"] = [id]
@@ -792,6 +798,9 @@ def AddKPI(request, fname, lname, dob):
     # All test type names in the TestTypeT table
     test_types = TestTypeT.objects.values_list("tname", flat=True)
 
+    # All KPI reports for this specific athlete
+    athlete_KPI_Reports = KpiT.objects.filter(fname=fname, lname=lname, dob=dob).order_by("-datekpi")
+
     Fname = fname
     Lname = lname
     DOB = dob
@@ -815,12 +824,19 @@ def AddKPI(request, fname, lname, dob):
 
     context = {
         "athleteProf": athleteProf,
-        # TestTypeT table tname's
+        "athlete_KPI_Reports":athlete_KPI_Reports,
         "test_types": test_types,
     }
 
     return render(request, "html/addkpi.html", context)
 
+@login_required(login_url="/")
+def DeleteKPI(request, id):
+    athlete_info = KpiT.objects.get(id=id)
+    kpi_to_delete = KpiT.objects.get(id=id)
+    kpi_to_delete.delete()
+
+    return redirect(AddKPI, fname=athlete_info.fname, lname=athlete_info.lname, dob=athlete_info.dob)
 
 @login_required(login_url="/")
 def AddWellness(request, fname, lname, dob):

@@ -114,8 +114,10 @@
     padding-top: 5px;
     padding-bottom: 5px;
     margin-top: 10px;
+    border: 1px solid #fc515100;
 }
 .delbtn:hover {
     border: 1px solid #FC5151;
     transform: (1.2);
 }
+

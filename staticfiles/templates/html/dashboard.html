@@ -11,9 +11,9 @@
     {% include 'html/sidenav.html' %}
     <main class="py-3">
       <div class="row">
-          <div class="col-md-4" style="padding-top: 20px">
+          <div class="col-md-4" style="padding-top: 20px; margin-left: 20px;">
             <div style="display: flex;">
-              <h1 class="mainFont" style="padding-bottom: 10px; padding-right: 4%;">Recently Viewed</h1>
+              <h2 class="mainFont" style="padding-bottom: 10px; padding-right: 4%;">Recently Viewed</h2>
             </div>
             <div class="basicreport" style="display: flex; flex-direction: column; justify-content: space-evenly;">
 
@@ -21,7 +21,7 @@
 
               {% for x in recentlyViewedAthletes %}
               <div style="display: flex;">
-                <img style="width: 100px; height: 100px;" src="/media/{{ x.image }}"></img>
+                <img style="width: 100px; height: 100px; border-radius: 7px;" src="/media/{{ x.image }}"></img>
                 &nbsp;
                 &nbsp;
                 <div>
@@ -41,21 +41,36 @@
 
             </div>
           </div>
-          <div class="col-md-3" style="padding-top: 20px">
+          <div class="col-md-5" style="padding-top: 20px; margin-left: 20px;">
             <div style="display: flex;">
-              <h1 class="mainFont" style="padding-bottom: 10px; padding-right: 8%;">Teams</h1>
+              <h2 class="mainFont" style="padding-bottom: 10px; padding-right: 8%;">Recently Added KPI's</h2>
             </div>
-            <table class="table table-dark table-striped table-hover table-customs">
-              {% for TeamT in teams %}
-              <tr style="height: 50px; vertical-align:middle;">
-                <td>{{ TeamT.sport }}</td>
-              </tr>
+            <div class="basicreport" style="display: flex; flex-direction: column; justify-content: space-evenly;">
+              {% for x in addedKPIs %}
+                <div style="display: flex; justify-content: space-between;">
+                  <p>{{ x.fname }} {{ x.lname }}</p>
+                  <div>
+                    <i class="fa-solid fa-pen" style="color: var(--yellow-accent); font-size: var(--icon-size);"></i>
+                    &nbsp;
+                    <a onclick="return confirm('Are you sure?');" href="{% url 'DeleteKPI_Dash' x.id %}">
+                      <button class="delkpibtn" style="background-color: #fc515100; font-size: var(--icon-size)" name="delete" value="delete"><i class="fa-solid fa-x"></i></button>
+                  </a>
+                  </div>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                  <p>{{x.testresult}}</p>
+                  <p>{{ x.testtype }}</p>
+                  <p>{{x.datekpi}}</p>
+                </div>
+                {% if forloop.counter != 8 %}
+                <hr>
+                {% endif %}
               {% endfor %}
-            </table>
+            </div>
           </div>
-          <div class="col-md-2" style="padding-top: 20px">
+          <div class="col-md-2" style="padding-top: 20px; margin-left: 20px;">
             <div style="display: flex;">
-              <h1 class="mainFont" style="padding-bottom: 10px; padding-right: 8%;">Quick Actions</h1>
+              <h2 class="mainFont" style="padding-bottom: 10px; padding-right: 8%;">Quick Actions</h2>
             </div>
             <a href="/recordKPI">
               <button class="kpidatabtn" style="margin-top: 20px;">New KPI</button>

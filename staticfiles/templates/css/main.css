@@ -295,3 +295,17 @@ select {
       transform: rotate(360deg);
   }
 }
+
+.delkpibtn {
+  transition: transform 0.3s;
+  border-radius: var(--radius-small);
+  border: none;
+  align-self: center;
+  border: 1px solid #fc515100;
+  color: white;
+}
+
+.delkpibtn:hover {
+  color: var(--red-accent);
+  transform: (1.2);
+}
