@@ -39,7 +39,7 @@ class WellnessT(models.Model):
     fname = models.CharField(db_column='Fname', max_length=30)  # Field name made lowercase.
     lname = models.CharField(db_column='Lname', max_length=30)  # Field name made lowercase.
     dob = models.CharField(db_column='DOB', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    status = models.CharField(db_column='Status', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    status = models.CharField(db_column='Status', max_length=4, blank=True, null=True)  # Field name made lowercase.
     #sportsteam = models.CharField(db_column='SportsTeam', max_length=30, blank=True, null=True)  # Field name made lowercase.
     date = models.CharField(db_column='Date', max_length=10, blank=True, null=True)  # Field name made lowercase.
     #position = models.CharField(db_column='Position', max_length=30, blank=True, null=True)  # Field name made lowercase.
