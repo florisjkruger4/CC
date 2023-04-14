@@ -11,6 +11,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from .forms import AthleteForm, ImageForm, RegisterForm
+import concurrent.futures
 
 
 def LoginRegister(request):
@@ -146,7 +147,6 @@ def AddAthlete(request):
 start_time = 0
 end_time = 0
 
-
 def kpiAjax(fname, lname, dob, date_one, date_two):
     start_time = time.time()
 
@@ -176,7 +176,6 @@ def kpiAjax(fname, lname, dob, date_one, date_two):
         TestTypeT.objects.all()   
     )
 
-
     # Get kpi results for each test type
     for x in test_type:
         first_result = 0
@@ -199,10 +198,11 @@ def kpiAjax(fname, lname, dob, date_one, date_two):
                 minBetterValue = y.minbetter
                 minBetter_list.append(minBetterValue)
 
-
         # Sets x and y coordinate values
         results_x = [x.datekpi for x in kpi_results]
         results_y = [x.testresult for x in kpi_results]
+
+        start_time2 = time.time()
 
         first_result = results_y[0]
         last_result = results_y[len(results_y) - 1]
@@ -210,12 +210,18 @@ def kpiAjax(fname, lname, dob, date_one, date_two):
         change = round(last_result - first_result, 2)
         changes.append(change)
 
+        Date1_results.append(first_result)
+        Date2_results.append(last_result)
+
+        end_time2 = time.time()
+        print(f"Graphs Elapsed: {end_time2 - start_time2: .5f}")
+
         # Calls matplotlib bar graph with above data
         kpi_line.append(line_graph(results_x, results_y, change, minBetterValue))
         kpi_bar.append(bar_graph(results_x, results_y))
 
-        Date1_results.append(first_result)
-        Date2_results.append(last_result)
+    end_time = time.time()
+    print(f"Elapsed: {end_time - start_time: .2f}")
 
         # Checking if the current test type's min is better ([0][0] is just indexing the first element of the list, true or false)
         #minBetter = TestTypeT.objects.filter(tname=x).values_list() #.values_list('minbetter')[0][0]
@@ -671,28 +677,35 @@ def WellnessDash(request):
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
         # ...AND it's also a POST request...
         if request.method == "POST":
+
+            # Get date and sport passed from front end
             data = json.load(request)
             selectedDate = data.get("wellnessdate")
             selectedSport = data.get("sportsteam")
 
+            # Get all athletes on this team
             athletes = AthleteT.objects.filter(sportsteam__exact=selectedSport)
 
             all_wellness = {}
             athletes_img = []
             wellness_trends = []
-
             iter = 0
+
             for x in athletes:
                 wellness_latest = {}
 
+                # Get wellness reports relevant to this athlete
                 wellness_relevant = WellnessT.objects.filter(
                     fname=x.fname, lname=x.lname, dob=x.dob, date__lte=selectedDate
                 )
 
+                # ...then order them by date
                 result = wellness_relevant.order_by("date").last()
 
+                # Get athlete image from AthleteT
                 athletes_img.append(x.image.url)
 
+                # If there are wellness reports for this athlete, get each resulting data point
                 if wellness_relevant:
                     wellness_latest["hoursofsleep"] = result.hoursofsleep
                     wellness_latest["sleepquality"] = result.sleepquality
@@ -707,6 +720,8 @@ def WellnessDash(request):
 
                     all_wellness[iter] = wellness_latest
 
+                # ... Otherwise, set them to all zeroes (front end will interpret this as an athlete that has
+                # no Wellness reports and will adjust the view accordingly)
                 else:
                     wellness_latest["hoursofsleep"] = 0
                     wellness_latest["sleepquality"] = 0
@@ -726,6 +741,7 @@ def WellnessDash(request):
                 wellness_trend_data_x = []
                 wellness_trend_data_y = []
 
+                # Calculate total readiness score to construct a trend graph
                 for y in wellness_relevant:
                     total = y.hoursofsleep
                     total += y.sleepquality
@@ -738,6 +754,7 @@ def WellnessDash(request):
                     wellness_trend_data_y.append(total)
                     wellness_trend_data_x.append(y.date)
 
+                # If there is more than one wellness report, create trend graph
                 if len(wellness_trend_data_x) > 1:
                     wellness_trends.append(
                         line_graph(
@@ -746,14 +763,6 @@ def WellnessDash(request):
                     )
                 else:
                     wellness_trends.append(None)
-
-            """
-            query = "SELECT * FROM Wellness_T WHERE sportsteam = \"Men\'s Swimming\""
-            query += " AND (fname, lname, dob, date) IN (SELECT fname, lname, dob, MAX(date)"
-            query += " FROM Wellness_T WHERE sportsteam = \"Men\'s Swimming\" GROUP BY fname, lname, dob)"
-
-            results = WellnessT.objects.raw(query)
-            """
 
             return JsonResponse(
                 {

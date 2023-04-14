@@ -10,37 +10,66 @@
 
     <!-- SideNavbar -->
     {% include 'html/sidenav.html' %}
+
+    <!-- HTML Templates for KPI Trends and Bar Graphs -->
+    <!-- See "kpi_ajax()" below for context -->
+    <div class="hide-template">
+        <div id="bar-template">
+            <h3 id="tname"></h3>
+            <img id="tgraph" style="width: 100%; height: auto;">
+        </div>
+        <div id=trend-template>
+            <div class="d-flex justify-content-between align-items-center kpi-img">
+                <div id="kpi-name" style="width: 25%;">
+                    <p></p>
+                </div>
+                <div id="kpi-change" class="d-flex align-items-center justify-content-center"
+                    style="width: 25%; gap: 10px;"><i id="kpi-arrow"></i></div>
+                <div style="width: 50%;">
+                    <img id="kpi-graph">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <p id="kpi-date-1"></p>
+                        <p id="kpi-date-2"></p>
+                    </div>
+                </div>
+            </div>
+            <hr>
+        </div>
+    </div>
+
     <main class="py-3 py-override">
         <div class="container" style="max-width: 1800px;">
             <div class="row">
                 <div class="col-lg-5 overflow-scroll">
                     <div class="col-scroll">
-                        
+
                         <!-- Athlete Info/Header -->
                         <div class="main-header justify-content-between">
                             <div class="d-flex align-items-center" style="gap: 15px;">
-                                <a href="/athletes"><i class="fa-solid fa-chevron-left" style="color: var(--yellow-accent); margin-bottom: 4px;"></i></a>
                                 <h1>{{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
                             </div>
                             <div class="justify-content-between">
                                 <label for="id_image">
-                                    <i class="fa-solid fa-camera" style="color: var(--yellow-accent); font-size: var(--icon-size); cursor: pointer;"></i>
+                                    <i class="fa-solid fa-camera"
+                                        style="color: var(--yellow-accent); font-size: var(--icon-size); cursor: pointer;"></i>
                                 </label>
                                 &nbsp;
-                                <a href="{% url 'EditAthlete' athleteProf.fname athleteProf.lname athleteProf.dob athleteProf.id %}">
-                                    <i class="fa-solid fa-pen" style="color: var(--yellow-accent); font-size: var(--icon-size);"></i>
+                                <a
+                                    href="{% url 'EditAthlete' athleteProf.fname athleteProf.lname athleteProf.dob athleteProf.id %}">
+                                    <i class="fa-solid fa-pen"
+                                        style="color: var(--yellow-accent); font-size: var(--icon-size);"></i>
                                 </a>
                             </div>
                         </div>
 
                         <!-- Hidden Input Field to change an image -->
-                        <form method="post" enctype="multipart/form-data" style="display: none;" id="imgForm">  
-                            {% csrf_token %}  
-                            {{ form.image }}  
+                        <form method="post" enctype="multipart/form-data" style="display: none;" id="imgForm">
+                            {% csrf_token %}
+                            {{ form.image }}
                         </form>
 
                         <div class="d-flex">
-                            
+
                             <img class="athlete-pic" src="/media/{{ athleteProf.image }}" id="profileImg"></img>
 
                             <div class="w-100" style="margin-left: var(--inner-padding);">
@@ -61,7 +90,7 @@
                                 <hr>
                                 <div class="d-flex justify-content-between">
                                     <h6>Height</h6>
-                                    <h6 class="text-end">{{ athleteProf.height }}</h6>
+                                    <h6 class="text-end">{{ athleteProf.height }}"</h6>
                                 </div>
                             </div>
                         </div>
@@ -113,11 +142,11 @@
                                     <p style="font-size: 16px" id="resulttwo"></p>
                                 </div>
                             </div>
-
                             <hr>
 
+                            <!-- This is where graphs will populate -->
                             <div id="kpi-trend">
-                                <p style="margin-bottom: 0;">No data</p>
+                                <p id="no-data" style="margin-bottom: 0;">No data</p>
                             </div>
 
                             <a href="{% url 'AddKPI' athleteProf.fname athleteProf.lname athleteProf.dob %}">
@@ -239,21 +268,27 @@
                             <div class="d-flex align-items-center" style="gap:var(--inner-padding);">
                                 <!-- Bar/Spider Chart Tabs-->
                                 <div class="d-flex" style="height: 100%; margin-top: 6px;">
-                                    <button id="bar-tab" class="report-tab" style="padding: 15px 25px;">Bar Chart</button>
-                                    <button id="spider-tab" class="report-tab" style="padding: 15px 25px;">Spider Chart</button>
+                                    <button id="bar-tab" class="report-tab" style="padding: 15px 25px;">Bar
+                                        Chart</button>
+                                    <button id="spider-tab" class="report-tab" style="padding: 15px 25px;">Spider
+                                        Chart</button>
+                                    <button id="z-scores-tab" class="report-tab"
+                                        style="padding: 15px 25px;">Z-Scores</button>
                                 </div>
                                 <i class="fa-solid fa-gear" id="settings"
                                     style="color: var(--yellow-accent); font-size: var(--icon-size); z-index: 2;"></i>
 
-                                <div id="options-card" class="options-card" style="display: none;">
+                                <div id="options-card" class="options-card overflow-scroll" style="display: none;">
                                     <h4>Settings</h4>
                                     <ul>
-                                        <li>Show Team Avg<input id="i-show_fullname" type="checkbox" checked="true"></li>
-                                        <li>Show Gender Avg<input id="i-show_trends" type="checkbox" checked="true"></li>
+                                        <li>Show Team Avg<input id="i-show_fullname" type="checkbox" checked="true">
+                                        </li>
+                                        <li>Show Gender Avg<input id="i-show_trends" type="checkbox" checked="true">
+                                        </li>
                                         <li>Show Position Avg<input id="i-show_pos" type="checkbox" checked="true"></li>
-                                        <hr>
-                                        <li>Standard Deviation<input id="i-show_fullname" type="checkbox" checked="true"></li>
                                     </ul>
+                                    <hr>
+                                    <ul id="test-list"></ul>
                                 </div>
                             </div>
                         </div>
@@ -264,23 +299,40 @@
                             $(document).ready(function () {
 
                                 //initially hide wellness report and show only kpi trends
+                                $("#bar-graphs").show();
                                 document.getElementById("spider-tab").style.backgroundColor = "#191A1C";
+                                document.getElementById("z-scores-tab").style.backgroundColor = "#191A1C";
 
                                 //upon click of wellness tab, show wellnessreport div & hide kpireport div
                                 //swap color of tab
                                 $("#spider-tab").click(function () {
-                                    $("#spider-graphs").show();
                                     $("#bar-graphs").hide();
+                                    $("#z-scores").hide();
+                                    $("#spider-graphs").show();
                                     document.getElementById("spider-tab").style.backgroundColor = "var(--med-gray-2)";
                                     document.getElementById("bar-tab").style.backgroundColor = "#191A1C";
+                                    document.getElementById("z-scores-tab").style.backgroundColor = "#191A1C";
                                 });
 
                                 //upon click of kpi tab, show kpireport div & hide wellnessreport div
                                 //swap color of tab
                                 $("#bar-tab").click(function () {
                                     $("#spider-graphs").hide();
+                                    $("#z-scores").hide();
                                     $("#bar-graphs").show();
                                     document.getElementById("bar-tab").style.backgroundColor = "var(--med-gray-2)";
+                                    document.getElementById("spider-tab").style.backgroundColor = "#191A1C";
+                                    document.getElementById("z-scores-tab").style.backgroundColor = "#191A1C";
+                                });
+
+                                //upon click of kpi tab, show kpireport div & hide wellnessreport div
+                                //swap color of tab
+                                $("#z-scores-tab").click(function () {
+                                    $("#spider-graphs").hide();
+                                    $("#bar-graphs").hide();
+                                    $("#z-scores").show();
+                                    document.getElementById("z-scores-tab").style.backgroundColor = "var(--med-gray-2)";
+                                    document.getElementById("bar-tab").style.backgroundColor = "#191A1C";
                                     document.getElementById("spider-tab").style.backgroundColor = "#191A1C";
                                 });
 
@@ -297,64 +349,70 @@
                             });
                         </script>
 
-                        <div id="spider-graphs" style="display: none;">
-                            <!-- Radar/Spider Graph -->
-                            <div class="graphprof">
-                                <form method="post" id="kpi_radar_form">
-                                    {% csrf_token %}
-                                    <div class="d-flex justify-content-between">
-                                        <select id="radar_date" name="radar_date">
-                                            <option disabled hidden selected>Select Date</option>
-                                            <option selected>{{ kpi_most_recent }}</option>
-                                            {% for x in all_dates %}
-                                                <option>{{ x.datekpi }}</option>
-                                            {% endfor %}
-                                        </select>
-                                        <input type="submit" value="submit" class="submit">
-                                    </div>
-                                    <br>
-                                    <!-- If a date has been selected -->
-                                    {% if radar_date %}
-                                        <div>
-                                            <form method="post" id="selected_radar_tests">
-                                                {% csrf_token %}
-                                                <!-- Passing radar_date as a session variable -->
-                                                <input type="hidden" name="radar_date" id="radar_date_input" value="{{ radar_date }}">
-                                                <!-- Checkboxes for the test types -->
-                                                {% for test in all_tests %}
-                                                    <input type="checkbox" id="{{ test }}" name="selected_radar_tests" value="{{ test }}">
-                                                    <label for="{{ test }}">{{ test }}</label><br>
-                                                {% endfor %}
-                                                <hr> 
-                                                <!-- Checkboxes for the averages to compare to -->                            
-                                                <input type="checkbox" id="team_avg" name="compare_avg" value="team_avg">
-                                                <label for="team_avg">Team Avg</label><br>
-                                            
-                                                <input type="checkbox" id="position_avg" name="compare_avg" value="position_avg">
-                                                <label for="position_avg">Position Avg</label><br>
-                                            
-                                                <input type="checkbox" id="gender_avg" name="compare_avg" value="gender_avg">
-                                                <label for="gender_avg">Gender Avg</label><br>
-                                                <br>
-                                                <input type="submit" value="Submit" class="submit">
-                                            </form>                                            
-                                        </div>
-                                        <br>
-                                        <!-- Display the spider graph or not -->
-                                        {% if selected_radar_tests %}
-                                            {% if selected_radar_tests|length > 2 %}
-                                                {{ Radar_chart|safe }}
-                                            {% else %}
-                                                <p>Three tests are required to generate a spider graph.</p>
-                                            {% endif %}
-                                        {% endif %}
-                                    {% endif %}
-                                </form>
-                            </div>
+                        <div id="z-scores" class="graphprof">
+                            <p style="margin-bottom: 0; align-self: center;">No data</p>
                         </div>
 
-                        <div id="bar-graphs" class="graphprof d-flex flex-column">
-                            <p style="margin-bottom: 0; align-self: center;">No data</p>
+                        <div id="spider-graphs" class="graphprof">
+                            <!-- Radar/Spider Graph -->
+                            <form method="post" id="kpi_radar_form">
+                                {% csrf_token %}
+                                <div class="d-flex justify-content-between">
+                                    <select id="radar_date" name="radar_date">
+                                        <option disabled hidden selected>Select Date</option>
+                                        <option selected>{{ kpi_most_recent }}</option>
+                                        {% for x in all_dates %}
+                                        <option>{{ x.datekpi }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <input type="submit" value="submit" class="submit">
+                                </div>
+                                <br>
+                                <!-- If a date has been selected -->
+                                {% if radar_date %}
+                                <div>
+                                    <form method="post" id="selected_radar_tests">
+                                        {% csrf_token %}
+                                        <!-- Passing radar_date as a session variable -->
+                                        <input type="hidden" name="radar_date" id="radar_date_input"
+                                            value="{{ radar_date }}">
+                                        <!-- Checkboxes for the test types -->
+                                        {% for test in all_tests %}
+                                        <input type="checkbox" id="{{ test }}" name="selected_radar_tests"
+                                            value="{{ test }}">
+                                        <label for="{{ test }}">{{ test }}</label><br>
+                                        {% endfor %}
+                                        <hr>
+                                        <!-- Checkboxes for the averages to compare to -->
+                                        <input type="checkbox" id="team_avg" name="compare_avg" value="team_avg">
+                                        <label for="team_avg">Team Avg</label><br>
+
+                                        <input type="checkbox" id="position_avg" name="compare_avg"
+                                            value="position_avg">
+                                        <label for="position_avg">Position Avg</label><br>
+
+                                        <input type="checkbox" id="gender_avg" name="compare_avg" value="gender_avg">
+                                        <label for="gender_avg">Gender Avg</label><br>
+                                        <br>
+                                        <input type="submit" value="Submit" class="submit">
+                                    </form>
+                                </div>
+                                <br>
+                                <!-- Display the spider graph or not -->
+                                {% if selected_radar_tests %}
+                                {% if selected_radar_tests|length > 2 %}
+                                {{ Radar_chart|safe }}
+                                {% else %}
+                                <p>Three tests are required to generate a spider graph.</p>
+                                {% endif %}
+                                {% endif %}
+                                {% endif %}
+                            </form>
+                        </div>
+
+                        <!-- This is where bar graphs will populate -->
+                        <div id="bar-graphs" class="graphprof">
+                            <p id="no-data" style="margin-bottom: 0; align-self: center;">No data</p>
                         </div>
 
                         <script>
@@ -371,7 +429,15 @@
                                 if (wellness_count > 0)
                                     wellness_ajax();
 
-                                dateUpdater();
+                                // if a date selector changes, call ajax to update the page
+                                document.getElementById("date1").addEventListener("change", kpi_ajax);
+                                document.getElementById("date2").addEventListener("change", kpi_ajax);
+
+                                //if a date selector changes, call ajax to update the page 
+                                document.getElementById("wellnessdate").addEventListener("change", wellness_ajax);
+
+                                // if img upload changes... 
+                                document.getElementById("id_image").addEventListener("change", imgChange);
 
                                 //set dates on kpi-report div to the ones initially selected
                                 document.getElementById("resultone").innerHTML = "{{ kpi_earliest }}";
@@ -403,200 +469,242 @@
                                 return cookieValue;
                             }
 
-                            // if img upload changes... 
-                            document.getElementById("id_image").addEventListener("change", imgChange);
                             // stops form from resubmitting when page is refreshed to show 
-                            if ( window.history.replaceState ) {
-                                window.history.replaceState( null, null, window.location.href );
+                            if (window.history.replaceState) {
+                                window.history.replaceState(null, null, window.location.href);
                             }
 
+                            // submit the form to change database, and refresh the page to show new profile image       
                             function imgChange() {
-                                // submit the form to change database, and refresh the page to show new profile image
                                 document.getElementById("imgForm").submit();
                                 document.getElementById("imgForm").reset();
-                                console.log("submit form")
                             }
 
-                            //if a date selector changes, call ajax to update the page
-                            document.getElementById("date1").addEventListener("change", kpi_ajax);
-                            document.getElementById("date2").addEventListener("change", kpi_ajax);
+                            // hides/shows tests when their corresponding checkmark in the options tab is checked/unchecked
+                            function hide_tests() {
+                                document.querySelectorAll("[type=checkbox]").forEach(checkbox => {
+                                    checkbox.addEventListener("click", function (e) {
+
+                                        // get id of this checkbox
+                                        id = this.id;
+                                        console.log(id);
+                                        if (this.checked) {
+
+                                            // concatenate respective ids of bar and trend graphs
+                                            $("#bar_"+id).show();
+                                            $("#trend_"+id).show();
+                                        }
+                                        else {
+                                            // concatenate respective ids of bar and trend graphs
+                                            $("#bar_"+id).hide();
+                                            $("#trend_"+id).hide();
+                                        }
+                                        e.stopPropagation();
+                                    })
+                                })
+                            }
+
+                            // global variables to create a lockout when an AJAX request has been made
+                            // ensures multiple AJAX requests can't be sent at the same time, which would 
+                            // result in jumbled data
+                            let is_loading_kpi = false;
+                            let is_loading_wellness = false;
 
                             //grabs info from the database without refreshing page and screwing everything up
                             function kpi_ajax() {
 
-                                //get dates from selectors
-                                var date_one = document.getElementById("date1").value
-                                var date_two = document.getElementById("date2").value
+                                if (!is_loading_kpi) {
 
-                                //clear trends and graphs 
-                                $("#kpi-trend").empty()
-                                $("#bar-graphs").empty()
+                                    // AJAX function has been called! No other calls can be made until this one finishes
+                                    is_loading_kpi = true;
 
-                                //add loading circle
-                                $("#kpi-trend").append("<div id=\"loading-line\" class=\"d-flex justify-content-center\"> <div class=\"lds-dual-ring\"></div></div>");
-                                $("#bar-graphs").append("<div id=\"loading-bar\" class=\"d-flex justify-content-center\"> <div class=\"lds-dual-ring\"></div></div>");
+                                    // get dates from selectors
+                                    var date_one = document.getElementById("date1")
+                                    var date_two = document.getElementById("date2")
 
-                                $.ajax({
-                                    url: "{% url 'AthleteProf' athleteProf.fname athleteProf.lname athleteProf.dob athleteProf.id %}",
-                                    type: "POST",
-                                    dataType: "json",
-                                    data: JSON.stringify({ date1: date_one, date2: date_two }),
-                                    headers: {
-                                        "X-Requested-With": "XMLHttpRequest",
-                                        "X-CSRFToken": getCookie("csrftoken"),
-                                    },
-                                    success: (response) => {
+                                    resultone.innerText = date_one.options[date_one.selectedIndex].text;
+                                    resulttwo.innerText = date_two.options[date_two.selectedIndex].text;
 
-                                        //shows info being passed from backend
-                                        console.log(response);
+                                    // clear trends and graphs 
+                                    $("#kpi-trend").empty()
+                                    $("#bar-graphs").empty()
 
-                                        //remove loading circle after info arrives from db
-                                        $("#loading-line").remove()
-                                        $("#loading-bar").remove()
+                                    // add loading circle
+                                    $("#kpi-trend").append("<div id=\"loading-line\" class=\"d-flex justify-content-center\"> <div class=\"lds-dual-ring\"></div></div>");
+                                    $("#bar-graphs").append("<div id=\"loading-bar\" class=\"d-flex justify-content-center\"> <div class=\"lds-dual-ring\"></div></div>");
 
-                                        //loop thru each test type and get its info
-                                        for (var key in response.test_types) {
-                                            var report = "<div class=\"d-flex justify-content-between align-items-center kpi-img\">";
-                                            var graphs = "<div>";
-                                            report += "<div style=\"width: 25%\"> <p>" + response.test_types[key] + "</p></div>";
+                                    $.ajax({
+                                        url: "{% url 'AthleteProf' athleteProf.fname athleteProf.lname athleteProf.dob athleteProf.id %}",
+                                        type: "POST",
+                                        dataType: "json",
+                                        data: JSON.stringify({ date1: date_one.value, date2: date_two.value }),
+                                        headers: {
+                                            "X-Requested-With": "XMLHttpRequest",
+                                            "X-CSRFToken": getCookie("csrftoken"),
+                                        },
+                                        success: (response) => {
 
-                                            // If the change is increasing
-                                            if (response.changes[key] > 0) {
-                                                // If a minimum score is better for a test, the change is increasing and is red
-                                                // (don't judge the === true and false, Ajax/JS didn't like the expression without them)
-                                                if (response.minBetter[key] === true) {
-                                                    report += "<p style=\"color:var(--red-accent);\"> <i class=\"fa-solid fa-arrow-up\" style=\"color:var(--red-accent)\"></i> " + response.changes[key] + " </p>";
+                                            //shows info being passed from backend
+                                            console.log(response);
+
+                                            //remove loading circle after info arrives from db
+                                            $("#loading-line").remove()
+                                            $("#loading-bar").remove()
+
+                                            //loop thru each test type and get its info
+                                            for (var key in response.test_types) {
+
+                                                let bar_template = document.getElementById("bar-template").cloneNode(true);
+                                                let trend_template = document.getElementById("trend-template").cloneNode(true);
+
+                                                // If the change is increasing
+                                                if (response.changes[key] > 0) {
+                                                    // If a minimum score is better for a test, the change is increasing and is red
+                                                    if (response.minBetter[key] === true)
+                                                        trend_template.querySelector("#kpi-change").style.color = "var(--red-accent)";
                                                     // If a minimum score is NOT better for a test, the change is increasing and is green
-                                                } else if (response.minBetter[key] === false) {
-                                                    report += "<p style=\"color:var(--green-accent);\"> <i class=\"fa-solid fa-arrow-up\" style=\"color:var(--green-accent)\"></i> " + response.changes[key] + " </p>";
-                                                    // minBetter is not defined, make it white/neutral (bodyweight, body composition, etc)
-                                                } else {
-                                                    report += "<p style=\"color:#FFFFFF;\"> <i class=\"fa-solid fa-arrow-up\" style=\"color:#FFFFFF\"></i> " + response.changes[key] + " </p>";
+                                                    else if (response.minBetter[key] === false)
+                                                        trend_template.querySelector("#kpi-change").style.color = "var(--green-accent)";
+
+                                                    // Add correctly oriented arrow icon
+                                                    trend_template.querySelector("#kpi-arrow").setAttribute("class", "fa-solid fa-arrow-up");
                                                 }
                                                 // If the change is decreasing
-                                            } else if (response.changes[key] < 0) {
-                                                // If a minimum score is better for a test, the change is decreasing and is green
-                                                if (response.minBetter[key] === true) {
-                                                    report += "<p style=\"color:var(--green-accent);\"> <i class=\"fa-solid fa-arrow-down\" style=\"color:var(--green-accent)\"></i> " + Math.abs(response.changes[key]) + " </p>";
+                                                else if (response.changes[key] < 0) {
+                                                    // If a minimum score is better for a test, the change is decreasing and is green
+                                                    if (response.minBetter[key] === true)
+                                                        trend_template.querySelector("#kpi-change").style.color = "var(--green-accent)";
                                                     // If a minimum score is NOT better for a test, the change is decreasing and is red
-                                                } else if (response.minBetter[key] === false) {
-                                                    report += "<p style=\"color:var(--red-accent);\"> <i class=\"fa-solid fa-arrow-down\" style=\"color:var(--red-accent)\"></i> " + Math.abs(response.changes[key]) + " </p>";
-                                                    // minBetter is not defined, make it white/neutral (bodyweight, body composition, etc)
-                                                } else {
-                                                    report += "<p style=\"color:#FFFFFF;\"> <i class=\"fa-solid fa-arrow-down\" style=\"color:#FFFFFF\"></i> " + Math.abs(response.changes[key]) + " </p>";
+                                                    else if (response.minBetter[key] === false)
+                                                        trend_template.querySelector("#kpi-change").style.color = "var(--red-accent)";
+
+                                                    // Add correctly oriented arrow icon
+                                                    trend_template.querySelector("#kpi-arrow").setAttribute("class", "fa-solid fa-arrow-down");
                                                 }
-                                                // The change is 0, no arrow
-                                            } else {
-                                                report += "<p style=\"color:#FFFFFF;\"> " + response.changes[key] + " </p>";
+
+                                                // Append the actual change value (in absolute form so there is no -)
+                                                trend_template.querySelector("#kpi-change").append(Math.abs(response.changes[key]));
+
+                                                // Construct URL for line graph and add path to this node's img tag
+                                                var line_graphURL = "data:image/png;base64, " + response.kpi_line[key];
+                                                trend_template.querySelector("#kpi-graph").setAttribute("src", line_graphURL);
+
+                                                // Fill in name and dates for this KPI trend
+                                                trend_template.querySelector("#kpi-name").innerText = response.test_types[key];
+                                                trend_template.querySelector("#kpi-date-1").innerText = response.Date1_results[key];
+                                                trend_template.querySelector("#kpi-date-2").innerText = response.Date2_results[key];
+
+                                                // Construct URL for bar graph and add path to this node's img tag
+                                                var bar_graphURL = "data:image/png;base64, " + response.kpi_bar[key];
+                                                bar_template.querySelector("#tname").innerText = response.test_types[key];
+                                                bar_template.querySelector("#tgraph").setAttribute("src", bar_graphURL);
+
+                                                // Give both graphs for each type an integer ID that will allow them to be maniuplated later
+                                                trend_template.setAttribute("id", "trend_" + key);
+                                                bar_template.setAttribute("id", "bar_" + key);
+
+                                                // Add this completed graph template to the div containing all graphs
+                                                $("#kpi-trend").append(trend_template);
+                                                //$("#kpi-trend").append("<hr>");
+                                                $("#bar-graphs").append(bar_template);
+
+                                                var checkid = /*"check_" +*/ key;
+
+                                                document.getElementById("test-list").innerHTML += "<li>" + response.test_types[key] + "<input type=\"checkbox\" id=\"" + checkid + "\" checked=\"true\"></li>";
+
+                                                //document.getElementById(checkid).addEventListener("change", function() { update_graph_display(key) });
                                             }
+                                            hide_tests();
+                                            // AJAX call is done, so another one can go
+                                            is_loading_kpi = false;
+                                        },
+                                        error: (error) => {
+                                            console.log("Error processing KPI request: " + error);
 
-                                            //add line graph with results below
-                                            report += "<div style=\"width: 50%;\"> <img src=\"data:image/png;base64, " + response.kpi_line[key] + "\">";
-                                            report += "<div class=\"d-flex justify-content-between align-items-center\"> <p>" + response.Date1_results[key] + "</p> <p>" + response.Date2_results[key] + "</p></div>";
-                                            report += "</div>";
-                                            report += "</div>";
-
-                                            //add bar graphs with test name
-                                            graphs += "<h3>" + response.test_types[key] + "</h3>";
-                                            graphs += "<img style=\"width: 100%; height:auto;\" src=\"data:image/png;base64, " + response.kpi_bar[key] + "\">";
-                                            graphs += "</div>";
-
-                                            $("#kpi-trend").append(report);
-                                            $("#kpi-trend").append("<hr>");
-
-                                            $("#bar-graphs").append(graphs);
+                                            // AJAX call is done, so another one can go
+                                            is_loading_kpi = false;
                                         }
-
-                                    },
-                                    error: (error) => {
-                                        console.log("Couldn't complete request: " + error);
-                                    }
-                                })
+                                    })
+                                }
+                                else
+                                    alert("Dates changed too quickly! Please wait for this request to finish and try again.");
                             }
-
-                            //if a date selector changes, call ajax to update the page 
-                            document.getElementById("wellnessdate").addEventListener("change", wellness_ajax);
 
                             /* When the "#wellnessform" form is submitted, this function will send an AJAX request to fetch the new data. */
                             function wellness_ajax() {
 
-                                // Get value of #sportsteam
-                                var date_selected = document.getElementById("wellnessdate").value
+                                if (!is_loading_wellness) {
 
-                                // Send "POST" AJAX request to url 'AthleteProf'
-                                // This request will be handled by the Django backend -> see views.py recordKPI() for that code
-                                $.ajax({
-                                    //URL needs to be fname, lname, DOB for athletes
-                                    url: "{% url 'AthleteProf' athleteProf.fname athleteProf.lname athleteProf.dob athleteProf.id %}",
-                                    type: "POST",
-                                    dataType: "json",
-                                    data: JSON.stringify({ wellnessdate: date_selected, }),
-                                    headers: {
-                                        "X-Requested-With": "XMLHttpRequest",
-                                        "X-CSRFToken": getCookie("csrftoken"),  // don't forget to include the 'getCookie' function
-                                    },
-                                    success: (response) => {
+                                    is_loading_wellness = true;
 
-                                        console.log(response);
+                                    // Get value of #sportsteam
+                                    var date_selected = document.getElementById("wellnessdate").value
 
-                                        // Get individual values needed for wellness total and then sum them
-                                        var hoursofsleep = Number(response.wellness[0].hoursofsleep);
-                                        var sleepquality = Number(response.wellness[0].sleepquality);
-                                        var breakfast = Number(response.wellness[0].breakfast);
-                                        var hydration = Number(response.wellness[0].hydration);
-                                        var soreness = Number(response.wellness[0].soreness);
-                                        var stress = Number(response.wellness[0].stress);
-                                        var mood = Number(response.wellness[0].mood);
+                                    // Send "POST" AJAX request to url 'AthleteProf'
+                                    // This request will be handled by the Django backend -> see views.py recordKPI() for that code
+                                    $.ajax({
+                                        //URL needs to be fname, lname, DOB for athletes
+                                        url: "{% url 'AthleteProf' athleteProf.fname athleteProf.lname athleteProf.dob athleteProf.id %}",
+                                        type: "POST",
+                                        dataType: "json",
+                                        data: JSON.stringify({ wellnessdate: date_selected, }),
+                                        headers: {
+                                            "X-Requested-With": "XMLHttpRequest",
+                                            "X-CSRFToken": getCookie("csrftoken"),  // don't forget to include the 'getCookie' function
+                                        },
+                                        success: (response) => {
 
-                                        document.getElementById("hrs_sleep").innerText = hoursofsleep;
-                                        document.getElementById("sleep_qual").innerText = sleepquality;
-                                        document.getElementById("breakfast").innerText = breakfast;
-                                        document.getElementById("hydration").innerText = hydration;
-                                        document.getElementById("soreness").innerText = soreness;
-                                        document.getElementById("stress").innerText = stress;
-                                        document.getElementById("mood").innerText = mood;
+                                            console.log(response);
 
-                                        var total = hoursofsleep + sleepquality + breakfast + hydration + soreness + stress + mood;
-                                        var status = response.wellness[0].status;
+                                            // Get individual values needed for wellness total and then sum them
+                                            var hoursofsleep = Number(response.wellness[0].hoursofsleep);
+                                            var sleepquality = Number(response.wellness[0].sleepquality);
+                                            var breakfast = Number(response.wellness[0].breakfast);
+                                            var hydration = Number(response.wellness[0].hydration);
+                                            var soreness = Number(response.wellness[0].soreness);
+                                            var stress = Number(response.wellness[0].stress);
+                                            var mood = Number(response.wellness[0].mood);
 
-                                        // Update total & readiness in document
-                                        document.getElementById("wellness_total").innerText = total;
-                                        document.getElementById("total").innerHTML = "Readiness: " + total;
-                                        document.getElementById("stat").innerHTML = "Status: " + status;
+                                            document.getElementById("hrs_sleep").innerText = hoursofsleep;
+                                            document.getElementById("sleep_qual").innerText = sleepquality;
+                                            document.getElementById("breakfast").innerText = breakfast;
+                                            document.getElementById("hydration").innerText = hydration;
+                                            document.getElementById("soreness").innerText = soreness;
+                                            document.getElementById("stress").innerText = stress;
+                                            document.getElementById("mood").innerText = mood;
 
-                                        if (status == 'N') {
-                                            document.getElementById("stat").style.color = "var(--red-accent)";
-                                            document.getElementById("bor").style.border = "1px solid var(--red-accent)";
+                                            var total = hoursofsleep + sleepquality + breakfast + hydration + soreness + stress + mood;
+                                            var status = response.wellness[0].status;
+
+                                            // Update total & readiness in document
+                                            document.getElementById("wellness_total").innerText = total;
+                                            document.getElementById("total").innerHTML = "Readiness: " + total;
+                                            document.getElementById("stat").innerHTML = "Status: " + status;
+
+                                            if (status == "Out") {
+                                                document.getElementById("stat").style.color = "var(--red-accent)";
+                                                document.getElementById("bor").style.border = "1px solid var(--red-accent)";
+                                            }
+                                            else if (status == "Good") {
+                                                document.getElementById("stat").style.color = "var(--green-accent)";
+                                                document.getElementById("bor").style.border = "1px solid var(--green-accent)";
+                                            }
+
+                                            is_loading_wellness = false;
+
+                                        },
+                                        error: (error) => {
+
+                                            console.log(error);
+                                            alert("Error processing Wellness request: " + error);
+                                            is_loading_wellness = false;
                                         }
-                                        else if (status == 'Y') {
-                                            document.getElementById("stat").style.color = "var(--green-accent)";
-                                            document.getElementById("bor").style.border = "1px solid var(--green-accent)";
-                                        }
-
-                                    },
-                                    error: (error) => {
-
-                                        console.log(error);
-                                        alert("Pause");
-                                    }
-                                })
+                                    })
+                                }
+                                else
+                                    alert("Date changed too quickly! Please wait for this request to finish and try again.");
                             }
-                            /* End of "#sportsteam" change function */
 
-                            function dateUpdater() {
-
-                                let selection1 = document.getElementById('date1');
-                                let selection2 = document.getElementById('date2');
-
-                                selection1.addEventListener('change', () => {
-                                    resultone.innerText = selection1.options[selection1.selectedIndex].text;
-                                });
-
-                                selection2.addEventListener('change', () => {
-                                    resulttwo.innerText = selection2.options[selection2.selectedIndex].text;
-                                });
-                            }
-                            console.log(window.performance);
                         </script>
                     </div>
                 </div>
@@ -604,3 +712,5 @@
         </div>
     </main>
 </body>
+
+</html>
