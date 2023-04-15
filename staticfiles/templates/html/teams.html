@@ -22,10 +22,36 @@
             <h1>Teams</h1>
           </div>
 
+          <div style="margin-top: 20px;">
+            <h4>Populations</h4>
+            &nbsp;
+          </div>
+
+          <table class="table table-dark table-striped table-hover table-customs">
+            <tr style="height: 50px; vertical-align:middle;">
+              <td>All Athletes</td>
+              <td style="text-align: right;"><a href="/athletes"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></td>
+            </tr>
+            <tr style="height: 50px; vertical-align:middle;">
+              <td>Males</td>
+              <td style="text-align: right;"><a href="{% url 'MaleAthletes' %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></td>
+            </tr>
+            <tr style="height: 50px; vertical-align:middle;">
+              <td>Females</td>
+              <td style="text-align: right;"><a href="{% url 'FemaleAthletes' %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></td>
+            </tr>
+          </table>
+
+          <div style="margin-top: 20px;">
+            <h4>Sports Teams</h4>
+            &nbsp;
+          </div>
+
           <table class="table table-dark table-striped table-hover table-customs">
             {% for TeamT in teams %}
             <tr style="height: 50px; vertical-align:middle;">
               <td>{{ TeamT.sport }}</td>
+              <td style="text-align: right;"><a href="{% url 'TeamSpecificAthletes' TeamT.sport %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></td>
             </tr>
             {% endfor %}
           </table>
@@ -55,8 +81,10 @@
           </div>
 
           <div style="height:85vh; background-color: var(--med-gray-2);" class="basicreport">
+            <div style="margin: auto; width: fit-content; height: 100%;">
+              <p style="margin-top: 37vh;">Select a Sports Team or a Population</p>
+            </div>
           </div>
-
         </div>
       </div>
     </div>

@@ -25,7 +25,7 @@
                 &nbsp;
                 &nbsp;
                 <div>
-                  <a href="{% url 'AthleteProf' x.fname x.lname x.dob x.id %}"><p>{{x.fname}} {{x.lname}}</p></a>
+                  <a href="{% url 'AthleteProf' x.fname x.lname x.dob x.id %}"><p class="recentViewedLink">{{x.fname}} {{x.lname}}</p></a>
                   <p style="font-size: x-small;">{{x.position}}</p>
                   <p style="font-size: x-small;">{{x.year}}</p>
                 </div>
@@ -50,7 +50,9 @@
                 <div style="display: flex; justify-content: space-between;">
                   <p>{{ x.fname }} {{ x.lname }}</p>
                   <div>
-                    <i class="fa-solid fa-pen" style="color: var(--yellow-accent); font-size: var(--icon-size);"></i>
+                    <a href="{% url 'EditKPI' x.id %}">
+                      <i class="fa-solid fa-pen" style="color: var(--yellow-accent); font-size: var(--icon-size);"></i>
+                    </a>
                     &nbsp;
                     <a onclick="return confirm('Are you sure?');" href="{% url 'DeleteKPI_Dash' x.id %}">
                       <button class="delkpibtn" style="background-color: #fc515100; font-size: var(--icon-size)" name="delete" value="delete"><i class="fa-solid fa-x"></i></button>

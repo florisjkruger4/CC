@@ -309,3 +309,13 @@ select {
   color: var(--red-accent);
   transform: (1.2);
 }
+
+.recentViewedLink{
+  transition: transform 0.3s;
+  color: white;
+}
+
+.recentViewedLink:hover{
+  color: #99C7FF;
+  transform: (1.2);
+}

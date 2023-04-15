@@ -11,6 +11,9 @@ urlpatterns = [
 
     path('dash/', views.Dashboard, name="Dashboard"),
     path('athletes/', views.AthletesDash, name="AthletesDash"),
+    path('maleathletes/', views.MaleAthletes, name="MaleAthletes"),
+    path('femaleathletes/', views.FemaleAthletes, name="FemaleAthletes"),
+    path('teamspecificathletes/<str:sport>/', views.TeamSpecificAthletes, name="TeamSpecificAthletes"),
 
     path('addathlete/', views.AddAthlete, name="AddAthlete"),
     path('<str:fname>/<str:lname>/<path:dob>/<int:id>', views.AthleteProf, name="AthleteProf"),
@@ -24,6 +27,7 @@ urlpatterns = [
     path('/addkpi/<str:fname>/<str:lname>/<path:dob>', views.AddKPI, name="AddKPI"),
     path('deletekpi/<int:id>', views.DeleteKPI, name="DeleteKPI"),
     path('deletekpidash/<int:id>', views.DeleteKPI_Dash, name="DeleteKPI_Dash"),
+    path('editkpi/<int:id>', views.EditKPI, name="EditKPI")
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -130,6 +130,53 @@ def AthletesDash(request):
 
     return render(request, "html/athletes.html", context)
 
+@login_required(login_url="/")
+def MaleAthletes(request):
+    q = request.GET.get("q") 
+    q = "M"
+
+    athletes = AthleteT.objects.filter(
+        Q()
+        | Q(gender__icontains=q)
+    )
+
+    context = {
+        "athletes": athletes,
+    }
+
+    return render(request, "html/athletes.html", context)
+
+@login_required(login_url="/")
+def FemaleAthletes(request):
+    q = request.GET.get("q") 
+    q = "F"
+
+    athletes = AthleteT.objects.filter(
+        Q()
+        | Q(gender__icontains=q)
+    )
+
+    context = {
+        "athletes": athletes,
+    }
+
+    return render(request, "html/athletes.html", context)
+
+@login_required(login_url="/")
+def TeamSpecificAthletes(request, sport):
+    q = request.GET.get("q") 
+    q = sport
+
+    athletes = AthleteT.objects.filter(
+        Q()
+        | Q(sportsteam__icontains=q)
+    )
+
+    context = {
+        "athletes": athletes,
+    }
+
+    return render(request, "html/athletes.html", context)
 
 @login_required(login_url="/")
 def AddAthlete(request):
@@ -557,6 +604,21 @@ def EditAthlete(request, fname, lname, dob, id):
         editTeam = request.POST["sportsteam"]
         editPosition = request.POST["position"]
 
+        # what the new edit looks like
+        newEdit = AthleteT(
+            fname=editFname,
+            lname=editLname,
+            gender=editGender,
+            dob=editDOB,
+            sportsteam=editTeam,
+            position=editPosition,
+            year=editYear,
+            height=editHeight,
+        )
+
+        # checks if this is even allowedd before the update queries get sent
+        newEdit.validate_constraints()
+
         athlete = AthleteT.objects.filter(id=id).update(
             fname=editFname,
             lname=editLname,
@@ -567,20 +629,23 @@ def EditAthlete(request, fname, lname, dob, id):
             year=editYear,
             height=editHeight,
         )
+
+        #redirect info
+        x = AthleteT.objects.get(id=id)
+
         WellnessT.objects.filter(fname=fname, lname=lname, dob=dob).update(
             fname=editFname,
             lname=editLname,
             dob=editDOB,
-            sportsteam=editTeam,
-            position=editPosition,
         )
+
         KpiT.objects.filter(fname=fname, lname=lname, dob=dob).update(
             fname=editFname,
             lname=editLname,
             dob=editDOB,
         )
 
-        return redirect("/athletes")
+        return redirect(AthleteProf, fname=x.fname, lname=x.lname, dob=x.dob, id=x.id)
 
     context = {"athlete": athlete}
 
@@ -790,7 +855,6 @@ def WellnessDash(request):
 
     return render(request, "html/wellness.html", context)
 
-
 @login_required(login_url="/")
 def AddKPI(request, fname, lname, dob):
     athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
@@ -831,12 +895,63 @@ def AddKPI(request, fname, lname, dob):
     return render(request, "html/addkpi.html", context)
 
 @login_required(login_url="/")
+def EditKPI(request, id):
+
+    # gets id of kpi record
+    editKPI = KpiT.objects.get(id=id)
+
+    # All test type names in the TestTypeT table
+    test_types = TestTypeT.objects.values_list("tname", flat=True)
+
+    # initiallizes for initial page load
+    newkpi = None
+
+     # updates changes made to kpi in kpi table
+    if request.method == "POST":
+        editTestType = request.POST["testtype"]
+        editTestResult = request.POST["testresult"]
+        editDatekpi = request.POST["datekpi"]
+
+        # what the new edit looks like
+        newEdit = KpiT(
+            fname=editKPI.fname,
+            lname=editKPI.lname,
+            dob=editKPI.dob,
+            testtype=editTestType,
+            testresult=editTestResult,
+            datekpi=editDatekpi,
+        )
+
+        if editKPI.testtype == editTestType and editKPI.datekpi == editDatekpi and editKPI.testresult != editTestResult:
+            newkpi = KpiT.objects.filter(id=id).update(
+                testresult=editTestResult,
+            )
+        else:
+            # checks if this is even allowed before reaching the update queries
+            newEdit.validate_constraints()
+
+            newkpi = KpiT.objects.filter(id=id).update(
+                testtype=editTestType,
+                testresult=editTestResult,
+                datekpi=editDatekpi,
+            )
+
+        return redirect(AddKPI, fname=editKPI.fname, lname=editKPI.lname, dob=editKPI.dob)
+
+    context = {
+        "editKPI":editKPI,
+        "test_types":test_types,
+        "newkpi":newkpi
+    }
+
+    return render(request, "html/editkpi.html", context)
+
+@login_required(login_url="/")
 def DeleteKPI(request, id):
-    athlete_info = KpiT.objects.get(id=id)
     kpi_to_delete = KpiT.objects.get(id=id)
     kpi_to_delete.delete()
 
-    return redirect(AddKPI, fname=athlete_info.fname, lname=athlete_info.lname, dob=athlete_info.dob)
+    return redirect(AddKPI, fname=kpi_to_delete.fname, lname=kpi_to_delete.lname, dob=kpi_to_delete.dob)
 
 @login_required(login_url="/")
 def AddWellness(request, fname, lname, dob):
