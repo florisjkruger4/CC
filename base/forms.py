@@ -10,8 +10,8 @@ class AthleteForm(forms.ModelForm):
     DEFAULT = ''
     FRESHMAN = 'Freshman'
     SOPHOMORE = 'Sophomore'
-    JUNIOR = 'JUNIOR'
-    SENIOR = 'SENIOR'
+    JUNIOR = 'Junior'
+    SENIOR = 'Senior'
     SCHOOL_YEARS = [
         (DEFAULT, ('')),
         (FRESHMAN, ('Freshman')),

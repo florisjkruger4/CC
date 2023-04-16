@@ -185,7 +185,10 @@ def AddAthlete(request):
 
         if form.is_valid():
             # form.validate_constraints()
+            messages.info(request, 'Athlete Added Successfully')
             form.save()
+        else:
+            messages.info(request, 'Athlete Profile Already Exists')
 
     else:
         form = AthleteForm()
@@ -616,19 +619,31 @@ def EditAthlete(request, fname, lname, dob, id):
             height=editHeight,
         )
 
-        # checks if this is even allowedd before the update queries get sent
-        newEdit.validate_constraints()
+        if ((athlete.fname == editFname and athlete.lname == editLname and athlete.dob == editDOB) and (athlete.gender != editGender or athlete.height != editHeight or athlete.sportsteam != editTeam or athlete.position != editPosition or athlete.year != editYear)):
+            athlete = AthleteT.objects.filter(id=id).update(
+                fname=editFname,
+                lname=editLname,
+                gender=editGender,
+                dob=editDOB,
+                sportsteam=editTeam,
+                position=editPosition,
+                year=editYear,
+                height=editHeight,
+            )
+        else:
+            # checks if this is even allowedd before the update queries get sent
+            newEdit.validate_constraints()
 
-        athlete = AthleteT.objects.filter(id=id).update(
-            fname=editFname,
-            lname=editLname,
-            gender=editGender,
-            dob=editDOB,
-            sportsteam=editTeam,
-            position=editPosition,
-            year=editYear,
-            height=editHeight,
-        )
+            athlete = AthleteT.objects.filter(id=id).update(
+                fname=editFname,
+                lname=editLname,
+                gender=editGender,
+                dob=editDOB,
+                sportsteam=editTeam,
+                position=editPosition,
+                year=editYear,
+                height=editHeight,
+            )
 
         #redirect info
         x = AthleteT.objects.get(id=id)
