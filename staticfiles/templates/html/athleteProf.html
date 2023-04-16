@@ -69,7 +69,11 @@
 
                         <div class="d-flex">
 
+                            {% if athleteProf.image == '' %}
+                            <img class="athlete-pic" src="/media/placeholder.jpg" id="profileImg"></img>
+                            {% elif athleteProf.image %}
                             <img class="athlete-pic" src="/media/{{ athleteProf.image }}" id="profileImg"></img>
+                            {% endif %}
 
                             <div class="w-100" style="margin-left: var(--inner-padding);">
                                 <div class="d-flex justify-content-between">

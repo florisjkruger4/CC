@@ -21,7 +21,11 @@
 
               {% for x in recentlyViewedAthletes %}
               <div style="display: flex;">
+                {% if x.image == '' %}
+                <img style="width: 100px; height: 100px; border-radius: 7px;" src="/media/placeholder.jpg"></img>
+                {% elif x.image %}
                 <img style="width: 100px; height: 100px; border-radius: 7px;" src="/media/{{ x.image }}"></img>
+                {% endif %}
                 &nbsp;
                 &nbsp;
                 <div>

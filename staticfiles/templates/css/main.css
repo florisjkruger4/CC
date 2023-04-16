@@ -240,6 +240,7 @@ select {
 .upload-img-frame {
   background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='17' ry='17' stroke='%23333' stroke-width='8' stroke-dasharray='15' stroke-dashoffset='38' stroke-linecap='square'/%3e%3c/svg%3e");
   border-radius: 17px;
+  background-color: var(--dark-gray);
   height: 150px;
   width: 150px;
   cursor: pointer;

@@ -1,3 +1,4 @@
+{% load widget_tweaks %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,11 +19,78 @@
             <h1>Add Athlete</h1>
         </div>
 
-        <form method="post" enctype="multipart/form-data">  
-            {% csrf_token %}  
-            {{ form.as_p }}  
-            <button type="submit">Submit</button>  
+        <form method="post" enctype="multipart/form-data"> 
+            <div class="basicreport" style="width: 100%; max-width: 500px; height: auto;">
+                {% csrf_token %}  
+                <div class="d-flex" style="gap: var(--inner-padding); padding-bottom: var(--inner-padding);">
+                    <div>
+                        <p>First Name</p>
+                        {% render_field form.fname class+="form-control" %}
+                    </div>
+                    <div>
+                        <p>Last Name</p>
+                        {% render_field form.lname class+="form-control" %}
+                    </div>
+                </div>
+                <div class="d-flex" style="gap: var(--inner-padding); padding-bottom: var(--inner-padding);">
+                    <div>
+                        <p>Year</p>
+                        {% render_field form.year class+="form-control" %}
+                    </div>
+                    <div>
+                        <p>Date of Birth</p>
+                        {% render_field form.dob class+="form-control" type+="date"%}
+                    </div>
+                </div>
+                <div class="d-flex" style="gap: var(--inner-padding); padding-bottom: var(--inner-padding);"> 
+                    <div>
+                        <p>Height (in.)</p>
+                        {% render_field form.height class+="form-control" %}
+                    </div>
+                    <div>
+                        <p>Gender</p>
+                        {% render_field form.gender class+="form-control" %}
+                    </div>
+                </div>
+
+                <p>Upload Photo</p>
+                <div style="display: flex;">
+                    <label for="id_image">
+                        <div class="upload-img-frame" id="imgHolder" style="text-align: center; justify-content: center; align-items: center; display: flex;">
+                            <i class="fa-solid fa-user" style="color: var(--light-gray-1); font-size: 45px" id="camicon"></i>
+                        </div>
+                    </label>
+                    <p style="margin: auto; visibility: hidden; opacity: 50%; font-style: italic;" id="uploadmsg">File Uploaded Successfully</p>
+                </div>
+                
+                {% render_field form.image class+="upload-img-frame" style+="display: none" onchange+="fileUpload()"%}
+
+                <div class="d-flex" style="gap: var(--inner-padding); padding-top: var(--inner-padding); padding-bottom: var(--inner-padding);">
+                    <div>
+                        <p>Team</p>
+                        {% render_field form.sportsteam class+="form-control" %}
+                    </div>
+                    <div>
+                        <p>Position</p>
+                        {% render_field form.position class+="form-control" %}
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <button class="kpidatabtn" style="width: 25%;" type="submit" value="Submit">Submit</button>
+                </div>
+            </div> 
         </form> 
+
+        <script>
+            function fileUpload() {
+                if(document.getElementById("id_image").files.length > 0 ){
+                document.getElementById("imgHolder").style.backgroundColor = "var(--light-gray-1)";
+                document.getElementById("camicon").style.color = "var(--dark-gray)";
+                document.getElementById("uploadmsg").style.visibility = "visible";
+                }
+            }
+            
+        </script>
 
         <!--
         <form method="post" id="addathleteform">
