@@ -9,7 +9,7 @@ def get_graph():
 
     buffer = BytesIO()
 
-    plt.savefig(buffer, format='png', transparent=True, dpi=100)
+    plt.savefig(buffer, format='png', transparent=True, dpi=120)
 
     buffer.seek(0)
     image_png = buffer.getvalue()
@@ -33,14 +33,13 @@ def bar_graph(x, y):
         plt.xticks(rotation=0)
 
     
-    plt.bar(x, y, color="#96B7FF")
+    plt.bar(x, y, color="#99C7FF")
     plt.tight_layout()
     ax = plt.gca()
-    ax.set_facecolor("#1F2126")
     ax.spines['bottom'].set_color("white")
     ax.spines['left'].set_color("white")
-    ax.spines['top'].set_color("#1F2126")
-    ax.spines['right'].set_color("#1F2126")
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
     ax.tick_params(axis='x', colors='white')
     ax.tick_params(axis='y', colors='white')
 

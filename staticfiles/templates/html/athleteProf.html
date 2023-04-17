@@ -40,7 +40,7 @@
     <main class="py-3 py-override">
         <div class="container" style="max-width: 1800px;">
             <div class="row">
-                <div class="col-lg-5 overflow-scroll">
+                <div class="col-lg-5 overflow-scroll col-padding">
                     <div class="col-scroll">
 
                         <!-- Athlete Info/Header -->
@@ -51,13 +51,13 @@
                             <div class="justify-content-between">
                                 <label for="id_image">
                                     <i class="fa-solid fa-camera"
-                                        style="color: var(--yellow-accent); font-size: var(--icon-size); cursor: pointer;"></i>
+                                        style="color: var(--acc-color-main); font-size: var(--icon-size); cursor: pointer;"></i>
                                 </label>
                                 &nbsp;
                                 <a
                                     href="{% url 'EditAthlete' athleteProf.fname athleteProf.lname athleteProf.dob athleteProf.id %}">
                                     <i class="fa-solid fa-pen"
-                                        style="color: var(--yellow-accent); font-size: var(--icon-size);"></i>
+                                        style="color: var(--acc-color-main); font-size: var(--icon-size);"></i>
                                 </a>
                             </div>
                         </div>
@@ -108,15 +108,15 @@
 
                                 //initially hide wellness report and show only kpi trends
                                 $("#wellnessreport").hide();
-                                document.getElementById("wellness-tab").style.backgroundColor = "#191A1C";
+                                document.getElementById("wellness-tab").style.backgroundColor = "var(--color-tertiary)";
 
                                 //upon click of wellness tab, show wellnessreport div & hide kpireport div
                                 //swap color of tab
                                 $("#wellness-tab").click(function () {
                                     $("#kpireport").hide();
                                     $("#wellnessreport").show();
-                                    document.getElementById("wellness-tab").style.backgroundColor = "var(--med-gray-2)";
-                                    document.getElementById("kpi-tab").style.backgroundColor = "#191A1C";
+                                    document.getElementById("wellness-tab").style.backgroundColor = "var(--color-secondary)";
+                                    document.getElementById("kpi-tab").style.backgroundColor = "var(--color-tertiary)";
                                 });
 
                                 //upon click of kpi tab, show kpireport div & hide wellnessreport div
@@ -124,8 +124,8 @@
                                 $("#kpi-tab").click(function () {
                                     $("#kpireport").show();
                                     $("#wellnessreport").hide();
-                                    document.getElementById("kpi-tab").style.backgroundColor = "var(--med-gray-2)";
-                                    document.getElementById("wellness-tab").style.backgroundColor = "#191A1C";
+                                    document.getElementById("kpi-tab").style.backgroundColor = "var(--color-secondary)";
+                                    document.getElementById("wellness-tab").style.backgroundColor = "var(--color-tertiary)";
                                 });
                             });
                         </script>
@@ -150,7 +150,7 @@
                             </div>
 
                             <a href="{% url 'AddKPI' athleteProf.fname athleteProf.lname athleteProf.dob %}">
-                                <button class="kpidatabtn" style="margin-top: var(--inner-padding);">Add KPI</button>
+                                <button class="spanning-button" style="margin-top: var(--inner-padding);">Add KPI</button>
                             </a>
 
                         </div>
@@ -176,16 +176,16 @@
                             <!-- Wellness Display -->
                             <div style="margin-top: var(--inner-padding);">
                                 <div class="d-flex">
-                                    <div class="w-100 wellness-status-display"
-                                        style="margin-right: calc(var(--inner-padding)/2);" id="bor">
+                                    <div id="stat-box" class="w-100 wellness-status-display"
+                                        style="margin-right: calc(var(--inner-padding)/2);">
                                         <div class="d-flex justify-content-center">
-                                            <h4 id="stat"></h4>
+                                            <h4 id="stat">None</h4>
                                         </div>
                                     </div>
                                     <div class="w-100 wellness-status-display"
                                         style="margin-left: calc(var(--inner-padding)/2); border: 1px solid white;">
                                         <div class="d-flex justify-content-center">
-                                            <h4 id="total"></h4>
+                                            <h4 id="total">None</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -237,18 +237,18 @@
                             </div>
 
                             <a href="{% url 'AddWellness' athleteProf.fname athleteProf.lname athleteProf.dob %}">
-                                <button class="kpidatabtn" style="margin-top: 20px;">Add Wellness Report</button>
+                                <button class="spanning-button" style="margin-top: 20px;">Add Wellness Report</button>
                             </a>
 
                         </div>
                     </div>
                 </div>
 
-                <div class="col-lg-7 overflow-scroll">
+                <div class="col-lg-7 overflow-scroll col-padding">
                     <div class="col-scroll">
 
                         <!-- Date Selector + Settings-->
-                        <div class="main-header justify-content-between">
+                        <div class="main-header justify-content-between" style="padding-top: var(--inner-padding)">
                             <form method="post" id="kpiform" name="kpiform">
                                 {% csrf_token %}
                                 <select id="date1" name="date1" style="font-size:20px;">
@@ -265,18 +265,17 @@
                                     {% endfor %}
                                 </select>
                             </form>
-                            <div class="d-flex align-items-center" style="gap:var(--inner-padding);">
+                            <div class="d-flex align-items-center" style="gap:var(--inner-padding); margin-top: 10px;">
                                 <!-- Bar/Spider Chart Tabs-->
-                                <div class="d-flex" style="height: 100%; margin-top: 6px;">
-                                    <button id="bar-tab" class="report-tab" style="padding: 15px 25px;">Bar
+                                <div class="d-flex h-100">
+                                    <button id="bar-tab" class="report-tab" style="padding-top: 16px; padding-bottom: 16px;">Bar
                                         Chart</button>
-                                    <button id="spider-tab" class="report-tab" style="padding: 15px 25px;">Spider
+                                    <button id="spider-tab" class="report-tab">Spider
                                         Chart</button>
-                                    <button id="z-scores-tab" class="report-tab"
-                                        style="padding: 15px 25px;">Z-Scores</button>
+                                    <button id="z-scores-tab" class="report-tab">Z-Scores</button>
                                 </div>
                                 <i class="fa-solid fa-gear" id="settings"
-                                    style="color: var(--yellow-accent); font-size: var(--icon-size); z-index: 2;"></i>
+                                    style="color: var(--acc-color-main); font-size: var(--icon-size); z-index: 2;"></i>
 
                                 <div id="options-card" class="options-card overflow-scroll" style="display: none;">
                                     <h4>Settings</h4>
@@ -300,8 +299,8 @@
 
                                 //initially hide wellness report and show only kpi trends
                                 $("#bar-graphs").show();
-                                document.getElementById("spider-tab").style.backgroundColor = "#191A1C";
-                                document.getElementById("z-scores-tab").style.backgroundColor = "#191A1C";
+                                document.getElementById("spider-tab").style.backgroundColor = "var(--color-tertiary)";
+                                document.getElementById("z-scores-tab").style.backgroundColor = "var(--color-tertiary)";
 
                                 //upon click of wellness tab, show wellnessreport div & hide kpireport div
                                 //swap color of tab
@@ -309,9 +308,9 @@
                                     $("#bar-graphs").hide();
                                     $("#z-scores").hide();
                                     $("#spider-graphs").show();
-                                    document.getElementById("spider-tab").style.backgroundColor = "var(--med-gray-2)";
-                                    document.getElementById("bar-tab").style.backgroundColor = "#191A1C";
-                                    document.getElementById("z-scores-tab").style.backgroundColor = "#191A1C";
+                                    document.getElementById("spider-tab").style.backgroundColor = "var(--color-secondary)";
+                                    document.getElementById("bar-tab").style.backgroundColor = "var(--color-tertiary)";
+                                    document.getElementById("z-scores-tab").style.backgroundColor = "var(--color-tertiary)";
                                 });
 
                                 //upon click of kpi tab, show kpireport div & hide wellnessreport div
@@ -320,9 +319,9 @@
                                     $("#spider-graphs").hide();
                                     $("#z-scores").hide();
                                     $("#bar-graphs").show();
-                                    document.getElementById("bar-tab").style.backgroundColor = "var(--med-gray-2)";
-                                    document.getElementById("spider-tab").style.backgroundColor = "#191A1C";
-                                    document.getElementById("z-scores-tab").style.backgroundColor = "#191A1C";
+                                    document.getElementById("bar-tab").style.backgroundColor = "var(--color-secondary)";
+                                    document.getElementById("spider-tab").style.backgroundColor = "var(--color-tertiary)";
+                                    document.getElementById("z-scores-tab").style.backgroundColor = "var(--color-tertiary)";
                                 });
 
                                 //upon click of kpi tab, show kpireport div & hide wellnessreport div
@@ -331,9 +330,9 @@
                                     $("#spider-graphs").hide();
                                     $("#bar-graphs").hide();
                                     $("#z-scores").show();
-                                    document.getElementById("z-scores-tab").style.backgroundColor = "var(--med-gray-2)";
-                                    document.getElementById("bar-tab").style.backgroundColor = "#191A1C";
-                                    document.getElementById("spider-tab").style.backgroundColor = "#191A1C";
+                                    document.getElementById("z-scores-tab").style.backgroundColor = "var(--color-secondary)";
+                                    document.getElementById("bar-tab").style.backgroundColor = "var(--color-tertiary)";
+                                    document.getElementById("spider-tab").style.backgroundColor = "var(--color-tertiary)";
                                 });
 
                                 // upon click of cog wheel "settings", show the options card
@@ -561,10 +560,10 @@
                                                 if (response.changes[key] > 0) {
                                                     // If a minimum score is better for a test, the change is increasing and is red
                                                     if (response.minBetter[key] === true)
-                                                        trend_template.querySelector("#kpi-change").style.color = "var(--red-accent)";
+                                                        trend_template.querySelector("#kpi-change").style.color = "var(--acc-color-neg)";
                                                     // If a minimum score is NOT better for a test, the change is increasing and is green
                                                     else if (response.minBetter[key] === false)
-                                                        trend_template.querySelector("#kpi-change").style.color = "var(--green-accent)";
+                                                        trend_template.querySelector("#kpi-change").style.color = "var(--acc-color-pos)";
 
                                                     // Add correctly oriented arrow icon
                                                     trend_template.querySelector("#kpi-arrow").setAttribute("class", "fa-solid fa-arrow-up");
@@ -573,10 +572,10 @@
                                                 else if (response.changes[key] < 0) {
                                                     // If a minimum score is better for a test, the change is decreasing and is green
                                                     if (response.minBetter[key] === true)
-                                                        trend_template.querySelector("#kpi-change").style.color = "var(--green-accent)";
+                                                        trend_template.querySelector("#kpi-change").style.color = "var(--acc-color-pos)";
                                                     // If a minimum score is NOT better for a test, the change is decreasing and is red
                                                     else if (response.minBetter[key] === false)
-                                                        trend_template.querySelector("#kpi-change").style.color = "var(--red-accent)";
+                                                        trend_template.querySelector("#kpi-change").style.color = "var(--acc-color-neg)";
 
                                                     // Add correctly oriented arrow icon
                                                     trend_template.querySelector("#kpi-arrow").setAttribute("class", "fa-solid fa-arrow-down");
@@ -678,16 +677,16 @@
 
                                             // Update total & readiness in document
                                             document.getElementById("wellness_total").innerText = total;
+                                            document.getElementById("stat").innerHTML = status;
                                             document.getElementById("total").innerHTML = "Readiness: " + total;
-                                            document.getElementById("stat").innerHTML = "Status: " + status;
 
                                             if (status == "Out") {
-                                                document.getElementById("stat").style.color = "var(--red-accent)";
-                                                document.getElementById("bor").style.border = "1px solid var(--red-accent)";
+                                                document.getElementById("stat-box").style.color = "var(--black-text)";
+                                                document.getElementById("stat-box").style.backgroundColor = "var(--acc-color-neg)";
                                             }
                                             else if (status == "Good") {
-                                                document.getElementById("stat").style.color = "var(--green-accent)";
-                                                document.getElementById("bor").style.border = "1px solid var(--green-accent)";
+                                                document.getElementById("stat-box").style.color = "var(--black-text)";
+                                                document.getElementById("stat-box").style.backgroundColor = "var(--acc-color-pos)";
                                             }
 
                                             is_loading_wellness = false;

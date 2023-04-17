@@ -47,7 +47,7 @@
             
                             <input type="text" name="testresult" id="testresult" style="width: 20%; color: black; border-radius: 10px;">
                             <input type="date" name="datekpi" id="datekpi" style="background-color: white; color-scheme: dark; border-radius: 10px; width: 30%; color: black;">
-                            <button class="kpidatabtn" style="width: 10%;" type="submit" value="Submit">Add</button>
+                            <button class="spanning-button" style="width: 10%;" type="submit" value="Submit">Add</button>
                         </div>
         
                         <script>
@@ -95,7 +95,7 @@
                       <td style="width: 24%;">{{ x.testresult }}</td>
                       <td>{{ x.datekpi }}</td>
                       <td style="text-align: right;">
-                        <i class="fa-solid fa-pen" style="color: var(--yellow-accent); font-size: var(--icon-size);"></i>
+                        <i class="fa-solid fa-pen" style="color: var(--acc-color-main); font-size: var(--icon-size);"></i>
                         &nbsp;
                         <a onclick="return confirm('Are you sure?');" href="{% url 'DeleteKPI' x.id %}">
                             <button class="delkpibtn" style="background-color: #fc515100; font-size: var(--icon-size)" name="delete" value="delete"><i class="fa-solid fa-x"></i></button>

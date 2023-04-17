@@ -14,27 +14,34 @@
 /* These some colors fr */
 :root {
 
-  /* Dark Theme */
-  --med-gray-1: #31363D;
-  --med-gray-2: #1F2126;
-  --dark-gray: #101214;
-  --separator-gray: #404245;
+  /* Color variables */
+  --color-primary: hsl(223, 15%, 17%);
+  --color-secondary: hsl(223, 15%, 11%);
+  --color-tertiary: hsl(223, 15%, 9%);
+  --color-bg: hsl(223, 12%, 6%);
+  --color-separator: #404245;
 
   /* Light Theme */
   --white-bg: #F5F6FA;
   --light-gray-1: #DAE0ED;
   --light-gray-2: #BCC1CC;
+  --light-gray-3: #BCC1CC;
+
+  /* Dark Theme */
+  --dark-bg: hsl(210, 12%, 6%);
+  --med-gray-1: hsl(210, 12%, 20%);
+  --med-gray-2: hsl(210, 12%, 17%);
+  --med-gray-3: hsl(210, 12%, 12%);
 
   /* Text Colors */
   --white-text: white;
   --black-text: black;
 
   /* Accent Colors */
-  --red-accent: #FC5151;
-  --green-accent: #58E767;
-  --blue-accent: #99C7FF;
-  --dark-blue-accent: #587598;
-  --yellow-accent: #FFCE54;
+  --acc-color-neg: #FC5151;
+  --acc-color-pos: #58E767;
+  --acc-color-2: #99C7FF;
+  --acc-color-main: hsl(46, 34%, 60%);
 
   /* Layout affecting vars */
   --nav-width: 225px;
@@ -73,7 +80,7 @@ img {
 
 body {
   font-family: 'Titillium Web', sans-serif;
-  background-color: var(--dark-gray);
+  background-color: var(--color-bg);
   color: var(--white-text);
 }
 
@@ -102,7 +109,7 @@ h4 {
 }
 
 hr {
-  background: var(--separator-gray);
+  background: var(--color-separator);
 }
 
 td {
@@ -119,7 +126,15 @@ a:active {
 }
 
 input, textarea{
-  color: #000000;
+  color: var(--black-text);
+}
+
+select {
+  background-color: inherit;
+  border-radius: 10px;
+  border: none;
+  font-family: inherit;
+  color: var(--white-text);
 }
 
 /* Change color of calendar icon on input type=date to white */
@@ -130,21 +145,21 @@ input, textarea{
 /* 4. Athletes Table
    ********************************** */
 .table-customs {
-  --bs-table-bg: var(--med-gray-1) !important;
-  --bs-table-striped-bg: var(--med-gray-2) !important;
-  --bs-table-hover-bg: var(--blue-accent) !important;
+  --bs-table-bg: var(--color-primary) !important;
+  --bs-table-striped-bg: var(--color-secondary) !important;
+  --bs-table-hover-bg: var(--acc-color-main) !important;
 }
 
 .table-customs th {
-  background-color: var(--dark-gray);
+  background-color: var(--color-bg);
 }
 
 .table-customs tr:hover td{
-  color:black;
+  color: var(--black-text);
 }
 
 .table-customs tr:hover td a{
-  color:black;
+  color: var(--black-text);
 }
 
 .teams-table tr {
@@ -156,7 +171,8 @@ input, textarea{
 
 /* Record KPI Table Header
   - Set empty height to height of element with content */
-  #data-table #theader {
+#data-table #theader 
+{
   height: calc(1rem + 1rem * 1.5); /* Sum of vertical padding and (font-size * line height) */
 }
 
@@ -169,9 +185,11 @@ input, textarea{
    ********************************** */
 
 .main-header {
-  height: 60px;
+  padding-top: 10px;
+  height: 90px;
   display: flex;
   align-items: center;
+  background-color: var(--color-bg);
 }
 
 .py-override {
@@ -179,12 +197,18 @@ input, textarea{
   padding-bottom: 0 !important;
 }
 
+.col-padding {
+  height: 100vh; 
+  padding-top: 0 !important;
+  padding-left: 0;
+}
+
 /* 7. Custom Elements
    ********************************** */
 
 .report {
   width: 100%;
-  background-color: var(--med-gray-2);
+  background-color: var(--color-secondary);
   border-radius: var(--radius-big);
   padding: var(--inner-padding);
 }
@@ -207,34 +231,38 @@ input, textarea{
   position: absolute;
   right: 13px;
   top:12px;
-  color: var(--med-gray-1);
+  color: var(--color-secondary);
 }
 
 .form-control{
   height: 40px;
-  background-color: var(--dark-gray);
-  border-color: var(--med-gray-1);
-  color: white;
+  background-color: var(--color-bg);
+  border-color: var(--color-secondary);
+  color: var(--white-text);
   box-shadow: none;
   border-radius: var(--radius-big);
 }
 
-select {
-  background-color: var(--dark-gray);
-  border-radius: 10px;
-  border: none;
-  font-family: inherit;
-  color: var(--white-text);
-}
-
 .submit {
-  background-color: var(--yellow-accent);
+  background-color: var(--acc-color-main);
   border-radius: 10px;
   border: none;
   color: var(--black-text);
   height: 40px;
   padding-left: 15px;
   padding-right: 15px;
+}
+
+.spanning-button {
+  background-color: var(--acc-color-main);
+  color: var(--black-text);
+  border-radius: var(--radius-small);
+  border: none;
+  width: 100%;
+  align-self: center;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin-top: 10px;
 }
 
 .upload-img-frame {
@@ -245,10 +273,39 @@ select {
   cursor: pointer;
 }
 
+.delkpibtn {
+  transition: transform 0.3s;
+  border-radius: var(--radius-small);
+  border: none;
+  align-self: center;
+  border: 1px solid var(--acc-color-neg);
+  color: var(--white-text)
+}
+
+.delkpibtn:hover {
+  color: var(--acc-color-neg);
+  transform: (1.2);
+}
+
+.how-to-text {
+  position: fixed;
+  top: 50%;
+  left: calc(50% + calc(var(--nav-width)/2)); 
+  transform: translate(-50%, -50%);
+}
+
 /* 8. Animations
    ********************************** */
 
 /* Loading Circle */
+.lds-dual-ring {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
 .lds-dual-ring:after {
   content: " ";
   display: block;
@@ -256,16 +313,8 @@ select {
   height: 50px;
   border-radius: 50%;
   border: 6px solid;
-  border-color: var(--blue-accent) transparent var(--blue-accent) transparent;
+  border-color: var(--acc-color-2) transparent var(--acc-color-2) transparent;
   animation: lds-dual-ring 1.2s linear infinite;
-}
-
-.lds-dual-ring {
-  display: inline-block;
-  width: 50px;
-  height: 50px;
-  margin-top: 50px;
-  margin-bottom: 50px;
 }
 
 /* Loading Circle Small  */
@@ -282,7 +331,7 @@ select {
   height: 40px;
   border-radius: 50%;
   border: 6px solid;
-  border-color: var(--blue-accent) transparent var(--blue-accent) transparent;
+  border-color: var(--acc-color-2) transparent var(--acc-color-2) transparent;
   animation: lds-dual-ring 1.2s linear infinite;
 }
 
@@ -294,18 +343,4 @@ select {
   100% {
       transform: rotate(360deg);
   }
-}
-
-.delkpibtn {
-  transition: transform 0.3s;
-  border-radius: var(--radius-small);
-  border: none;
-  align-self: center;
-  border: 1px solid #fc515100;
-  color: white;
-}
-
-.delkpibtn:hover {
-  color: var(--red-accent);
-  transform: (1.2);
 }

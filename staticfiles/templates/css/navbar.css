@@ -21,11 +21,18 @@
 nav {
   width: var(--nav-width);
   font-size: 20;
+  background-color: var(--color-secondary);
+}
+
+.nav-header {
+  background-color: var(--color-tertiary); 
+  width: 100%; 
+  height: 90px;
 }
 
 /* Override default nav-pill color to our accent color */
 .nav-pills {
-  --bs-nav-link-hover-color: #99C7FF !important;
+  --bs-nav-link-hover-color: var(--acc-color-main) !important;
 }
 
 /* Separate from the user nav header */
@@ -39,8 +46,8 @@ nav {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: var(--yellow-accent);
-  color: black;
+  background-color: var(--acc-color-main);
+  color: var(--black-text);
   font-size: 16px;
   display: flex;
   justify-content: center;
@@ -52,65 +59,3 @@ nav {
   padding-left: var(--gutter); 
   padding-right: var(--inner-padding);
 }
-  
-/* Old stylings kept for WIP references */
-  /*
-  .side-nav {
-    width: 225px;
-    height: 100vh;
-    background-color: #1F2126;
-    font-family: 'Titillium Web', sans-serif;
-    font-size: 20px;
-    color: white;
-    position: fixed;
-    display: block;
-    padding: 0;
-  }
-
-  .side-nav a {
-    text-decoration: none;
-    color: white;
-  }
-
-  .side-nav i {
-    width: 18px;
-    font-size: 20px;
-  }
-
-  .nav-user {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .nav-pfp {
-    width: 40px;
-    padding-right: 20px;
-  }
-
-  .nav-footer {
-    font-size: 10px;
-    margin-bottom: 20px;
-    bottom: 0;
-    position: absolute;
-    text-align: center;
-    
-  }
-
-  .nav-links {
-    padding-left: 40px;
-    padding-top: 40px;
-    padding-right: 40px;
-  }
-
-  .nav-list-item {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-
-  .nav-list-item:hover{
-    opacity: 70%;
-    transition: 400ms;
-  }
-  */

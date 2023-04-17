@@ -13,148 +13,146 @@
 
   <main class="py-3 py-override">
 
-    <div style="padding-top: 1rem;">
-      <div style="margin-bottom: var(--gutter);">
+    <p class="how-to-text" id="how-to">Select a Team & Date to Show Wellness</p>
 
-        <div class="d-flex justify-content-between align-items-center">
-          <h1 id="header-text">Wellness</h1>
+    <div class="container" style="max-width: 1800px;">
+      <div class="row">
 
-          <div class="d-flex align-items-center" style="gap: var(--inner-padding);">
+        <div class="col-lg-12 col-padding">
+          <div class="main-header justify-content-between">
+            <h1 id="header-text">Wellness</h1>
 
-            <a href="{% url 'wellnessForm' %}">
-              <button class="kpidatabtn" style="margin-top: 0; padding: 10px 10px;">Record Wellness</button>
-            </a>
+            <div class="d-flex align-items-center" style="gap: var(--inner-padding);">
 
-            <i id="settings" class="fa-solid fa-gear"
-              style="color: var(--yellow-accent); font-size: var(--icon-size); z-index: 2;"></i>
+              <a href="{% url 'wellnessForm' %}">
+                <button class="spanning-button" style="margin-top: 0; padding: 10px 10px;">Record Wellness</button>
+              </a>
 
-            <div id="options-card" class="options-card" style="display: none;">
-              <h4>Settings</h4>
-              <ul>
-                <li>Show Full Name<input id="i-show_fullname" type="checkbox" checked="true"></li>
-                <li>Show Trend Graphs<input id="i-show_trends" type="checkbox" checked="true"></li>
-                <li>Show Positions<input id="i-show_pos" type="checkbox" checked="true"></li>
-              </ul>
+              <i id="settings" class="fa-solid fa-gear"
+                style="color: var(--acc-color-main); font-size: var(--icon-size); z-index: 2;"></i>
+
+              <div id="options-card" class="options-card" style="display: none;">
+                <h4>Settings</h4>
+                <ul>
+                  <li>Show Full Name<input id="i-show_fullname" type="checkbox" checked="true"></li>
+                  <li>Show Trend Graphs<input id="i-show_trends" type="checkbox" checked="true"></li>
+                  <li>Show Positions<input id="i-show_pos" type="checkbox" checked="true"></li>
+                </ul>
+              </div>
             </div>
-          </div>
 
-          <script>
-            $(document).ready(function () {
+            <script>
+              $(document).ready(function () {
 
-              //initially hide options tab
-              $("#options-card").hide();
+                //initially hide options tab
+                $("#options-card").hide();
 
-              // upon click of cog wheel "settings", show the options card
-              // if it's already showing, close it. functions as a toggle
-              $("#settings").click(function () {
-                if ($('#options-card').is(':hidden')) {
-                  $("#options-card").show();
-                } else {
-                  $("#options-card").hide();
-                }
+                // upon click of cog wheel "settings", show the options card
+                // if it's already showing, close it. functions as a toggle
+                $("#settings").click(function () {
+                  if ($('#options-card').is(':hidden')) {
+                    $("#options-card").show();
+                  } else {
+                    $("#options-card").hide();
+                  }
 
+                });
               });
-            });
-          </script>
+            </script>
+          </div>
+
+          <form method="post" id="wellnessdisplayform">
+            {% csrf_token %}
+            <div id="header" class="d-flex" style="gap: var(--inner-padding);">
+              <input type="date" class="form-control input-box" id="wellnessdate" name="wellnessdate" value="Today">
+              <select id="wellnesssport" name="sportsteam">
+                <option disabled hidden selected>Select Sports Team</option>
+                {% for x in wellnessSportsTeams %}
+                <option>{{ x.sport }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </form>
+
         </div>
 
-        <form method="post" id="wellnessdisplayform">
-          {% csrf_token %}
-          <div id="header" class="d-flex" style="gap: var(--inner-padding);">
-            <input type="date" class="form-control input-box" id="wellnessdate" name="wellnessdate" value="Today">
-            <select id="wellnesssport" name="sportsteam">
-              <option disabled hidden selected>Select Sports Team</option>
-              {% for x in wellnessSportsTeams %}
-              <option>{{ x.sport }}</option>
-              {% endfor %}
-            </select>
-          </div>
-        </form>
+        <!-- "Template" to be cloned for each wellness report card -->
+        <div class="hide-template">
+          <div id="base" class="report wellness-card">
 
-      </div>
+            <div class="d-flex flex-column" style="justify-content: flex-end; height: 100%;">
 
-      <!-- "Template" to be cloned for each wellness report card -->
-      <div class="hide-template">
-        <div id="base" class="report wellness-card">
-
-          <div class="d-flex flex-column" style="justify-content: flex-end; height: 100%;">
-
-            <div class="d-flex justify-content-between align-items-center bottom-margin">
-              <h2 id="ath-name"></h2>
-              <h4 id="ath-pos"></h4>
-            </div>
-
-            <div class="d-flex justify-content-between bottom-margin">
-              <div style="width: 50%; margin-right: calc(var(--inner-padding)/2);">
-                <img class="bottom-margin-half" id="ath-img">
-
-                <div class="wellness-status-display bottom-margin-half" id="status-box">
-                  <p id="status"></p>
-                </div>
-
-                <div class="wellness-status-display" id="readiness-box" style="border: 1px solid white;">
-                  <p id="readiness"></p>
-                </div>
-
+              <div class="d-flex justify-content-between align-items-center bottom-margin">
+                <h2 id="ath-name"></h2>
+                <h4 id="ath-pos"></h4>
               </div>
 
-              <div class="wellness-table" style="width: 50%; margin-left: calc(var(--inner-padding)/2);">
-                <div class="wellnessrows">
-                  <h6>Hours of Sleep</h6>
-                  <h6 id="Hoursofsleep"></h6>
+              <div class="d-flex justify-content-between bottom-margin">
+                <div style="width: 50%; margin-right: calc(var(--inner-padding)/2);">
+                  <img class="bottom-margin-half" id="ath-img">
+
+                  <div class="wellness-status-display bottom-margin-half" id="status-box">
+                    <p id="status"></p>
+                  </div>
+
+                  <div class="wellness-status-display" id="readiness-box" style="border: 1px solid white;">
+                    <p id="readiness"></p>
+                  </div>
+
                 </div>
-                <hr>
-                <div class="wellnessrows">
-                  <h6>Sleep Quality</h6>
-                  <h6 id="Sleepquality"></h6>
-                </div>
-                <hr>
-                <div class="wellnessrows">
-                  <h6>Breakfast</h6>
-                  <h6 id="Breakfast"></h6>
-                </div>
-                <hr>
-                <div class="wellnessrows">
-                  <h6>Hydration</h6>
-                  <h6 id="Hydration"></h6>
-                </div>
-                <hr>
-                <div class="wellnessrows">
-                  <h6>Soreness</h6>
-                  <h6 id="Soreness"></h6>
-                </div>
-                <hr>
-                <div class="wellnessrows">
-                  <h6>Stress</h6>
-                  <h6 id="Stress"></h6>
-                </div>
-                <hr>
-                <div class="wellnessrows">
-                  <h6>Mood</h6>
-                  <h6 id="Mood"></h6>
+
+                <div class="wellness-table" style="width: 50%; margin-left: calc(var(--inner-padding)/2);">
+                  <div class="wellnessrows">
+                    <h6>Hours of Sleep</h6>
+                    <h6 id="Hoursofsleep"></h6>
+                  </div>
+                  <hr>
+                  <div class="wellnessrows">
+                    <h6>Sleep Quality</h6>
+                    <h6 id="Sleepquality"></h6>
+                  </div>
+                  <hr>
+                  <div class="wellnessrows">
+                    <h6>Breakfast</h6>
+                    <h6 id="Breakfast"></h6>
+                  </div>
+                  <hr>
+                  <div class="wellnessrows">
+                    <h6>Hydration</h6>
+                    <h6 id="Hydration"></h6>
+                  </div>
+                  <hr>
+                  <div class="wellnessrows">
+                    <h6>Soreness</h6>
+                    <h6 id="Soreness"></h6>
+                  </div>
+                  <hr>
+                  <div class="wellnessrows">
+                    <h6>Stress</h6>
+                    <h6 id="Stress"></h6>
+                  </div>
+                  <hr>
+                  <div class="wellnessrows">
+                    <h6>Mood</h6>
+                    <h6 id="Mood"></h6>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div style="margin-top: auto;">
-              <div id="trend-display" class="bottom-margin-half">
-                <div class="bottom-margin-half">
-                  <h4>Readiness Trend</h4>
+              <div style="margin-top: auto;">
+                <div id="trend-display" class="bottom-margin-half">
+                  <div class="bottom-margin-half">
+                    <h4>Readiness Trend</h4>
+                  </div>
+                  <div class="trend-graph" id="trend-graph"></div>
                 </div>
-                <div class="trend-graph" id="trend-graph"></div>
-              </div>
-              <div style="text-align: right;">
-                <p id="date-recorded" style="opacity: 50%; font-style: italic;">No Data</p>
+                <div style="text-align: right;">
+                  <p id="date-recorded" style="opacity: 50%; font-style: italic;">No Data</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <p style="position: fixed;
-    top: 50%;
-    left: calc(50% + calc(var(--nav-width)/2)); 
-    transform: translate(-50%, -50%);" id="how-to">Select a Team & Date to Show Wellness</p>
-      <div id="forms" class="forms"></div>
     </div>
     <script>
 
@@ -358,17 +356,17 @@
               if (status == "Out") {
                 template.querySelector("#status").style.color = "black";
                 template.querySelector("#status").innerText = "Out";
-                template.querySelector("#status-box").style.backgroundColor = "var(--red-accent)";
+                template.querySelector("#status-box").style.backgroundColor = "var(--acc-color-neg)";
               }
               else if (status == "Good") {
                 template.querySelector("#status").style.color = "black";
                 template.querySelector("#status").innerText = "Good";
-                template.querySelector("#status-box").style.backgroundColor = "var(--green-accent)";
+                template.querySelector("#status-box").style.backgroundColor = "var(--acc-color-pos)";
               }
               //if there is no status, set it to gray
               else {
                 template.querySelector("#status").innerText = "None";
-                template.querySelector("#status-box").style.backgroundColor = "var(--med-gray-1)";
+                template.querySelector("#status-box").style.backgroundColor = "var(--color-primary)";
               }
 
               template.querySelector("#readiness").innerText = "Readiness: " + total;

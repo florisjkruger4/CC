@@ -13,14 +13,13 @@
 
     <main class="py-3 py-override">
       <!-- Definitly not responsive... sorry-->
-      <p style="position: fixed;
-      top: 50%;
-      left: calc(40% + calc(var(--nav-width)/2)); 
-      transform: translate(-50%, -50%);" id="how-to">Select a Sports Team To Start KPI Recording</p>
+      <p class="how-to-text" style="left: calc(40% + calc(var(--nav-width)/2));" id="how-to">
+        Select a Sports Team To Start KPI Recording
+      </p>
 
       <div class="container" style="max-width: 1800px;">
         <div class="row">
-          <div class="col-lg-9" style="height: 100vh; padding: 1rem 1.5rem 0 0">
+          <div class="col-lg-9 col-padding">
 
             <!-- Title Header -->
             <div class="main-header justify-content-between">
@@ -127,11 +126,11 @@
 
           </script>
 
-          <div class="col-lg-3" style="margin-top: var(--gutter); height: 85vh; padding: 0;">
+          <div class="col-lg-3 col-padding" style="margin-top: var(--gutter); height: 85vh;">
             <input type="text" id="test-search" onkeyup="listFilter()" placeholder="Search for tests..."
               style="margin-bottom: 0; border-radius: var(--radius-big) var(--radius-big) 0 0; color: white;">
             <div class="overflow-auto"
-              style="background-color: var(--med-gray-2); height: 100%; padding-top: var(--inner-padding); border-radius: 0 0 var(--radius-big) var(--radius-big);">
+              style="background-color: var(--color-secondary); height: 100%; padding-top: var(--inner-padding); border-radius: 0 0 var(--radius-big) var(--radius-big);">
               <ul id="test-list">
                 {% for x in test_types %}
                 <li>
@@ -349,7 +348,7 @@
               <style>
                 #test-search {
                   background-image: url('https://fontawesome.com/icons/magnifying-glass?f=classic&s=solid');
-                  background-color: var(--dark-gray);
+                  background-color: var(--color-bg);
                   /* Add a search icon to input */
                   background-position: 10px 12px;
                   /* Position the search icon */
@@ -361,7 +360,7 @@
                   /* Increase font-size */
                   padding: 12px 20px 12px 40px;
                   /* Add some padding */
-                  border: 2px solid var(--med-gray-1);
+                  border: 2px solid var(--color-primary);
                   border-radius: var(--radius-big);
                   /* Add a grey border */
                   margin-bottom: 12px;
@@ -379,13 +378,13 @@
 
                 #test-list input {
                   width: 25px;
-                  border: 2px solid var(--yellow-accent);
-                  background-color: var(--med-gray-1);
+                  border: 2px solid var(--acc-color-main);
+                  background-color: var(--color-primary);
                 }
 
                 /* When the checkbox is checked, add a blue background */
                 .container input:checked~.checkmark {
-                  background-color: var(--yellow-accent);
+                  background-color: var(--acc-color-main);
                 }
 
                 #test-list div {

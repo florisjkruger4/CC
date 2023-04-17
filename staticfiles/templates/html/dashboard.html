@@ -9,11 +9,11 @@
     
     <!-- SideNavbar -->
     {% include 'html/sidenav.html' %}
-    <main class="py-3">
+    <main class="py-3 py-override">
       <div class="row">
-          <div class="col-md-4" style="padding-top: 20px; margin-left: 20px;">
+          <div class="col-md-4">
             <div style="display: flex;">
-              <h2 class="mainFont" style="padding-bottom: 10px; padding-right: 4%;">Recently Viewed</h2>
+              <h2 style="padding-bottom: 10px; padding-right: 4%;">Recently Viewed</h2>
             </div>
             <div class="basicreport" style="display: flex; flex-direction: column; justify-content: space-evenly;">
 
@@ -43,14 +43,14 @@
           </div>
           <div class="col-md-5" style="padding-top: 20px; margin-left: 20px;">
             <div style="display: flex;">
-              <h2 class="mainFont" style="padding-bottom: 10px; padding-right: 8%;">Recently Added KPI's</h2>
+              <h2 class="mainFont" style="padding-bottom: 10px; padding-right: 8%;">Recently Added KPIs</h2>
             </div>
             <div class="basicreport" style="display: flex; flex-direction: column; justify-content: space-evenly;">
               {% for x in addedKPIs %}
                 <div style="display: flex; justify-content: space-between;">
                   <p>{{ x.fname }} {{ x.lname }}</p>
                   <div>
-                    <i class="fa-solid fa-pen" style="color: var(--yellow-accent); font-size: var(--icon-size);"></i>
+                    <i class="fa-solid fa-pen" style="color: var(--acc-color-main); font-size: var(--icon-size);"></i>
                     &nbsp;
                     <a onclick="return confirm('Are you sure?');" href="{% url 'DeleteKPI_Dash' x.id %}">
                       <button class="delkpibtn" style="background-color: #fc515100; font-size: var(--icon-size)" name="delete" value="delete"><i class="fa-solid fa-x"></i></button>
@@ -73,15 +73,15 @@
               <h2 class="mainFont" style="padding-bottom: 10px; padding-right: 8%;">Quick Actions</h2>
             </div>
             <a href="/recordKPI">
-              <button class="kpidatabtn" style="margin-top: 20px;">New KPI</button>
+              <button class="spanning-button" style="margin-top: 20px;">New KPI</button>
             </a>
             
             <a href="/addathlete">
-              <button class="kpidatabtn" style="margin-top: 20px;">New Athlete</button>
+              <button class="spanning-button" style="margin-top: 20px;">New Athlete</button>
             </a>
             
             <a href="/commingSoon">  
-              <button class="kpidatabtn" style="margin-top: 20px;">New Test</button>
+              <button class="spanning-button" style="margin-top: 20px;">New Test</button>
             </a>
           </div>
        </div> 

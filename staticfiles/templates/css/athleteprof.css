@@ -13,24 +13,25 @@
 
 .basicreport {
     width: 100%;
-    background-color: var(--med-gray-2);
+    background-color: var(--color-secondary);
     border-radius: var(--radius-big);
     padding: var(--inner-padding);
     margin-bottom: var(--inner-padding);
 }
 
 .report-tab {
-    background-color: var(--med-gray-2); 
+    background-color: var(--color-secondary); 
     padding: 10px 25px; 
     border: none; 
     color: white; 
     border-radius: var(--radius-big) var(--radius-big) 0 0;
+    padding: 15px 25px;
 }
 
 .graphprof {
     height: fit-content;
     width: 100%;
-    background-color: var(--med-gray-2);
+    background-color: var(--color-secondary);
     border-radius: var(--radius-big);
     padding: var(--inner-padding);
     margin-bottom: var(--inner-padding);
@@ -48,23 +49,10 @@
 }
 
 .wellness-status-display {
-    border-radius: 5px;
-    border-width: 1px;
+    border-radius: var(--radius-big);
     text-align: center;
     padding: 5px;
     vertical-align: middle;
-}
-
-.kpidatabtn {
-    background-color: var(--yellow-accent);
-    color: black;
-    border-radius: var(--radius-small);
-    border: none;
-    width: 100%;
-    align-self: center;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    margin-top: 10px;
 }
 
 .kpi-img img {
