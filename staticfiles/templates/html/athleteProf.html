@@ -46,7 +46,7 @@
                         <!-- Athlete Info/Header -->
                         <div class="main-header justify-content-between">
                             <div class="d-flex align-items-center" style="gap: 15px;">
-                                <h1 style="position: fixed; background-color: var(--dark-gray); border-radius: 0px 5px 5px 0px; padding: 5px;">{{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
+                                <h1 style="position: fixed; background-color: var(--color-bg); border-radius: 0px 5px 5px 0px; padding: 5px;">{{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
                             </div>
                             <div class="justify-content-between">
                                 <label for="id_image">
@@ -56,7 +56,7 @@
                                 &nbsp;
                                 <a
                                     href="{% url 'EditAthlete' athleteProf.fname athleteProf.lname athleteProf.dob athleteProf.id %}">
-                                    <i class="fa-solid fa-pen" style="color: var(--yellow-accent); font-size: var(--icon-size);"></i>
+                                    <i class="fa-solid fa-pen" style="color: var(--acc-color-main); font-size: var(--icon-size);"></i>
                                 </a>
                             </div>
                         </div>

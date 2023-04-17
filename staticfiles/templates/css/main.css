@@ -28,10 +28,10 @@
   --light-gray-3: #BCC1CC;
 
   /* Dark Theme */
-  --dark-bg: hsl(210, 12%, 6%);
-  --med-gray-1: hsl(210, 12%, 20%);
-  --med-gray-2: hsl(210, 12%, 17%);
-  --med-gray-3: hsl(210, 12%, 12%);
+  --dark-bg: hsl(223, 12%, 6%);
+  --med-gray-1: hsl(223, 15%, 17%);
+  --med-gray-2:hsl(223, 15%, 11%);
+  --med-gray-3: hsl(223, 15%, 9%);
 
   /* Text Colors */
   --white-text: white;
@@ -198,9 +198,15 @@ select {
 }
 
 .col-padding {
-  height: 100vh; 
   padding-top: 0 !important;
-  padding-left: 0;
+}
+
+.col-inner-padding-r {
+  padding-left: calc(var(--gutter)/2) !important;
+}
+.col-inner-padding-l {
+  padding-right: calc(var(--gutter)/2) !important;
+  padding-left: 0 !important;
 }
 
 /* 7. Custom Elements
@@ -231,13 +237,13 @@ select {
   position: absolute;
   right: 13px;
   top:12px;
-  color: var(--color-secondary);
+  color: var(--color-separator);
 }
 
 .form-control{
   height: 40px;
   background-color: var(--color-bg);
-  border-color: var(--color-secondary);
+  border-color: var(--color-separator);
   color: var(--white-text);
   box-shadow: none;
   border-radius: var(--radius-big);

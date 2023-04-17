@@ -42,6 +42,7 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: var(--inner-padding);
+    margin-top: var(--inner-padding);
 }
 
 .forms img {

@@ -19,7 +19,7 @@
 
       <div class="container" style="max-width: 1800px;">
         <div class="row">
-          <div class="col-lg-9 col-padding">
+          <div class="col-lg-9 col-padding col-inner-padding-l">
 
             <!-- Title Header -->
             <div class="main-header justify-content-between">
@@ -126,7 +126,7 @@
 
           </script>
 
-          <div class="col-lg-3 col-padding" style="margin-top: var(--gutter); height: 85vh;">
+          <div class="col-lg-3 col-inner-padding-r" style="margin-top: var(--gutter); height: 85vh;">
             <input type="text" id="test-search" onkeyup="listFilter()" placeholder="Search for tests..."
               style="margin-bottom: 0; border-radius: var(--radius-big) var(--radius-big) 0 0; color: white;">
             <div class="overflow-auto"
@@ -135,8 +135,8 @@
                 {% for x in test_types %}
                 <li>
                   <div><a>{{ x }}</a><input id="{{ forloop.counter }}" type="checkbox" disabled="true"></div>
+                  <hr style="margin-left: var(--inner-padding); margin-right: var(--inner-padding);">
                 </li>
-                <hr style="margin-left: var(--inner-padding); margin-right: var(--inner-padding);">
                 {% endfor %}
               </ul>
             
