@@ -788,8 +788,13 @@ def WellnessDash(request):
                 # ...then order them by date
                 result = wellness_relevant.order_by("date").last()
 
-                # Get athlete image from AthleteT
-                athletes_img.append(x.image.url)
+                # ...if the athlete does not have an image uploaded
+                if (x.image == ''):
+                    x.image = "/media/placeholder.jpg"
+                    athletes_img.append(str(x.image))
+                else: 
+                    # Get athlete image from AthleteT
+                    athletes_img.append(x.image.url)
 
                 # If there are wellness reports for this athlete, get each resulting data point
                 if wellness_relevant:

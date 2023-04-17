@@ -358,6 +358,6 @@ select {
 }
 
 .recentViewedLink:hover{
-  color: #99C7FF;
+  color: var(--acc-color-main);
   transform: (1.2);
 }
