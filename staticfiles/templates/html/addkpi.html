@@ -14,7 +14,7 @@
     <main class="py-3">
 
         <div class="main-header" style="gap: 25px;">
-            <a href="/athletes"><i class="fa-solid fa-circle-arrow-left"></i></a>
+            <a href="{% url 'AthleteProf' athleteProf.fname athleteProf.lname athleteProf.dob athleteProf.id %}"><i class="fa-solid fa-circle-arrow-left"></i></a>
             <h1>Add/Edit KPI Data: {{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
         </div>
         <div class="row" style="margin-left: 30px;">
@@ -90,12 +90,14 @@
                 <table class="table table-dark table-striped table-hover table-customs">
                     {% for x in athlete_KPI_Reports %}
                     <tr style="height: 50px; vertical-align:middle;">
-                      <td style="width: 24%;">{{ x.id }} {{ x.fname }} {{ x.lname }}</td>
+                      <td style="width: 24%;">{{ x.fname }} {{ x.lname }}</td>
                       <td style="width: 26%;">{{ x.testtype }}</td>
                       <td style="width: 24%;">{{ x.testresult }}</td>
                       <td>{{ x.datekpi }}</td>
                       <td style="text-align: right;">
-                        <i class="fa-solid fa-pen" style="color: var(--acc-color-main); font-size: var(--icon-size);"></i>
+                        <a href="{% url 'EditKPI' x.id %}">
+                            <i class="fa-solid fa-pen" style="color: var(--yellow-accent); font-size: var(--icon-size);"></i>
+                        </a>
                         &nbsp;
                         <a onclick="return confirm('Are you sure?');" href="{% url 'DeleteKPI' x.id %}">
                             <button class="delkpibtn" style="background-color: #fc515100; font-size: var(--icon-size)" name="delete" value="delete"><i class="fa-solid fa-x"></i></button>

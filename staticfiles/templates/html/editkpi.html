@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Header -->
+    {% include 'html/header.html' %}
+</head>
+
+<body>
+
+    <!-- SideNavbar -->
+    {% include 'html/sidenav.html' %}
+
+    <main class="py-3">
+
+        <div class="main-header" style="gap: 25px;">
+            <a href="{% url 'AddKPI' editKPI.fname editKPI.lname editKPI.dob %}"><i class="fa-solid fa-circle-arrow-left"></i></a>
+            <h1>Edit KPI: {{ editKPI.fname }} {{ editKPI.lname }}</h1>
+        </div>
+        <div>
+            <h2>{{ editKPI.testtype }} - {{ editKPI.datekpi }}</h2>
+        </div>
+
+        <div class="row">
+            <div class="col-md-7">
+                <form method="post" id="addkpiform">
+                    {% csrf_token %}
+                    &nbsp;
+                    &nbsp;
+                    <div class="basicreport">
+                        <div style="display: flex; justify-content: space-between;">
+                            <div style="width: 30%;">
+                                <h6>Test Type</h6>
+                            </div>
+                            <div style="width: 20%;">
+                                <h6>Result</h6>
+                            </div>
+                            <div style="width: 30%;">
+                                <h6>Date Recorded</h6>
+                            </div>
+                            <div style="width: 10%"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding-top: 5px;">
+                            <select id="testtype" name="testtype" style="width: 30%; background-color: white; color: black;">
+                                <option selected>{{ editKPI.testtype }}</option>
+                                {% for x in test_types %}
+                                <option>{{ x }}</option>
+                                {% endfor %}   
+                            </select>
+            
+                            <input type="text" name="testresult" id="testresult" style="width: 20%; color: black; border-radius: 10px;" value="{{ editKPI.testresult }}">
+                            <input type="date" name="datekpi" id="datekpi" style="background-color: white; color-scheme: dark; border-radius: 10px; width: 30%; color: black;" value="{{ editKPI.datekpi }}">
+                            <button class="kpidatabtn" style="width: 10%;" type="submit" value="Submit">Edit</button>
+                        </div>
+        
+                        <script>
+                            const date = new Date();
+        
+                            if (month < 10)
+                                month = "0" + month;
+        
+                            if (day < 10)
+                                month = "0" + month;
+                        </script>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</body>

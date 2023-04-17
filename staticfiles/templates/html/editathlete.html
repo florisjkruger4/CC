@@ -14,7 +14,7 @@
     <main class="py-3">
 
         <div class="main-header" style="gap: 25px;">
-            <a href="/athletes"><i class="fa-solid fa-circle-arrow-left"></i></a>
+            <a href="{% url 'AthleteProf' athlete.fname athlete.lname athlete.dob athlete.id %}"><i class="fa-solid fa-circle-arrow-left"></i></a>
             <h1>Edit Athlete: {{athlete.fname}} {{athlete.lname}}</h1>
         </div>
 
@@ -37,7 +37,7 @@
                         <select name="year" class="form-control">
                             <option selected>{{athlete.year}}</option>
                             <option>Freshman</option>
-                            <option>Sophmore</option>
+                            <option>Sophomore</option>
                             <option>Junior</option>
                             <option>Senior</option>
                         </select>
