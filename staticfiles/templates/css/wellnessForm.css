@@ -1,3 +1,20 @@
-.radio-inline{
-  
+
+.formBox{
+  background-color: var(--med-gray-2);
+  padding: 10px 25px;
+  border: none;
+  color: white;
+  border-radius: var(--radius-big) var(--radius-big);
+  padding: 15px 25px;
+  margin: 25px;
+
+  margin-left: 25%;
+  max-width: 50%;
+
+}
+
+.submit{
+  margin-left: 25%;
+  margin-bottom: 50px;
+  width: 50%;
 }
