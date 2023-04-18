@@ -15,10 +15,10 @@
 :root {
 
   /* Color variables */
-  --color-primary: hsl(223, 15%, 17%);
-  --color-secondary: hsl(223, 15%, 11%);
-  --color-tertiary: hsl(223, 15%, 9%);
-  --color-bg: hsl(223, 12%, 6%);
+  --color-primary: #252932;
+  --color-secondary: #181a20;
+  --color-tertiary: #14151a;
+  --color-bg: #0d0f11;
   --color-separator: #404245;
 
   /* Light Theme */

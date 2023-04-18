@@ -204,7 +204,7 @@ start_time = 0
 end_time = 0
 
 def kpiAjax(fname, lname, dob, date_one, date_two):
-    start_time = time.time()
+    #start_time = time.time()
 
     # init/reset variables to 0 before next use
     kpi_bar = []
@@ -276,8 +276,8 @@ def kpiAjax(fname, lname, dob, date_one, date_two):
         kpi_line.append(line_graph(results_x, results_y, change, minBetterValue))
         kpi_bar.append(bar_graph(results_x, results_y))
 
-    end_time = time.time()
-    print(f"Elapsed: {end_time - start_time: .2f}")
+    #end_time = time.time()
+    #print(f"Elapsed: {end_time - start_time: .2f}")
 
         # Checking if the current test type's min is better ([0][0] is just indexing the first element of the list, true or false)
         #minBetter = TestTypeT.objects.filter(tname=x).values_list() #.values_list('minbetter')[0][0]
@@ -315,20 +315,138 @@ def wellnessAjax(fname, lname, dob, wellnessdate):
     # Return the list of athletes
     return JsonResponse({"wellness": list(wellness.values())})
 
+def spiderAjax(fname, lname, dob, sportsteam, gender, position, radar_date, selected_radar_tests, compare_avg):
+
+    # Selected KPI date and tests
+    #radar_date = request.POST.get("radar_date")
+    #selected_radar_tests = request.POST.getlist("selected_radar_tests")
+
+    # Athletes results for selected KPI's and Date
+    # Dictioanry of test_type and result key:value pairs
+    # Dictioanry of test_type and result key:value pairs
+    athlete_radar_results = {}
+    for test in selected_radar_tests:
+        # Get the kpi result <=/lte to the given date
+        result = KpiT.objects.filter(fname=fname, lname=lname, dob=dob, datekpi__lte=radar_date, testtype=test).order_by('datekpi').values_list('testresult', flat=True).first()
+        athlete_radar_results[test] = result
+
+    # List to hold nested dictionaries of averages test data
+    average_radar_results = []
+
+    # Sportsteam: generate averages in each selected test for athletes of the same Sportsteam 
+    if "team_avg" in compare_avg:
+        same_team_athletes = AthleteT.objects.filter(sportsteam=sportsteam).exclude(fname=fname, lname=lname, dob=dob).values_list('fname', 'lname', 'dob')
+        # Queryset of KPI data for each athlete of the same team where test type is in the selected tests and datekpi is less than or equal to the specified radar date
+        kpi_results = KpiT.objects.filter(fname__in=same_team_athletes.values_list('fname', flat=True),
+                            lname__in=same_team_athletes.values_list('lname', flat=True),
+                            dob__in=same_team_athletes.values_list('dob', flat=True),
+                            testtype__in=selected_radar_tests,
+                            datekpi__lte=radar_date).values('fname', 'lname', 'dob', 'testtype', 'testresult')
+        # Loop through kpi_results and add up the test results for each test type
+        test_results = {}
+        for result in kpi_results:
+            test_type = result['testtype']
+            test_result = result['testresult']
+            if test_type in test_results:
+                # If test_type already exists, add the new test result to the existing value
+                test_results[test_type]['total'] += test_result
+                test_results[test_type]['count'] += 1
+            else:
+                # If test_type doesn't exist, create a new dictionary entry for it
+                test_results[test_type] = {'total': test_result, 'count': 1}
+        # Loop through test_results and calculate the average for each test type rounded to the nearest whole number
+        for test_type, result in test_results.items():
+            average = round(result['total'] / result['count'])
+            test_results[test_type] = average
+        # Append the test_type and average result key:value pair to the result
+        average_radar_results.append({'group': 'team', 'results': test_results})
+
+    # Position: generate averages in each selected test for athletes of the same position 
+    if "position_avg" in compare_avg:
+        same_position_athletes = AthleteT.objects.filter(sportsteam=sportsteam, position=position).exclude(fname=fname, lname=lname, dob=dob).values_list('fname', 'lname', 'dob')
+        # Queryset of KPI data for each athlete of the same position where test type is in the selected tests and datekpi is less than or equal to the specified radar date
+        kpi_results = KpiT.objects.filter(fname__in=same_position_athletes.values_list('fname', flat=True),
+                            lname__in=same_position_athletes.values_list('lname', flat=True),
+                            dob__in=same_position_athletes.values_list('dob', flat=True),
+                            testtype__in=selected_radar_tests,
+                            datekpi__lte=radar_date).values('fname', 'lname', 'dob', 'testtype', 'testresult')
+        # Loop through kpi_results and add up the test results for each test type
+        test_results = {}
+        for result in kpi_results:
+            test_type = result['testtype']
+            test_result = result['testresult']
+            if test_type in test_results:
+                # If test_type already exists, add the new test result to the existing value
+                test_results[test_type]['total'] += test_result
+                test_results[test_type]['count'] += 1
+            else:
+                # If test_type doesn't exist, create a new dictionary entry for it
+                test_results[test_type] = {'total': test_result, 'count': 1}
+        # Loop through test_results and calculate the average for each test type rounded to the nearest whole number
+        for test_type, result in test_results.items():
+            average = round(result['total'] / result['count'])
+            test_results[test_type] = average
+        # Append the test_type and average result key:value pair to the result
+        average_radar_results.append({'group': 'position', 'results': test_results})
+
+    # Gender: generate averages in each selected test for athletes of the same gender 
+    if "gender_avg" in compare_avg:
+        # Queryset of athletes of the same gender not including the current athlete
+        same_gender_athletes = AthleteT.objects.filter(gender=gender).exclude(fname=fname, lname=lname, dob=dob).values_list('fname', 'lname', 'dob')
+        # Queryset of KPI data for each athlete of the same gender where test type is in the selected tests and datekpi is less than or equal to the specified radar date
+        kpi_results = KpiT.objects.filter(fname__in=same_gender_athletes.values_list('fname', flat=True),
+                            lname__in=same_gender_athletes.values_list('lname', flat=True),
+                            dob__in=same_gender_athletes.values_list('dob', flat=True),
+                            testtype__in=selected_radar_tests,
+                            datekpi__lte=radar_date).values('fname', 'lname', 'dob', 'testtype', 'testresult')
+        # Loop through kpi_results and add up the test results for each test type
+        test_results = {}
+        for result in kpi_results:
+            test_type = result['testtype']
+            test_result = result['testresult']
+            if test_type in test_results:
+                # If test_type already exists, add the new test result to the existing value
+                test_results[test_type]['total'] += test_result
+                test_results[test_type]['count'] += 1
+            else:
+                # If test_type doesn't exist, create a new dictionary entry for it
+                test_results[test_type] = {'total': test_result, 'count': 1}
+        # Loop through test_results and calculate the average for each test type rounded to the nearest whole number
+        for test_type, result in test_results.items():
+            average = round(result['total'] / result['count'])
+            test_results[test_type] = average
+        # Append the test_type and average result key:value pair to the result
+        average_radar_results.append({'group': 'gender', 'results': test_results})
+
+    print(athlete_radar_results)
+    print(average_radar_results)
+
+    # Render the graph if 3 or more tests were selected 
+    if len(selected_radar_tests) >= 3:
+        Radar_chart = radar_chart(athlete_radar_results, average_radar_results, radar_date)
+    else:
+        Radar_chart = None
+
+    return JsonResponse({
+        "radar_date": radar_date, 
+        "radar_chart": Radar_chart,
+        #"athlete_radar_results": athlete_radar_results,
+        })
 
 @login_required(login_url="/")
 def AthleteProf(request, fname, lname, dob, id):
     athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob, id=id)
+    sportsteam = athleteProf.sportsteam
+    gender = athleteProf.gender
+    position = athleteProf.position
 
     # instance of an image in order to edit profile picture...
     # (I have no idea what this means, it took me so long to get it working, if it works, it works.
     # Django documentation says to use ._meta("field name") but that never worked for me)
     instanceImg = AthleteT.objects.filter(id=id).only("image").first()
 
-    Radar_chart = None
     radar_date = None
     all_tests = None
-    selected_radar_tests = None
 
     # If parameter "request" is an XML request (AJAX)...
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
@@ -344,7 +462,12 @@ def AthleteProf(request, fname, lname, dob, id):
             # if we have data for "wellnessdate", we have a wellness update request
             elif data.get("wellnessdate"):
                 return wellnessAjax(fname, lname, dob, data.get("wellnessdate"))
+            
+            # if we have data for "radar_date", we have a radar/spider chart update request
+            elif data.get("radar_date"):
+                return spiderAjax(fname, lname, dob, sportsteam, gender, position, data.get("radar_date"), data.get("selected_radar_tests"), data.get("compare_avg"))
 
+            # data passed did not fit criteria above, so it is invalid
             else:
                 return JsonResponse({"status": "Invalid request"}, status=400)
         else:
@@ -409,123 +532,8 @@ def AthleteProf(request, fname, lname, dob, id):
             kpi_earliest = kpi_dates.first()["datekpi"]
             kpi_most_recent = kpi_dates.last()["datekpi"]
 
-            sportsteam = athleteProf.sportsteam
-            gender = athleteProf.gender
-            position = athleteProf.position
             all_tests = KpiT.objects.filter(fname=fname, lname=lname, dob=dob).values_list('testtype', flat=True).distinct()
 
-            if request.method == "POST":
-                # Selected KPI date and tests
-                radar_date = request.POST.get("radar_date")
-                selected_radar_tests = request.POST.getlist('selected_radar_tests')
-            else:
-                radar_date = kpi_most_recent
-                selected_radar_tests = all_tests
-
-            # Athletes results for selected KPI's and Date
-            # Dictioanry of test_type and result key:value pairs
-            athlete_radar_results = {}
-            for test in selected_radar_tests:
-                # Get the kpi result <=/lte to the given date
-                result = KpiT.objects.filter(fname=fname, lname=lname, dob=dob, datekpi__lte=radar_date, testtype=test).order_by('datekpi').values_list('testresult', flat=True).first()
-                athlete_radar_results[test] = result
-
-            # List specifying which averages to comapre to (Team, Position, or Gender)
-            compare_avg = request.POST.getlist('compare_avg')
-
-            # List to hold nested dictionaries of averages test data
-            average_radar_results = []
-
-            # Sportsteam: generate averages in each selected test for athletes of the same Sportsteam 
-            if "team_avg" in compare_avg:
-                same_team_athletes = AthleteT.objects.filter(sportsteam=sportsteam).exclude(fname=fname, lname=lname, dob=dob).values_list('fname', 'lname', 'dob')
-                # Queryset of KPI data for each athlete of the same team where test type is in the selected tests and datekpi is less than or equal to the specified radar date
-                kpi_results = KpiT.objects.filter(fname__in=same_team_athletes.values_list('fname', flat=True),
-                                    lname__in=same_team_athletes.values_list('lname', flat=True),
-                                    dob__in=same_team_athletes.values_list('dob', flat=True),
-                                    testtype__in=selected_radar_tests,
-                                    datekpi__lte=radar_date).values('fname', 'lname', 'dob', 'testtype', 'testresult')
-                # Loop through kpi_results and add up the test results for each test type
-                test_results = {}
-                for result in kpi_results:
-                    test_type = result['testtype']
-                    test_result = result['testresult']
-                    if test_type in test_results:
-                        # If test_type already exists, add the new test result to the existing value
-                        test_results[test_type]['total'] += test_result
-                        test_results[test_type]['count'] += 1
-                    else:
-                        # If test_type doesn't exist, create a new dictionary entry for it
-                        test_results[test_type] = {'total': test_result, 'count': 1}
-                # Loop through test_results and calculate the average for each test type rounded to the nearest whole number
-                for test_type, result in test_results.items():
-                    average = round(result['total'] / result['count'])
-                    test_results[test_type] = average
-                # Append the test_type and average result key:value pair to the result
-                average_radar_results.append({'group': 'team', 'results': test_results})
-
-            # Position: generate averages in each selected test for athletes of the same position 
-            if "position_avg" in compare_avg:
-                same_position_athletes = AthleteT.objects.filter(sportsteam=sportsteam, position=position).exclude(fname=fname, lname=lname, dob=dob).values_list('fname', 'lname', 'dob')
-                # Queryset of KPI data for each athlete of the same position where test type is in the selected tests and datekpi is less than or equal to the specified radar date
-                kpi_results = KpiT.objects.filter(fname__in=same_position_athletes.values_list('fname', flat=True),
-                                    lname__in=same_position_athletes.values_list('lname', flat=True),
-                                    dob__in=same_position_athletes.values_list('dob', flat=True),
-                                    testtype__in=selected_radar_tests,
-                                    datekpi__lte=radar_date).values('fname', 'lname', 'dob', 'testtype', 'testresult')
-                # Loop through kpi_results and add up the test results for each test type
-                test_results = {}
-                for result in kpi_results:
-                    test_type = result['testtype']
-                    test_result = result['testresult']
-                    if test_type in test_results:
-                        # If test_type already exists, add the new test result to the existing value
-                        test_results[test_type]['total'] += test_result
-                        test_results[test_type]['count'] += 1
-                    else:
-                        # If test_type doesn't exist, create a new dictionary entry for it
-                        test_results[test_type] = {'total': test_result, 'count': 1}
-                # Loop through test_results and calculate the average for each test type rounded to the nearest whole number
-                for test_type, result in test_results.items():
-                    average = round(result['total'] / result['count'])
-                    test_results[test_type] = average
-                # Append the test_type and average result key:value pair to the result
-                average_radar_results.append({'group': 'position', 'results': test_results})
-
-            # Gender: generate averages in each selected test for athletes of the same gender 
-            if "gender_avg" in compare_avg:
-                # Queryset of athletes of the same gender not including the current athlete
-                same_gender_athletes = AthleteT.objects.filter(gender=gender).exclude(fname=fname, lname=lname, dob=dob).values_list('fname', 'lname', 'dob')
-                # Queryset of KPI data for each athlete of the same gender where test type is in the selected tests and datekpi is less than or equal to the specified radar date
-                kpi_results = KpiT.objects.filter(fname__in=same_gender_athletes.values_list('fname', flat=True),
-                                    lname__in=same_gender_athletes.values_list('lname', flat=True),
-                                    dob__in=same_gender_athletes.values_list('dob', flat=True),
-                                    testtype__in=selected_radar_tests,
-                                    datekpi__lte=radar_date).values('fname', 'lname', 'dob', 'testtype', 'testresult')
-                # Loop through kpi_results and add up the test results for each test type
-                test_results = {}
-                for result in kpi_results:
-                    test_type = result['testtype']
-                    test_result = result['testresult']
-                    if test_type in test_results:
-                        # If test_type already exists, add the new test result to the existing value
-                        test_results[test_type]['total'] += test_result
-                        test_results[test_type]['count'] += 1
-                    else:
-                        # If test_type doesn't exist, create a new dictionary entry for it
-                        test_results[test_type] = {'total': test_result, 'count': 1}
-                # Loop through test_results and calculate the average for each test type rounded to the nearest whole number
-                for test_type, result in test_results.items():
-                    average = round(result['total'] / result['count'])
-                    test_results[test_type] = average
-                # Append the test_type and average result key:value pair to the result
-                average_radar_results.append({'group': 'gender', 'results': test_results})
-
-            # Render the graph if 3 or more tests were selected 
-            if len(selected_radar_tests) >= 3:
-                Radar_chart = radar_chart(athlete_radar_results, average_radar_results, radar_date)
-            else:
-                Radar_chart = None
         else: #if there are no kpi records for this athlete but there are wellness records... still loads their page
             kpi_dates = None
             kpi_earliest = None
@@ -571,11 +579,11 @@ def AthleteProf(request, fname, lname, dob, id):
         "mostRecentWellnessReportDate": wellness_most_recent,
         "wellness_count": wellness_count,
         # Radar/Spider
-        "Radar_chart": Radar_chart,
+        #"Radar_chart": Radar_chart,
         "radar_date": radar_date,
         "all_tests": all_tests,
-        "selected_radar_tests": selected_radar_tests,
-        # dashboardd session stuff
+        #"selected_radar_tests": selected_radar_tests,
+        # dashboard session stuff
         "recentlyViewedAthletes": recentlyViewedAthletes,
         # img form stuff
         "form": form,
