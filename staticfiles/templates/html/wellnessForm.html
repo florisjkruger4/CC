@@ -4,9 +4,113 @@
 <head>
   <!-- Header -->
   {% include 'html/header.html' %}
+  <link rel="stylesheet" href="/staticfiles/templates/css/wellnessForm.css">
 </head>
 
 <body>
+
+  <!-- Wellness Form -->
+  <form>
+
+    <!-- Select Name -->
+    <select id="name" name="name">
+      <option disabled hidden selected>Select Name</option>
+      {% for x in athletes %}
+      <option>{{ x.fname }} {{ x.lname }}</option>
+      {% endfor %}
+    </select>
+
+    <!-- Update which person this data is saved to with AJAX! --> 
+
+    <!-- How many hours of sleep did you get last night? -->
+    <p>How many hours of sleep did you get last night?</p>
+    <p>5 or fewer Hours</p>
+    <input type="radio" id="sleepHours1" class="radio-inline" name="sleepHours" value="1">
+    <label for="sleepHours1">1</label><br>
+    <input type="radio" id="sleepHours2" class="radio-inline" name="sleepHours" value="2">
+    <label for="sleepHours2">2</label><br>
+    <input type="radio" id="sleepHours3" class="radio-inline" name="sleepHours" value="3">
+    <label for="sleepHours3">3</label><br>
+    <p>8 or more hours</p>
+    <br>
+
+    <!-- How was the quality of your sleep? -->
+    <p>How was the quality of your sleep?</p>
+    <p>Poor - Constantly waking up; Rarely reached deep sleep</p>
+    <input type="radio" id="sleepQuality1" class="radio-inline" name="sleepQuality" value="1">
+    <label for="sleepQuality1">1</label><br>
+    <input type="radio" id="sleepQuality2" class="radio-inline" name="sleepQuality" value="2">
+    <label for="sleepQuality2">2</label><br>
+    <input type="radio" id="sleepQuality3" class="radio-inline" name="sleepQuality" value="3">
+    <label for="sleepQuality3">3</label><br>
+    <p>Great - Mostly slept through the night</p>
+    <br>
+
+    <!-- Did you eat breakfast? -->
+    <p>Did you eat breakfast?</p>
+    <p>No</p>
+    <input type="radio" id="breakfast1" class="radio-inline" name="breakfast" value="1">
+    <label for="breakfast1">1</label><br>
+    <input type="radio" id="breakfast2" class="radio-inline" name="breakfast" value="2">
+    <label for="breakfast2">2</label><br>
+    <input type="radio" id="breakfast3" class="radio-inline" name="breakfast" value="3">
+    <label for="breakfast3">3</label><br>
+    <p>Yes</p>
+    <br>
+
+    <!-- If your waking hours are divided into 4 quarters ...? -->
+    <p>If your waking hours are divided into 4 quarters and you need to consume at least 20oz of water per quarter, are you on track to meet your goal?</p>
+    <p>Behind quarterly requirement</p>
+    <input type="radio" id="quarters1" class="radio-inline" name="quarters" value="1">
+    <label for="quarters1">1</label><br>
+    <input type="radio" id="quarters2" class="radio-inline" name="quarters" value="2">
+    <label for="quarters2">2</label><br>
+    <input type="radio" id="quarters3" class="radio-inline" name="quarters" value="3">
+    <label for="quarters3">3</label><br>
+    <p>Ahead of quarterly requirement</p>
+    <br>
+
+    <!-- How does your body feel? -->
+    <p>How does your body feel?</p>
+    <p>Can barely move - Super sore, achy, and/or fatigued</p>
+    <input type="radio" id="feel1" class="radio-inline" name="feel" value="1">
+    <label for="feel1">1</label><br>
+    <input type="radio" id="feel2" class="radio-inline" name="feel" value="2">
+    <label for="feel2">2</label><br>
+    <input type="radio" id="feel3" class="radio-inline" name="feel" value="3">
+    <label for="feel3">3</label><br>
+    <p>Ready to go - Body feels great!</p>
+    <br>
+
+    <!-- How stressed do you currently feel? -->
+    <p>How stressed/anxious do you currently feel from your sport, school, relationships, and/or health?</p>
+    <p>Very - I'm irritable/tired and need a break and/or to vent</p>
+    <input type="radio" id="stress1" class="radio-inline" name="stress" value="1">
+    <label for="stress1">1</label><br>
+    <input type="radio" id="stress2" class="radio-inline" name="stress" value="2">
+    <label for="stress2">2</label><br>
+    <input type="radio" id="stress3" class="radio-inline" name="stress" value="3">
+    <label for="stress3">3</label><br>
+    <p>Life is good!!!</p>
+    <br>
+
+    <!-- How is your mood? -->
+    <p>How is your mood?</p>
+    <p>Positive</p>
+    <input type="radio" id="mood1" class="radio-inline" name="mood" value="1">
+    <label for="mood1">1</label><br>
+    <input type="radio" id="mood2" class="radio-inline" name="mood" value="2">
+    <label for="mood2">2</label><br>
+    <input type="radio" id="mood3" class="radio-inline" name="mood" value="3">
+    <label for="mood3">3</label><br>
+    <p>Negative</p>
+    <br>
+
+    <!-- Submit button -->
+    <input type="submit" value"Submit">
+
+
+  </form>
 
 </body>
 </html>

@@ -132,7 +132,7 @@ def AthletesDash(request):
 
 @login_required(login_url="/")
 def MaleAthletes(request):
-    q = request.GET.get("q") 
+    q = request.GET.get("q")
     q = "M"
 
     athletes = AthleteT.objects.filter(
@@ -148,7 +148,7 @@ def MaleAthletes(request):
 
 @login_required(login_url="/")
 def FemaleAthletes(request):
-    q = request.GET.get("q") 
+    q = request.GET.get("q")
     q = "F"
 
     athletes = AthleteT.objects.filter(
@@ -164,7 +164,7 @@ def FemaleAthletes(request):
 
 @login_required(login_url="/")
 def TeamSpecificAthletes(request, sport):
-    q = request.GET.get("q") 
+    q = request.GET.get("q")
     q = sport
 
     athletes = AthleteT.objects.filter(
@@ -229,7 +229,7 @@ def kpiAjax(fname, lname, dob, date_one, date_two):
     )
 
     minBetter = (
-        TestTypeT.objects.all()   
+        TestTypeT.objects.all()
     )
 
     # Get kpi results for each test type
@@ -436,7 +436,7 @@ def AthleteProf(request, fname, lname, dob, id):
             # List to hold nested dictionaries of averages test data
             average_radar_results = []
 
-            # Sportsteam: generate averages in each selected test for athletes of the same Sportsteam 
+            # Sportsteam: generate averages in each selected test for athletes of the same Sportsteam
             if "team_avg" in compare_avg:
                 same_team_athletes = AthleteT.objects.filter(sportsteam=sportsteam).exclude(fname=fname, lname=lname, dob=dob).values_list('fname', 'lname', 'dob')
                 # Queryset of KPI data for each athlete of the same team where test type is in the selected tests and datekpi is less than or equal to the specified radar date
@@ -464,7 +464,7 @@ def AthleteProf(request, fname, lname, dob, id):
                 # Append the test_type and average result key:value pair to the result
                 average_radar_results.append({'group': 'team', 'results': test_results})
 
-            # Position: generate averages in each selected test for athletes of the same position 
+            # Position: generate averages in each selected test for athletes of the same position
             if "position_avg" in compare_avg:
                 same_position_athletes = AthleteT.objects.filter(sportsteam=sportsteam, position=position).exclude(fname=fname, lname=lname, dob=dob).values_list('fname', 'lname', 'dob')
                 # Queryset of KPI data for each athlete of the same position where test type is in the selected tests and datekpi is less than or equal to the specified radar date
@@ -492,7 +492,7 @@ def AthleteProf(request, fname, lname, dob, id):
                 # Append the test_type and average result key:value pair to the result
                 average_radar_results.append({'group': 'position', 'results': test_results})
 
-            # Gender: generate averages in each selected test for athletes of the same gender 
+            # Gender: generate averages in each selected test for athletes of the same gender
             if "gender_avg" in compare_avg:
                 # Queryset of athletes of the same gender not including the current athlete
                 same_gender_athletes = AthleteT.objects.filter(gender=gender).exclude(fname=fname, lname=lname, dob=dob).values_list('fname', 'lname', 'dob')
@@ -521,7 +521,7 @@ def AthleteProf(request, fname, lname, dob, id):
                 # Append the test_type and average result key:value pair to the result
                 average_radar_results.append({'group': 'gender', 'results': test_results})
 
-            # Render the graph if 3 or more tests were selected 
+            # Render the graph if 3 or more tests were selected
             if len(selected_radar_tests) >= 3:
                 Radar_chart = radar_chart(athlete_radar_results, average_radar_results, radar_date)
             else:
@@ -531,7 +531,7 @@ def AthleteProf(request, fname, lname, dob, id):
             kpi_earliest = None
             kpi_most_recent = None
             kpi_count = None
-        
+
         #end_time = time.time()
         #elapsed = end_time - start_time
         #print(f"KPI took {elapsed:.2f}")
@@ -703,10 +703,10 @@ def recordKPI(request):
 
             # Gets the JSON data to hold info containig all tests selected
             if data.get("InputCellArray"):
-                
+
                 date = data.get("date_selector")
                 print(date)
-                
+
                 testType = data.get("TestTypeArray")
 
                 selectedSport = data.get("sportsteam")
@@ -738,7 +738,7 @@ def recordKPI(request):
 
     # Other (non-AJAX) requests will recieve a response with a whole HTML document. This requires a page reload.
 
-    
+
     if request.method == 'POST':
         print("test")
 
@@ -792,7 +792,7 @@ def WellnessDash(request):
                 if (x.image == ''):
                     x.image = "/media/placeholder.jpg"
                     athletes_img.append(str(x.image))
-                else: 
+                else:
                     # Get athlete image from AthleteT
                     athletes_img.append(x.image.url)
 
@@ -980,7 +980,7 @@ def AddWellness(request, fname, lname, dob):
     Fname = fname
     Lname = lname
     DOB = dob
-    
+
     if request.method == "POST":
         newhoursofsleep = request.POST["hoursofsleep"]
         newsleepquality = request.POST["sleepquality"]
@@ -1019,9 +1019,23 @@ def AddWellness(request, fname, lname, dob):
 
 @login_required(login_url="/")
 def wellnessForm(request):
+
+    # This is here sowe can retrieve a list of athletes for the name selector
+    q = request.GET.get("q") if request.GET.get("q") != None else ""
+
+    athletes = AthleteT.objects.filter(
+        Q()
+        | Q(fname__icontains=q)
+        | Q(lname__icontains=q)
+        | Q(sportsteam__icontains=q)
+        | Q(position__icontains=q)
+        | Q(year__icontains=q)
+    )
+
+    # This is for adding a new wellness entry
+    # Need to get fname lname dob form selector form
     """
     athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
-
     Fname = fname
     Lname = lname
     DOB = dob
@@ -1073,11 +1087,12 @@ def wellnessForm(request):
 
         newWellness.validate_constraints()
         newWellness.save()
-
-    context = {
-        "athleteProf": athleteProf,
-    }
-
     """
 
-    return render(request, "html/wellnessForm.html")
+    context = {
+        #"athleteProf": athleteProf,
+        "athletes": athletes,
+    }
+
+
+    return render(request, "html/wellnessForm.html", context)
