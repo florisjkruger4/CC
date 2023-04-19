@@ -2,7 +2,7 @@ import json, time
 from django.shortcuts import render, redirect
 from django.db.models import Q
 from .models import AthleteT, TeamT, WellnessT, KpiT, TestTypeT
-from .utils import bar_graph, line_graph, radar_chart
+from .utils import bar_graph, line_graph, radar_chart, z_score_graph
 from django.db.models import Count
 from django.http import JsonResponse
 from django.contrib.auth.models import User
@@ -10,8 +10,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
-from .forms import AthleteForm, ImageForm, RegisterForm
+from .forms import AthleteForm, ImageForm, RegisterForm, UpdateUserForm
 import concurrent.futures
+
+import numpy as np
+import pandas as pd
+import scipy.stats as stats
 
 
 def LoginRegister(request):
@@ -32,8 +36,6 @@ def LoginRegister(request):
 
         user = authenticate(request, username=username, password=password)
 
-        print(user)
-
         if user is not None:
             login(request, user)
             return redirect("dash/")
@@ -52,26 +54,42 @@ def userProf(request, username):
 
     form = RegisterForm()
 
+    updateForm = UpdateUserForm(user)
+
+    allUsers = User.objects.all()
+
     if request.method == 'POST':
+        updateForm = UpdateUserForm(user, request.POST)
+        if updateForm.is_valid():
+            user = updateForm.save()
+            user.save()
+        else:
+            messages.error(request, "An error occured when updating this profile")
+
         form = RegisterForm(request.POST)
         if form.is_valid():
-            # do we care about case sensitive usernames??
             user = form.save()
             user.save()
 
-            # log in created user
-            login(request, user)
-            return redirect("/dash")
+            return redirect(userProf, username=username)
         else:
             messages.error(request, "An error occured during registration")
 
     context = {
         "user": user,
         "form": form,
+        "updateForm":updateForm,
+        "allUsers":allUsers
     }
 
     return render(request, "html/userProf.html", context)
 
+@login_required(login_url="/")
+def DeleteUser(request, username, id):
+    user_to_delete = User.objects.get(id=id)
+    user_to_delete.delete()
+
+    return redirect(userProf, username=username)
 
 # deletes the session id token... meaning the user needs to log in once again to create a new session to be authenticated
 def LogoutUser(request):
@@ -203,10 +221,12 @@ def AddAthlete(request):
 start_time = 0
 end_time = 0
 
-def kpiAjax(fname, lname, dob, date_one, date_two):
+def kpiAjax(fname, lname, dob, date_one, date_two, rad, t_avg, g_avg, p_avg):
+    athlete = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
     start_time = time.time()
 
     # init/reset variables to 0 before next use
+    z_score_bar = []
     kpi_bar = []
     kpi_line = []
     Date1_results = []
@@ -272,9 +292,215 @@ def kpiAjax(fname, lname, dob, date_one, date_two):
         end_time2 = time.time()
         print(f"Graphs Elapsed: {end_time2 - start_time2: .5f}")
 
+        if (t_avg == '1'):
+            # find all the athletes on the same team and get their kpi reports
+            same_team_athletes = AthleteT.objects.filter(sportsteam=athlete.sportsteam).values('fname', 'lname', 'dob')
+            kpi_results = KpiT.objects.filter(fname__in=same_team_athletes.values_list('fname', flat=True),
+                                        lname__in=same_team_athletes.values_list('lname', flat=True),
+                                        dob__in=same_team_athletes.values_list('dob', flat=True),
+                                        datekpi__range=(date_one, date_two)).values('fname', 'lname', 'dob', 'testtype', 'testresult').order_by('datekpi')
+            indiv_tests = []
+            for result in kpi_results:
+                testType = result['testtype']
+                test_result = result['testresult']
+                if testType == x:
+                        indiv_tests.append(test_result)
+
+            # gets average of all the athletes on the same team with respect to the dates selected
+            T_AVG = (sum(indiv_tests) / len(indiv_tests))
+            print("Team Avg: " + x) 
+            print(T_AVG)
+        else:
+            T_AVG = None
+        
+        if (g_avg == '1'):
+            # find all the athletes of the gender and get their kpi reports
+            same_gender_athletes = AthleteT.objects.filter(gender=athlete.gender).values_list('fname', 'lname', 'dob')
+            kpi_results = KpiT.objects.filter(fname__in=same_gender_athletes.values_list('fname', flat=True),
+                                lname__in=same_gender_athletes.values_list('lname', flat=True),
+                                dob__in=same_gender_athletes.values_list('dob', flat=True),
+                                datekpi__range=(date_one, date_two)).values('fname', 'testtype', 'testresult').order_by('datekpi')
+            indiv_tests = []
+            for result in kpi_results:
+                testType = result['testtype']
+                test_result = result['testresult']
+                if testType == x:
+                        indiv_tests.append(test_result)
+
+            # gets average of all the athletes on the same gender with respect to the dates selected
+            G_AVG = (sum(indiv_tests) / len(indiv_tests))
+            print("Gender Avg: " + x) 
+            print(G_AVG)
+        else:
+            G_AVG = None
+
+        if (p_avg == '1'):
+            # find all the athletes of the position and get their kpi reports
+            same_position_athletes = AthleteT.objects.filter(sportsteam=athlete.sportsteam, position=athlete.position).values_list('fname', 'lname', 'dob')
+            kpi_results = KpiT.objects.filter(fname__in=same_position_athletes.values_list('fname', flat=True),
+                                lname__in=same_position_athletes.values_list('lname', flat=True),
+                                dob__in=same_position_athletes.values_list('dob', flat=True),
+                                datekpi__range=(date_one, date_two)).values('fname', 'lname', 'dob', 'testtype', 'testresult')
+            indiv_tests = []
+            for result in kpi_results:
+                testType = result['testtype']
+                test_result = result['testresult']
+                if testType == x:
+                        indiv_tests.append(test_result)
+
+            # gets average of all the athletes on the same position with respect to the dates selected
+            P_AVG = (sum(indiv_tests) / len(indiv_tests))
+            print("Position Avg: " + x) 
+            print(P_AVG)
+        else:
+            P_AVG = None
+
+        if (rad == '1'):
+            # Z-SCORE GRAPH'S IN RELATION TO TEAM AVERAGE (RADIO BUTTON 1)
+            # find all the athletes on the same team and get their kpi reports
+            same_team_athletes = AthleteT.objects.filter(sportsteam=athlete.sportsteam).values('fname', 'lname', 'dob')
+            kpi_results = KpiT.objects.filter(fname__in=same_team_athletes.values_list('fname', flat=True),
+                                        lname__in=same_team_athletes.values_list('lname', flat=True),
+                                        dob__in=same_team_athletes.values_list('dob', flat=True),
+                                        datekpi__range=(date_one, date_two)).values('fname', 'lname', 'dob', 'testtype', 'testresult').order_by('datekpi')
+            
+            # Loop through kpi_results to find all tests that relate to the z-score graph that needs to be generated
+            # keeps track of all tests from athletes on the same team relating to this test type
+            indiv_tests = []
+            # keeps track of the indexes where the test result belongs to this athlete
+            index_Tracker = []
+            for result in kpi_results:
+                athFname = result['fname']
+                athLname = result['lname']
+                athDOB = result['dob']
+                testType = result['testtype']
+                test_result = result['testresult']
+                if testType == x:
+                        indiv_tests.append(test_result)
+                        # if this test result belongs to the current athlete.. store the index val
+                        if (athFname == athlete.fname and athLname == athlete.lname and athDOB == athlete.dob):
+                            index_Tracker.append(indiv_tests.index(test_result))
+
+            # gets the z-scores for all the tests relating to this test type, date selection, and sports team 
+            z_score_teamAVG_results = stats.zscore(indiv_tests, nan_policy='omit')
+            # converts to list type
+            z_score_teamAVG_list = z_score_teamAVG_results.tolist()
+            # checks if z_score_list is nan or not
+            if (np.any(np.isnan(z_score_teamAVG_list))):
+                # if it is nan, then initialize to 0
+                z_score_teamAVG_list = [0];
+            
+            # finds the indexes from array above to pick out the z-score results that belong to the current athlete
+            athlete_z_scores_relation_to_teamAVG = [z_score_teamAVG_list[x] for x in index_Tracker]
+
+            # Convert to t-scores
+            T_Scores_TeamAVG = []
+            for i in range(0, len(athlete_z_scores_relation_to_teamAVG)):
+                calc = ((athlete_z_scores_relation_to_teamAVG[i]*10)+50)
+                T_Scores_TeamAVG.append(calc)
+
+            # Calls matplotlib t-score graph
+            z_score_bar.append(z_score_graph(results_x, T_Scores_TeamAVG))
+
+        elif (rad == '2'):
+            # Z-SCORE GRAPH'S IN RELATION TO GENDER AVERAGE (RADIO BUTTON 2)
+            # Queryset of athletes of the same gender 
+            same_gender_athletes = AthleteT.objects.filter(gender=athlete.gender).values_list('fname', 'lname', 'dob')
+            # Queryset of KPI data for each athlete of the same gender 
+            kpi_results = KpiT.objects.filter(fname__in=same_gender_athletes.values_list('fname', flat=True),
+                                lname__in=same_gender_athletes.values_list('lname', flat=True),
+                                dob__in=same_gender_athletes.values_list('dob', flat=True),
+                                datekpi__range=(date_one, date_two)).values('fname', 'lname', 'dob', 'testtype', 'testresult').order_by('datekpi')
+
+            # Loop through kpi_results to find all tests that relate to the z-score graph that needs to be generated
+            # keeps track of all tests from athletes on the same team relating to this test type
+            indiv_tests = []
+            # keeps track of the indexes where the test result belongs to this athlete
+            index_Tracker = []
+            for result in kpi_results:
+                athFname = result['fname']
+                athLname = result['lname']
+                athDOB = result['dob']
+                testType = result['testtype']
+                test_result = result['testresult']
+                if testType == x:
+                        indiv_tests.append(test_result)
+                        # if this test result belongs to the current athlete.. store the index val
+                        if (athFname == athlete.fname and athLname == athlete.lname and athDOB == athlete.dob):
+                            index_Tracker.append(indiv_tests.index(test_result))
+
+            # gets the z-scores for all the tests relating to this test type, date selection, and sports team 
+            z_score_genderAVG_results = stats.zscore(indiv_tests, nan_policy='omit')
+            # converts to list type
+            z_score_genderAVG_list = z_score_genderAVG_results.tolist()
+            # checks if z_score_list is nan or not
+            if (np.any(np.isnan(z_score_genderAVG_list))):
+                # if it is nan, then initialize to 0
+                z_score_genderAVG_list = [0];
+        
+            # finds the indexes from array above to pick out the z-score results that belong to the current athlete
+            athlete_z_scores_relation_to_genderAVG = [z_score_genderAVG_list[x] for x in index_Tracker]
+
+            # Convert to t-scores
+            T_Scores_GenderAVG = []
+            for i in range(0, len(athlete_z_scores_relation_to_genderAVG)):
+                calc = ((athlete_z_scores_relation_to_genderAVG[i]*10)+50)
+                T_Scores_GenderAVG.append(calc)
+
+            # Calls matplotlib t-score graph
+            z_score_bar.append(z_score_graph(results_x, T_Scores_GenderAVG))
+
+        elif (rad == '3'):
+            # Z-SCORE GRAPH'S IN RELATION TO POSITION AVERAGE (RADIO BUTTON 3)
+            # Queryset of athletes of the same position 
+            same_position_athletes = AthleteT.objects.filter(sportsteam=athlete.sportsteam, position=athlete.position).values_list('fname', 'lname', 'dob')
+            # Queryset of KPI data for each athlete of the same position where test type is in the selected tests
+            kpi_results = KpiT.objects.filter(fname__in=same_position_athletes.values_list('fname', flat=True),
+                                lname__in=same_position_athletes.values_list('lname', flat=True),
+                                dob__in=same_position_athletes.values_list('dob', flat=True),
+                                datekpi__range=(date_one, date_two)).values('fname', 'lname', 'dob', 'testtype', 'testresult')
+
+            # Loop through kpi_results to find all tests that relate to the z-score graph that needs to be generated
+            # keeps track of all tests from athletes on the same team relating to this test type
+            indiv_tests = []
+            # keeps track of the indexes where the test result belongs to this athlete
+            index_Tracker = []
+            for result in kpi_results:
+                athFname = result['fname']
+                athLname = result['lname']
+                athDOB = result['dob']
+                testType = result['testtype']
+                test_result = result['testresult']
+                if testType == x:
+                        indiv_tests.append(test_result)
+                        # if this test result belongs to the current athlete.. store the index val
+                        if (athFname == athlete.fname and athLname == athlete.lname and athDOB == athlete.dob):
+                            index_Tracker.append(indiv_tests.index(test_result))
+
+            # gets the z-scores for all the tests relating to this test type, date selection, and sports team 
+            z_score_positionAVG_results = stats.zscore(indiv_tests, nan_policy='omit')
+            # converts to list type
+            z_score_positionAVG_list = z_score_positionAVG_results.tolist()
+            # checks if z_score_list is nan or not
+            if (np.any(np.isnan(z_score_positionAVG_list))):
+                # if it is nan, then initialize to 0
+                z_score_positionAVG_list = [0];
+        
+            # finds the indexes from array above to pick out the z-score results that belong to the current athlete
+            athlete_z_scores_relation_to_positionAVG = [z_score_positionAVG_list[x] for x in index_Tracker]
+
+            # Convert to t-scores
+            T_Scores_PositionAVG = []
+            for i in range(0, len(athlete_z_scores_relation_to_positionAVG)):
+                calc = ((athlete_z_scores_relation_to_positionAVG[i]*10)+50)
+                T_Scores_PositionAVG.append(calc)
+
+            # Calls matplotlib t-score graph
+            z_score_bar.append(z_score_graph(results_x, T_Scores_PositionAVG))
+            
         # Calls matplotlib bar graph with above data
         kpi_line.append(line_graph(results_x, results_y, change, minBetterValue))
-        kpi_bar.append(bar_graph(results_x, results_y))
+        kpi_bar.append(bar_graph(results_x, results_y, T_AVG, G_AVG, P_AVG))
 
     end_time = time.time()
     print(f"Elapsed: {end_time - start_time: .2f}")
@@ -301,6 +527,7 @@ def kpiAjax(fname, lname, dob, date_one, date_two):
             "minBetter": list(minBetter_list),
             "kpi_bar": list(kpi_bar),
             "kpi_line": list(kpi_line),
+            "z_score_bar": list(z_score_bar),
         }
     )
 
@@ -338,8 +565,8 @@ def AthleteProf(request, fname, lname, dob, id):
             data = json.load(request)
 
             # if we have data for "date1" and "date2", we have a kpi update request
-            if data.get("date1") and data.get("date2"):
-                return kpiAjax(fname, lname, dob, data.get("date1"), data.get("date2"))
+            if data.get("date1") and data.get("date2" or data.get("AVG_Radio_BTN") or data.get("T_AVG_BTN") or data.get("G_AVG_BTN") or data.get("P_AVG_BTN")):
+                return kpiAjax(fname, lname, dob, data.get("date1"), data.get("date2"), data.get("AVG_Radio_BTN"), data.get("T_AVG_BTN"), data.get("G_AVG_BTN"), data.get("P_AVG_BTN"))
 
             # if we have data for "wellnessdate", we have a wellness update request
             elif data.get("wellnessdate"):

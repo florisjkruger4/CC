@@ -11,7 +11,7 @@
     {% include 'html/sidenav.html' %}
     <main class="py-3 py-override">
       <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-4" style="padding-top: 20px; margin-left: 20px;">
             <div style="display: flex;">
               <h2 style="padding-bottom: 10px; padding-right: 4%;">Recently Viewed</h2>
             </div>
@@ -56,7 +56,9 @@
                   <p>{{ x.fname }} {{ x.lname }}</p>
                   <div>
                     <a href="{% url 'EditKPI' x.id %}">
-                      <i class="fa-solid fa-pen" style="color: var(--yellow-accent); font-size: var(--icon-size);"></i>
+                      <button class="pen" style="background-color: #fc515100; font-size: var(--icon-size)">
+                        <i class="fa-solid fa-pen" style="color: var(--yellow-accent); font-size: var(--icon-size);"></i>
+                      </button>
                     </a>
                     &nbsp;
                     <a onclick="return confirm('Are you sure?');" href="{% url 'DeleteKPI_Dash' x.id %}">

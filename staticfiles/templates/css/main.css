@@ -282,15 +282,25 @@ select {
 
 .delkpibtn {
   transition: transform 0.3s;
-  border-radius: var(--radius-small);
   border: none;
   align-self: center;
-  border: 1px solid var(--acc-color-neg);
   color: var(--white-text)
 }
 
 .delkpibtn:hover {
   color: var(--acc-color-neg);
+  transform: (1.2);
+}
+
+.pen {
+  transition: transform 0.3s;
+  border: none;
+  align-self: center;
+  color: var(--white-text)
+}
+
+.pen:hover {
+  color: var( --acc-color-main);
   transform: (1.2);
 }
 
@@ -360,4 +370,8 @@ select {
 .recentViewedLink:hover{
   color: var(--acc-color-main);
   transform: (1.2);
+}
+
+.fa-gear{
+  cursor: pointer;
 }
