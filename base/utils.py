@@ -197,6 +197,7 @@ def z_score_graph(x, y):
     ax.spines['right'].set_visible(False)
     ax.tick_params(axis='x', colors='white')
     ax.tick_params(axis='y', colors='white')
+    ax.set_ylim([0, 100])
 
     if (len(y) > 0):
         avg = sum(y)/len(y)

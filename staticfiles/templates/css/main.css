@@ -16,7 +16,7 @@
 
   /* Color variables */
   --color-primary: hsl(223, 15%, 17%);
-  --color-secondary: hsl(223, 15%, 11%);
+  --color-secondary: hsl(223, 15%, 13%);
   --color-tertiary: hsl(223, 15%, 9%);
   --color-bg: hsl(223, 12%, 6%);
   --color-separator: #404245;
@@ -30,7 +30,7 @@
   /* Dark Theme */
   --dark-bg: hsl(223, 12%, 6%);
   --med-gray-1: hsl(223, 15%, 17%);
-  --med-gray-2:hsl(223, 15%, 11%);
+  --med-gray-2:hsl(223, 15%, 13%);
   --med-gray-3: hsl(223, 15%, 9%);
 
   /* Text Colors */
@@ -147,7 +147,7 @@ select {
 .table-customs {
   --bs-table-bg: var(--color-primary) !important;
   --bs-table-striped-bg: var(--color-secondary) !important;
-  --bs-table-hover-bg: var(--acc-color-main) !important;
+  --bs-table-hover-bg: var(--acc-color-2) !important;
 }
 
 .table-customs th {

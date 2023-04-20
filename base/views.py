@@ -223,7 +223,7 @@ end_time = 0
 
 def kpiAjax(fname, lname, dob, date_one, date_two, rad, t_avg, g_avg, p_avg):
     athlete = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
-    start_time = time.time()
+    #start_time = time.time()
 
     # init/reset variables to 0 before next use
     z_score_bar = []
@@ -278,7 +278,7 @@ def kpiAjax(fname, lname, dob, date_one, date_two, rad, t_avg, g_avg, p_avg):
         results_x = [x.datekpi for x in kpi_results]
         results_y = [x.testresult for x in kpi_results]
 
-        start_time2 = time.time()
+        #start_time2 = time.time()
 
         first_result = results_y[0]
         last_result = results_y[len(results_y) - 1]
@@ -289,8 +289,8 @@ def kpiAjax(fname, lname, dob, date_one, date_two, rad, t_avg, g_avg, p_avg):
         Date1_results.append(first_result)
         Date2_results.append(last_result)
 
-        end_time2 = time.time()
-        print(f"Graphs Elapsed: {end_time2 - start_time2: .5f}")
+        #end_time2 = time.time()
+        #print(f"Graphs Elapsed: {end_time2 - start_time2: .5f}")
 
         if (t_avg == '1'):
             # find all the athletes on the same team and get their kpi reports
@@ -502,8 +502,8 @@ def kpiAjax(fname, lname, dob, date_one, date_two, rad, t_avg, g_avg, p_avg):
         kpi_line.append(line_graph(results_x, results_y, change, minBetterValue))
         kpi_bar.append(bar_graph(results_x, results_y, T_AVG, G_AVG, P_AVG))
 
-    end_time = time.time()
-    print(f"Elapsed: {end_time - start_time: .2f}")
+    #end_time = time.time()
+    #print(f"Elapsed: {end_time - start_time: .2f}")
 
         # Checking if the current test type's min is better ([0][0] is just indexing the first element of the list, true or false)
         #minBetter = TestTypeT.objects.filter(tname=x).values_list() #.values_list('minbetter')[0][0]
