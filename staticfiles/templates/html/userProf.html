@@ -1,3 +1,4 @@
+{% load widget_tweaks %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,21 +10,149 @@
 <body>
     <!-- SideNavbar -->
     {% include 'html/sidenav.html' %}
+    <main class="py-3 py-override">
+        <div class="row" style="height: 85vh">
+            <div style="display: flex; padding-top: 20px; margin-left: 20px;">
+                <h1>{{user.username}} - Profile</h1>
+              </div>
+            <div class="col-md-4" style="padding-top: 10px; margin-left: 15px; height: 100%;">
+              <div class="basicreport" style="display: flex; flex-direction: column; justify-content: space-evenly; height: 90%;">
 
-    <div style="margin: auto; width: 60vh; height: 100vh;">
-        <h1>{{user.first_name}}'s Profile Page</h1>
-        <p>Register a New User</p>
-        <div class="basicreport" style="text-align: center;"">
-            <div style="display: flex; flex-direction: column; justify-content: space-around; height: 100%; margin-bottom: 20%;">
-                <form method="POST" action="">
+                <div class="d-flex justify-content-center align-items-center user-display" style="scale: 2.5; margin-top: 8%;">
+                    <div id="user-initials_profile" class="user-initials"></div>
+                </div>
+
+                <form method="POST" style="height: 100%;">
                     {% csrf_token %}
-                    <div style="display: flex; flex-direction: column; margin: auto; width: 80%; height: 100%; justify-content: space-evenly;">
-                        {{ form.as_p }}
-                        <button class="submit" style="margin-bottom: 30px; height: 45px; width: 40%; margin: auto;">Register</button>
+                    <div style="display: flex; flex-direction: column; justify-content: space-evenly; height: 100%;">
+
+                        <div style="display: flex; width: 100%;">
+                            <div style="float: left; width: 47%;">
+                                <p>Current Password</p>
+                                {% render_field updateForm.old_password class+="form-control" %}
+                            </div>
+                        </div>
+                        <div style="display: flex; width: 100%;">
+                            <div style="float: left; width: 47%;">
+                                <p>New Password</p>
+                                {% render_field updateForm.new_password1 class+="form-control" %}
+                            </div>
+                        </div>
+                        <div style="display: flex; width: 100%;">
+                            <div style="float: left; width: 47%;">
+                                <p>Confirm New Password</p>
+                                {% render_field updateForm.new_password2 class+="form-control" %}
+                            </div>
+                        </div>
+                        
+                        <div style="width: 100%;">
+                            <button class="submit" style="height: 45px; width: 30%; margin: auto; float: right;">Update Changes</button>
+                        </div>
+
                     </div>
                 </form>
+  
+              </div>
             </div>
-        </div>
-    </div>
-    
+
+            {% if user.is_superuser %}
+
+            <div class="col-md-4" style="padding-top: 10px; margin-left: 20px;">
+              <div class="basicreport" style="display: flex; flex-direction: column; height: 90%">
+                <h4>Register New User</h4>
+                <form method="POST" style="height: 100%;">
+                    {% csrf_token %}
+                    <div style="display: flex; flex-direction: column; justify-content: space-evenly; height: 100%; margin-top: 5%;">
+
+                        <div style="display: flex; width: 100%; justify-content: space-between;">
+                            <div style="width: 47%">
+                                <p>First Name</p>
+                                {% render_field form.first_name class+="form-control" %}
+                                <p>Username</p>
+                                {% render_field form.username class+="form-control" %}
+                            </div>
+                            <div style="width: 47%">
+                                <p>Last Name</p>
+                                {% render_field form.last_name class+="form-control" %}
+                            </div>
+                        </div>
+                        <div>
+                            <ul>
+                                <li>Your password can’t be too similar to your other personal information.</li>
+                                <li>Your password must contain at least 8 characters.</li>
+                                <li>Your password can’t be a commonly used password.</li>
+                                <li>Your password can’t be entirely numeric.</li>
+                            </ul>
+                        </div>
+                        <div style="display: flex; width: 100%;">
+                            <div style="float: left">
+                                <p>Password</p>
+                                {% render_field form.password1 class+="form-control" %}
+                                <p>Confirm Password</p>
+                                {% render_field form.password2 class+="form-control" %}
+                            </div>
+                        </div>
+                        
+                        <div style="width: 100%;">
+                            <button class="submit" style="height: 45px; width: 30%; margin: auto; float: right;">Add User</button>
+                        </div>
+
+                    </div>
+                </form>
+              </div>
+            </div>
+            <div class="col-md-3" style="padding-top: 10px; margin-left: 20px;">
+              <div style="display: flex;">
+                <h4 class="mainFont" style="padding-bottom: 10px; padding-right: 8%;">Registered Users</h4>
+                <h4 id="userCount"></h4>
+              </div>
+              
+              <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                <h6>Name</h6>
+                <h6>Username</h6>
+                <h6>Remove</h6>
+              </div>
+              <table class="table table-dark table-striped table-hover table-customs" id="usertable">
+                {% for x in allUsers %}
+                <tr style="height: 50px; vertical-align:middle;">
+                  <td style="width: 37%;">{{ x.first_name }} {{ x.last_name }}</td>
+                  <td>{{x.username}}</td>
+                  <td style="text-align: right;">
+                    <a onclick="return confirm('Are you sure?');" href="{% url 'DeleteUser' user.username x.id %}">
+                        <button class="delkpibtn" style="background-color: #fc515100; font-size: var(--icon-size)" name="delete" value="delete"><i class="fa-solid fa-x"></i></button>
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </table>
+
+            </div>
+            {% else %}
+            
+            {% endif %}
+         </div> 
+      </main>
+
+      <script>
+
+        const fname_prof = "{{ user.first_name}}";
+        const lname_prof = "{{ user.last_name}}";
+
+        var rowCount = document.getElementById('usertable').rows.length;
+        document.getElementById("userCount").innerHTML = "(" + rowCount + ")";
+      
+        // Formats first name with uppercase first letter
+        form_fname = fname.charAt(0).toUpperCase() + fname.slice(1);
+      
+        // Gets just the first character from first and last names 
+        // Makes them uppercase
+        var f_init_prof = fname_prof.charAt(0).toUpperCase();
+        var l_init_prof = lname_prof.charAt(0).toUpperCase();
+      
+        // Injects initials and names into HTML
+        document.getElementById("user-initials_profile").innerText = f_init_prof + l_init_prof;
+      
+      </script>
+
 </body>
+     
