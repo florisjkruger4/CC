@@ -231,6 +231,8 @@ def kpiAjax(fname, lname, dob, date_one, date_two, rad, t_avg, g_avg, p_avg):
     kpi_line = []
     Date1_results = []
     Date2_results = []
+    raw_results_x = {}
+    raw_results_y = {}
     changes = []
     # List of True or False values indicating if a tests minimum score is better
     minBetter_list = []
@@ -275,14 +277,15 @@ def kpiAjax(fname, lname, dob, date_one, date_two, rad, t_avg, g_avg, p_avg):
                 minBetter_list.append(minBetterValue)
 
         # Sets x and y coordinate values
-        results_x = [x.datekpi for x in kpi_results]
-        results_y = [x.testresult for x in kpi_results]
+        raw_results_x[x] = [x.datekpi for x in kpi_results]
+        raw_results_y[x] = [x.testresult for x in kpi_results]
 
         #start_time2 = time.time()
 
-        first_result = results_y[0]
-        last_result = results_y[len(results_y) - 1]
+        first_result = 0 #raw_results_y[x][0]
+        last_result = 0 #raw_results_y[len(raw_results_y[x]) - 1]
 
+        """
         change = round(last_result - first_result, 2)
         changes.append(change)
 
@@ -400,7 +403,7 @@ def kpiAjax(fname, lname, dob, date_one, date_two, rad, t_avg, g_avg, p_avg):
                 T_Scores_TeamAVG.append(calc)
 
             # Calls matplotlib t-score graph
-            z_score_bar.append(z_score_graph(results_x, T_Scores_TeamAVG))
+            #z_score_bar.append(z_score_graph(results_x, T_Scores_TeamAVG))
 
         elif (rad == '2'):
             # Z-SCORE GRAPH'S IN RELATION TO GENDER AVERAGE (RADIO BUTTON 2)
@@ -448,7 +451,7 @@ def kpiAjax(fname, lname, dob, date_one, date_two, rad, t_avg, g_avg, p_avg):
                 T_Scores_GenderAVG.append(calc)
 
             # Calls matplotlib t-score graph
-            z_score_bar.append(z_score_graph(results_x, T_Scores_GenderAVG))
+            #z_score_bar.append(z_score_graph(results_x, T_Scores_GenderAVG))
 
         elif (rad == '3'):
             # Z-SCORE GRAPH'S IN RELATION TO POSITION AVERAGE (RADIO BUTTON 3)
@@ -496,11 +499,11 @@ def kpiAjax(fname, lname, dob, date_one, date_two, rad, t_avg, g_avg, p_avg):
                 T_Scores_PositionAVG.append(calc)
 
             # Calls matplotlib t-score graph
-            z_score_bar.append(z_score_graph(results_x, T_Scores_PositionAVG))
+            #z_score_bar.append(z_score_graph(results_x, T_Scores_PositionAVG))
             
         # Calls matplotlib bar graph with above data
-        kpi_line.append(line_graph(results_x, results_y, change, minBetterValue))
-        kpi_bar.append(bar_graph(results_x, results_y, T_AVG, G_AVG, P_AVG))
+        kpi_line.append(line_graph(raw_results_x, raw_results_y, change, minBetterValue))
+        #kpi_bar.append(bar_graph(results_x, results_y, T_AVG, G_AVG, P_AVG))
 
     #end_time = time.time()
     #print(f"Elapsed: {end_time - start_time: .2f}")
@@ -511,6 +514,7 @@ def kpiAjax(fname, lname, dob, date_one, date_two, rad, t_avg, g_avg, p_avg):
         # Append the current tests minBetter result to the list of minBetter results
         #minBetter_list.append(minBetter.values_list("minbetter")[0][0])
 
+        """
     # Objects returned to frontend:
     # test_types = list of all test types for this athlete
     # Date1_results = list of floating point values of kpis on first date selected
@@ -520,14 +524,16 @@ def kpiAjax(fname, lname, dob, date_one, date_two, rad, t_avg, g_avg, p_avg):
     return JsonResponse(
         {
             "test_types": list(test_type),
-            "Date1_results": list(Date1_results),
-            "Date2_results": list(Date2_results),
-            "changes": list(changes),
+            #"Date1_results": list(Date1_results),
+            #"Date2_results": list(Date2_results),
+            #"changes": list(changes),
+            "raw_results_x": raw_results_x,
+            "raw_results_y": raw_results_y,
             # List of true or false values for each test type
-            "minBetter": list(minBetter_list),
-            "kpi_bar": list(kpi_bar),
-            "kpi_line": list(kpi_line),
-            "z_score_bar": list(z_score_bar),
+            #"minBetter": list(minBetter_list),
+            #"kpi_bar": list(kpi_bar),
+            #"kpi_line": list(kpi_line),
+            #"z_score_bar": list(z_score_bar),
         }
     )
 

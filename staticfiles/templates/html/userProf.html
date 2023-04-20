@@ -11,7 +11,7 @@
     <!-- SideNavbar -->
     {% include 'html/sidenav.html' %}
     <main class="py-3 py-override">
-        <div class="row" style="height: 85vh">
+        <div class="row" style="height: 85vh;">
             <div style="display: flex; padding-top: 20px; margin-left: 20px;">
                 <h1>{{user.username}} - Profile</h1>
               </div>
@@ -137,9 +137,6 @@
 
         const fname_prof = "{{ user.first_name}}";
         const lname_prof = "{{ user.last_name}}";
-
-        var rowCount = document.getElementById('usertable').rows.length;
-        document.getElementById("userCount").innerHTML = "(" + rowCount + ")";
       
         // Formats first name with uppercase first letter
         form_fname = fname.charAt(0).toUpperCase() + fname.slice(1);
@@ -151,6 +148,9 @@
       
         // Injects initials and names into HTML
         document.getElementById("user-initials_profile").innerText = f_init_prof + l_init_prof;
+
+        var rowCount = document.getElementById('usertable').rows.length;
+        document.getElementById("userCount").innerHTML = "(" + rowCount + ")";
       
       </script>
 

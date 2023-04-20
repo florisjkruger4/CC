@@ -445,9 +445,9 @@
                             <div class="btn-container">
                                 <div class="btn-group rt-toggle" role="group" aria-label="Basic radio toggle button group">
                                     <input type="radio" class="btn-check" name="btnradio" id="t-score-radio" autocomplete="off">
-                                    <label class="btn btn-outline-primary" for="t-score-radio">T</label>
+                                    <label title="T-Scores" class="btn btn-outline-primary" for="t-score-radio">T</label>
                                 
-                                    <input type="radio" class="btn-check" name="btnradio" id="raw-score-radio" autocomplete="off" checked>
+                                    <input title="Raw Scores" type="radio" class="btn-check" name="btnradio" id="raw-score-radio" autocomplete="off" checked>
                                     <label class="btn btn-outline-primary" for="raw-score-radio">R</label>
                                 </div>
                             </div>
@@ -627,6 +627,22 @@
                                             //loop thru each test type and get its info
                                             for (var key in response.test_types) {
 
+                                                xArray = response.raw_results_x[key].test_type;
+                                                yArray = response.raw_results_y[key].test_type;
+
+                                                console.log(xArray);
+                                                console.log(yArray);
+
+                                                var data = [{
+                                                    x: xArray,
+                                                    y: yArray,
+                                                    type: "bar"  
+                                                }];
+
+                                                Plotly.newPlot("bar-graphs", data, "");
+
+                                            /*
+
                                                 let bar_template = document.getElementById("bar-template").cloneNode(true);
                                                 let trend_template = document.getElementById("trend-template").cloneNode(true);
                                                 let z_template = document.getElementById("z-template").cloneNode(true);
@@ -689,8 +705,9 @@
                                                 $("#raw-score-graphs").append(bar_template);
                                                 $("#t-score-graphs").append(z_template);
 
-                                                var checkid = /*"check_" +*/ key;
+                                                var checkid = /*"check_" +*/
 
+                                                var checkid = key;
                                                 document.getElementById("test-list").innerHTML += "<li>" + response.test_types[key] + "<input type=\"checkbox\" id=\"" + checkid + "\" checked=\"true\"></li>";
 
                                                 //document.getElementById(checkid).addEventListener("change", function() { update_graph_display(key) });
