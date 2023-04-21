@@ -383,63 +383,6 @@
                             <p style="margin-bottom: 0; align-self: center;">No data</p>
                         </div>
 
-                        <div id="spider-graphs" class="graphprof">
-                            <!-- Radar/Spider Graph -->
-                            <form method="post" id="kpi_radar_form">
-                                {% csrf_token %}
-                                <div class="d-flex justify-content-between">
-                                    <select id="radar_date" name="radar_date">
-                                        <option disabled hidden selected>Select Date</option>
-                                        <option selected>{{ kpi_most_recent }}</option>
-                                        {% for x in all_dates %}
-                                        <option>{{ x.datekpi }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    <input type="submit" value="submit" class="submit">
-                                </div>
-                                <br>
-                                <!-- If a date has been selected -->
-                                {% if radar_date %}
-                                <div>
-                                    <form method="post" id="selected_radar_tests">
-                                        {% csrf_token %}
-                                        <!-- Passing radar_date as a session variable -->
-                                        <input type="hidden" name="radar_date" id="radar_date_input"
-                                            value="{{ radar_date }}">
-                                        <!-- Checkboxes for the test types -->
-                                        {% for test in all_tests %}
-                                        <input type="checkbox" id="{{ test }}" name="selected_radar_tests"
-                                            value="{{ test }}">
-                                        <label for="{{ test }}">{{ test }}</label><br>
-                                        {% endfor %}
-                                        <hr>
-                                        <!-- Checkboxes for the averages to compare to -->
-                                        <input type="checkbox" id="team_avg" name="compare_avg" value="team_avg">
-                                        <label for="team_avg">Team Avg</label><br>
-
-                                        <input type="checkbox" id="position_avg" name="compare_avg"
-                                            value="position_avg">
-                                        <label for="position_avg">Position Avg</label><br>
-
-                                        <input type="checkbox" id="gender_avg" name="compare_avg" value="gender_avg">
-                                        <label for="gender_avg">Gender Avg</label><br>
-                                        <br>
-                                        <input type="submit" value="Submit" class="submit">
-                                    </form>
-                                </div>
-                                <br>
-                                <!-- Display the spider graph or not -->
-                                {% if selected_radar_tests %}
-                                {% if selected_radar_tests|length > 2 %}
-                                {{ Radar_chart|safe }}
-                                {% else %}
-                                <p>Three tests are required to generate a spider graph.</p>
-                                {% endif %}
-                                {% endif %}
-                                {% endif %}
-                            </form>
-                        </div>
-
                         <!-- This is where bar graphs will populate -->
                         <div id="bar-graphs" class="graphprof">
                             <div class="btn-container">
@@ -458,6 +401,8 @@
                                 <p id="no-data" style="margin-bottom: 0; align-self: center;">No data</p>
                             </div>
                         </div>
+
+                        <div id="bar-graph-temp"></div>
 
                         <script>
 
@@ -539,7 +484,6 @@
 
                                         // get id of this checkbox
                                         id = this.id;
-                                        console.log(id);
                                         if (this.checked) {
 
                                             // concatenate respective ids of bar and trend graphs
@@ -556,6 +500,10 @@
                                         e.stopPropagation();
                                     })
                                 })
+                            }
+
+                            function select_lockout() {
+
                             }
 
                             // global variables to create a lockout when an AJAX request has been made
@@ -627,25 +575,60 @@
                                             //loop thru each test type and get its info
                                             for (var key in response.test_types) {
 
-                                                xArray = response.raw_results_x[key].test_type;
-                                                yArray = response.raw_results_y[key].test_type;
+                                                let curr_test_type = response.test_types[key];
+                                                let team_avg_arr = [];
+                                                var team_avg = 0, gender_avg, pos_avg;
 
-                                                console.log(xArray);
-                                                console.log(yArray);
+                                                xArray = response.raw_results_x[curr_test_type];
+                                                yArray = response.raw_results_y[curr_test_type];
 
-                                                var data = [{
+                                                for(i in xArray) {
+                                                    team_avg_arr[i] = team_avg;
+                                                }
+
+                                                
+
+                                                team_avg = response.team_avgs[key];
+
+                                                var bars = {
                                                     x: xArray,
                                                     y: yArray,
                                                     type: "bar"  
-                                                }];
+                                                };
 
-                                                Plotly.newPlot("bar-graphs", data, "");
+                                                var line = {
 
-                                            /*
+                                                    x: xArray,
+                                                    y: team_avg,
+                                                    type: 'scatter',
+                                                    mode: 'lines',
+                                                    name: 'Average'
+                                                
+                                                };
 
-                                                let bar_template = document.getElementById("bar-template").cloneNode(true);
+                                                var layout = {
+                                                    xaxis: {
+                                                        type: 'category',
+                                                    },
+                                                    yaxis: {
+                                                        overlaying: 'y',
+                                                        side: 'right'
+                                                    }
+                                                };
+
+                                                var data = [bars, line];
+
+                                                var config = {responsive: true};
+
+                                                const graphDiv = document.createElement("div");
+                                                graphDiv.id = curr_test_type;
+                                                document.getElementById("raw-score-graphs").append(graphDiv);
+
+                                                var plot = Plotly.newPlot(graphDiv, data, layout, config);
+
+                                                //let bar_template = document.getElementById("bar-template").cloneNode(true);
                                                 let trend_template = document.getElementById("trend-template").cloneNode(true);
-                                                let z_template = document.getElementById("z-template").cloneNode(true);
+                                                //let z_template = document.getElementById("z-template").cloneNode(true);
 
                                                 // If the change is increasing
                                                 if (response.changes[key] > 0) {
@@ -681,10 +664,10 @@
 
                                                 // Fill in name and dates for this KPI trend
                                                 trend_template.querySelector("#kpi-name").innerText = response.test_types[key];
-                                                trend_template.querySelector("#kpi-date-1").innerText = response.Date1_results[key];
-                                                trend_template.querySelector("#kpi-date-2").innerText = response.Date2_results[key];
+                                                trend_template.querySelector("#kpi-date-1").innerText = response.trend_vals[curr_test_type][0];
+                                                trend_template.querySelector("#kpi-date-2").innerText = response.trend_vals[curr_test_type][1];
 
-                                                // Construct URL for bar graph and add path to this node's img tag
+                                                /*// Construct URL for bar graph and add path to this node's img tag
                                                 var bar_graphURL = "data:image/png;base64, " + response.kpi_bar[key];
                                                 bar_template.querySelector("#tname").innerText = response.test_types[key];
                                                 bar_template.querySelector("#tgraph").setAttribute("src", bar_graphURL);
@@ -692,23 +675,23 @@
                                                 // Construct URL for z-score graph and add path to this node's img tag
                                                 var z_graphURL = "data:image/png;base64, " + response.z_score_bar[key];
                                                 z_template.querySelector("#zname").innerText = response.test_types[key];
-                                                z_template.querySelector("#zgraph").setAttribute("src", z_graphURL);
+                                                z_template.querySelector("#zgraph").setAttribute("src", z_graphURL);*/
 
                                                 // Give both graphs for each type an integer ID that will allow them to be maniuplated later
                                                 trend_template.setAttribute("id", "trend_" + key);
-                                                bar_template.setAttribute("id", "bar_" + key);
-                                                z_template.setAttribute("id", "z_" + key);
+                                                //bar_template.setAttribute("id", "bar_" + key);
+                                                //z_template.setAttribute("id", "z_" + key);
 
                                                 // Add this completed graph template to the div containing all graphs
                                                 $("#kpi-trend").append(trend_template);
                                                 //$("#kpi-trend").append("<hr>");
-                                                $("#raw-score-graphs").append(bar_template);
-                                                $("#t-score-graphs").append(z_template);
+                                               // $("#raw-score-graphs").append(bar_template);
+                                               // $("#t-score-graphs").append(z_template);
 
-                                                var checkid = /*"check_" +*/
+                                                //var checkid = "check_" + key;
+                                                //var checkid = key;
 
-                                                var checkid = key;
-                                                document.getElementById("test-list").innerHTML += "<li>" + response.test_types[key] + "<input type=\"checkbox\" id=\"" + checkid + "\" checked=\"true\"></li>";
+                                                //document.getElementById("test-list").innerHTML += "<li>" + response.test_types[key] + "<input type=\"checkbox\" id=\"" + checkid + "\" checked=\"true\"></li>";
 
                                                 //document.getElementById(checkid).addEventListener("change", function() { update_graph_display(key) });
                                             }
