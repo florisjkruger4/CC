@@ -347,7 +347,91 @@
                   }
                 })
               }
+            </script>
 
+            <!-- STYLING NEEDED FOR STICKY BUTTON AND FORM -->
+            <!-- Sticky button to add a new test type -->
+            <button id="addTestBtn" style="position: sticky; bottom: 0; width: 100%;" class="submit">Add New Test</button>
+
+            <!-- Form to input new test type -->
+            <!-- 'bottom' style pushes the form above the Add Test Type/Close button -->
+            <form id="addTestForm" style="display: none; position: absolute; bottom: 155px; background-color: #31363d; width: 320px; border-radius: 5px;" method="POST" action="{% url 'addTestType' %}">
+              {% csrf_token %}
+              <label for="Tname">Test Name: </label>
+              <input type="text" id="Tname" name="Tname"><br>
+
+              <label for="minBetter">Min is Better:</label>
+              <input type="checkbox" id="minBetter" name="minBetter" value=1><br>
+              
+              <button id="submitTestBtn" type="submit">Submit</button>
+            </form>
+
+            <!-- JS for new test type -->
+            <script>
+              // Variables to hold refrences to HTML elements
+              const addTestBtn = document.getElementById('addTestBtn');
+              const addTestForm = document.getElementById('addTestForm');
+              const submitTestBtn = document.getElementById('submitTestBtn');
+              const minBetter = document.getElementById('minBetter')
+              const Tname = document.getElementById('Tname')
+
+              // Event listener to show and hide the form
+              addTestBtn.addEventListener('click', () => {
+                if (addTestForm.style.display === 'none') {
+                  addTestForm.style.display = 'block'; // Show the addTestForm
+                  addTestBtn.textContent = 'Close';
+                } else {
+                  addTestForm.style.display = 'none'; // Hide the addTestForm
+                  addTestBtn.textContent = 'Add New Test';
+                }
+              });
+
+              // Event listener for addTestBtn to submit/add a new test
+              submitTestBtn.addEventListener('click', (event) => {
+                // Prevent the default addTestForm submission behavior
+                event.preventDefault(); // Prevent default addTestForm submission behavior
+
+                // Variable to hold the addTestForm data
+                const data = {
+                    Tname: Tname.value,
+                    minBetter: minBetter.checked
+                };
+
+                $.ajax({
+                  // URL to send the AJAX request to
+                  url: "{% url 'addTestType' %}",
+                  // HTTP method used to send the request
+                  type: "POST",
+                  // Type of data expected in the response
+                  dataType: "json",
+                  // Data to be sent with the request, in this case a JSON object converted to a string
+                  data: JSON.stringify(data),
+                  headers: {
+                    // Header to identify the request as an AJAX request
+                    "X-Requested-With": "XMLHttpRequest",
+                    // Header with the CSRF token
+                    "X-CSRFToken": getCookie("csrftoken"),
+                    // Header indicating that the data sent with the request is in JSON format
+                    "Content-Type": "application/json"
+                  },
+                  success: (response) => {
+                    console.log(response);
+                    // Display a success message
+                    alert("Test added successfully");
+                    // Clear the addTestForm
+                    addTestForm.reset();
+                    // Hide the addTestForm
+                    addTestForm.style.display = 'none';
+                    addTestBtn.textContent = 'Add New Test';
+                  },
+                  // Error handling
+                  error: (error) => {
+                    console.log(error);
+                    // Display an error message
+                    alert("Error adding test");
+                  }
+                });
+              });
             </script>
           </div>
         </div>

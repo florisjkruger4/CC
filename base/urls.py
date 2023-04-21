@@ -22,6 +22,7 @@ urlpatterns = [
     
     path('teams/', views.TeamDash, name="TeamDash"),
     path('recordKPI/', views.recordKPI, name="recordKPI"),
+    path('addTestType/', views.addTestType, name="addTestType"),
     path('wellnessForm/', views.wellnessForm, name="wellnessForm"),
     path('wellness/', views.WellnessDash, name="WellnessDash"),
     path('/addwellness/<str:fname>/<str:lname>/<path:dob>', views.AddWellness, name="AddWellness"),
