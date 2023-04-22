@@ -12,9 +12,9 @@
     <!-- SideNavbar -->
     {% include 'html/sidenav.html' %}
 
-    <main class="py-3">
+    <main class="py-3 py-override">
 
-        <div class="main-header" style="gap: 25px;">
+        <div class="main-header" style="gap: var(--inner-padding);">
             <a href="/athletes"><i class="fa-solid fa-circle-arrow-left"></i></a>
             <h1>Add Athlete</h1>
         </div>
@@ -54,7 +54,7 @@
                 </div>
 
                 <p>Upload Photo</p>
-                <div style="display: flex;">
+                <div class="d-flex">
                     <label for="id_image">
                         <div class="upload-img-frame" id="imgHolder" style="text-align: center; justify-content: center; align-items: center; display: flex;">
                             <i class="fa-solid fa-user" style="color: var(--light-gray-1); font-size: 45px" id="camicon"></i>
@@ -108,80 +108,5 @@
             }
             
         </script>
-
-        <!--
-        <form method="post" id="addathleteform">
-            {% csrf_token %}
-            <div class="basicreport" style="width: 100%; max-width: 500px; height: auto;">
-                <div class="d-flex" style="gap: var(--inner-padding); padding-bottom: var(--inner-padding);">
-                    <div>
-                        <p>First Name</p>
-                        <input type="text" class="form-control" name="fname">
-                    </div>
-                    <div>
-                        <p>Last Name</p>
-                        <input type="text" class="form-control" name="lname">
-                    </div>
-                </div>
-                <div class="d-flex" style="gap: var(--inner-padding); padding-bottom: var(--inner-padding);">
-                    <div>
-                        <p>Year</p>
-                        <select name="year" class="form-control">
-                            <option disabled hidden selected></option>
-                            <option>Freshman</option>
-                            <option>Sophmore</option>
-                            <option>Junior</option>
-                            <option>Senior</option>
-                        </select>
-                    </div>
-                    <div>
-                        <p>Date of Birth</p>
-                        <input type="date" class="form-control" name="dob">
-                    </div>
-                </div>
-                <div class="d-flex" style="gap: var(--inner-padding); padding-bottom: var(--inner-padding);"> 
-                    <div>
-                        <p>Height (in.)</p>
-                        <input type="text" class="form-control" name="height">
-                    </div>
-                    <div>
-                        <p>Gender</p>
-                        <select class="form-control" name="gender">
-                            <option disabled hidden selected></option>
-                            <option>M</option>
-                            <option>F</option>
-                        </select>
-                    </div>
-                </div>
-
-                <input type="file" id="img" name="image" accept="image/*" class="upload-img-frame">
-
-                <div class="d-flex" style="gap: var(--inner-padding); padding-top: var(--inner-padding); padding-bottom: var(--inner-padding);">
-                    <div>
-                        <p>Team</p>
-                        <select name="sportsteam" class="form-control">
-                            <option disabled hidden selected></option>
-                            <option>Field Hockey</option>
-                            <option>Football</option>
-                            <option>Men's Ice Hockey</option>
-                            <option>Men's Rugby</option>
-                            <option>Men's Swimming</option>
-                            <option>Women's Ice Hockey</option>
-                            <option>Women's Rugby</option>
-                            <option>Women's Swimming</option>
-                        </select>
-                       
-                    </div>
-                    <div>
-                        <p>Position</p>
-                        <input type="text" class="form-control" name="position">
-                    </div>
-                </div>
-                <div class="d-flex justify-content-between">
-                    <button class="spanning-button" style="width: 25%;" type="submit" value="Submit">Submit</button>
-                </div>
-            </div>
-        </form>
-        -->
     </main>
 </body>

@@ -389,7 +389,7 @@ def kpiAjax(athlete, date_one, date_two, rad, t_avg, g_avg, p_avg):
             # checks if z_score_list is nan or not
             if (np.any(np.isnan(z_score_teamAVG_list))):
                 # if it is nan, then initialize to 0
-                z_score_teamAVG_list = [0];
+                z_score_teamAVG_list = [0]
             
             # finds the indexes from array above to pick out the z-score results that belong to the current athlete
             athlete_z_scores_relation_to_teamAVG = [z_score_teamAVG_list[x] for x in index_Tracker]
@@ -437,7 +437,7 @@ def kpiAjax(athlete, date_one, date_two, rad, t_avg, g_avg, p_avg):
             # checks if z_score_list is nan or not
             if (np.any(np.isnan(z_score_genderAVG_list))):
                 # if it is nan, then initialize to 0
-                z_score_genderAVG_list = [0];
+                z_score_genderAVG_list = [0]
         
             # finds the indexes from array above to pick out the z-score results that belong to the current athlete
             athlete_z_scores_relation_to_genderAVG = [z_score_genderAVG_list[x] for x in index_Tracker]
@@ -485,7 +485,7 @@ def kpiAjax(athlete, date_one, date_two, rad, t_avg, g_avg, p_avg):
             # checks if z_score_list is nan or not
             if (np.any(np.isnan(z_score_positionAVG_list))):
                 # if it is nan, then initialize to 0
-                z_score_positionAVG_list = [0];
+                z_score_positionAVG_list = [0]
         
             # finds the indexes from array above to pick out the z-score results that belong to the current athlete
             athlete_z_scores_relation_to_positionAVG = [z_score_positionAVG_list[x] for x in index_Tracker]

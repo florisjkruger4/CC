@@ -50,9 +50,9 @@
                     <div class="col-scroll">
 
                         <!-- Athlete Info/Header -->
-                        <div class="main-header justify-content-between">
+                        <div class="main-header justify-content-between" style="position: sticky; top:0; z-index: 2;">
                             <div class="d-flex align-items-center" style="gap: 15px;">
-                                <h1 style="position: fixed; background-color: var(--color-bg); border-radius: 0px 5px 5px 0px; padding: 5px;">{{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
+                                <h1>{{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
                             </div>
                             <div class="justify-content-between">
                                 <label for="id_image">
@@ -130,7 +130,7 @@
                             </div>
 
                             <a href="{% url 'AddKPI' athleteProf.fname athleteProf.lname athleteProf.dob %}">
-                                <button class="spanning-button" style="margin-top: var(--inner-padding);">Add KPI</button>
+                                <button class="spanning-button" style="margin-top: var(--inner-padding);">KPI History</button>
                             </a>
 
                         </div>

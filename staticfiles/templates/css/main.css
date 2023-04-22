@@ -82,6 +82,7 @@ body {
   font-family: 'Titillium Web', sans-serif;
   background-color: var(--color-bg);
   color: var(--white-text);
+  scrollbar-width: none;
 }
 
 /* For titles on all pages */
