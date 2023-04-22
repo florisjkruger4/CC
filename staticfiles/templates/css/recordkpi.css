@@ -77,15 +77,12 @@
     text-align: center;
     padding-left: var(--inner-padding);
     padding-right: var(--inner-padding);
+    max-width: 160px;
+    min-width: 130px;
 }
 
 .data-table th:last-child,
 .data-table tr:last-child,
 .data-table td:last-child {
   border-right: none;
-}
-
-.i-size {
-    max-width: 150px;
-    min-width: 100px;
 }

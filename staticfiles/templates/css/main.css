@@ -148,6 +148,7 @@ select {
   --bs-table-bg: var(--color-primary) !important;
   --bs-table-striped-bg: var(--color-secondary) !important;
   --bs-table-hover-bg: var(--acc-color-2) !important;
+  --bs-table-border-color: var(--color-secondary) !important;
 }
 
 .table-customs th {

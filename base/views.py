@@ -217,77 +217,77 @@ def AddAthlete(request):
 
     return render(request, "html/addathlete.html", context)
 
+def kpiAjax(athlete, date_one, date_two, rad, t_avg, g_avg, p_avg):
+    start_time = time.time();
 
-start_time = 0
-end_time = 0
-
-def kpiAjax(fname, lname, dob, date_one, date_two, rad, t_avg, g_avg, p_avg):
-    athlete = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
-    #start_time = time.time()
-
-    # init/reset variables to 0 before next use
-    z_score_bar = []
-    kpi_bar = []
-    kpi_line = []
-    Date1_results = []
-    Date2_results = []
-    changes = []
-    # List of True or False values indicating if a tests minimum score is better
-    minBetter_list = []
-
-    # Gets test types within selected date range
-    test_type = (
+    all_kpi = list(
         KpiT.objects.filter(
-            fname=fname,
-            lname=lname,
-            dob=dob,
-            datekpi__range=(date_one, date_two),
-        )
-        .values_list("testtype", flat=True)
-        .order_by("testtype")
-        .distinct()
+            fname=athlete.fname, 
+            lname=athlete.lname, 
+            dob=athlete.dob, 
+            datekpi__range=(date_one, date_two)
+        ).values('testtype', 'datekpi', 'testresult')
+        .order_by("testtype", "datekpi")
     )
 
-    minBetter = (
+    minBetter = list(
         TestTypeT.objects.all()   
     )
+    
+    # init/reset variables to 0 before next use
+    test_types = []
+    kpi_line = []
+    kpi_bar = []
+    z_score_bar = []
+    changes = []
+    minBetter_list = []
+    Date1_results = []
+    Date2_results = [] 
 
-    # Get kpi results for each test type
-    for x in test_type:
-        first_result = 0
-        last_result = 0
+    # Dictionaries for each kpi result of each test type
+    # x stores k/v pairs: { <test_type>: dates[] }
+    # y stores k/v pairs: { <test_type>: values[] }
+    raw_results_x = {}
+    raw_results_y = {}
 
-        # Gets the rows for this test for specific athlete
-        kpi_results = KpiT.objects.filter(
-            fname=fname,
-            lname=lname,
-            dob=dob,
-            testtype__exact=x,
-            datekpi__range=(date_one, date_two),
-        ).order_by("datekpi")
+    # Get kpi results & corresponding dates for each test type
+    for x in all_kpi:
 
-        minBetterValue = False
+        # We've encountered a new test type, init array within dict
+        if x['testtype'] not in test_types:
 
-        # For some reason this is faster than the configuration before...?
-        for y in minBetter:
-            if y.tname == x:
-                minBetterValue = y.minbetter
-                minBetter_list.append(minBetterValue)
+            test_types.append(x['testtype'])
 
-        # Sets x and y coordinate values
-        results_x = [x.datekpi for x in kpi_results]
-        results_y = [x.testresult for x in kpi_results]
+            raw_results_x[x['testtype']] = []
+            raw_results_y[x['testtype']] = []
+        
+        raw_results_x[x['testtype']].append(x['datekpi'])
+        raw_results_y[x['testtype']].append(x['testresult'])
+    
+    for x in test_types:
 
-        #start_time2 = time.time()
+        # first and last value of this test type for this athlete
+        first_result = raw_results_y[x][0]
+        last_result = raw_results_y[x][len(raw_results_x[x])-1]
 
-        first_result = results_y[0]
-        last_result = results_y[len(results_y) - 1]
+        Date1_results.append(first_result)
+        Date2_results.append(last_result)
 
         change = round(last_result - first_result, 2)
         changes.append(change)
 
-        Date1_results.append(first_result)
-        Date2_results.append(last_result)
+        # Determine whether minimum is better or not for this test type
+        minBetterValue = False
+
+        for y in minBetter:
+            if y.tname == x:
+                minBetterValue = y.minbetter
+                minBetter_list.append(minBetterValue)
+                break
+
+        # make line graph for previous test type
+        #kpi_line.append(line_graph(raw_results_x[x], raw_results_y[x], change, minBetterValue))
+
 
         #end_time2 = time.time()
         #print(f"Graphs Elapsed: {end_time2 - start_time2: .5f}")
@@ -355,6 +355,7 @@ def kpiAjax(fname, lname, dob, date_one, date_two, rad, t_avg, g_avg, p_avg):
         else:
             P_AVG = None
 
+        
         if (rad == '1'):
             # Z-SCORE GRAPH'S IN RELATION TO TEAM AVERAGE (RADIO BUTTON 1)
             # find all the athletes on the same team and get their kpi reports
@@ -376,10 +377,10 @@ def kpiAjax(fname, lname, dob, date_one, date_two, rad, t_avg, g_avg, p_avg):
                 testType = result['testtype']
                 test_result = result['testresult']
                 if testType == x:
-                        indiv_tests.append(test_result)
-                        # if this test result belongs to the current athlete.. store the index val
-                        if (athFname == athlete.fname and athLname == athlete.lname and athDOB == athlete.dob):
-                            index_Tracker.append(indiv_tests.index(test_result))
+                    indiv_tests.append(test_result)
+                    # if this test result belongs to the current athlete.. store the index val
+                    if (athFname == athlete.fname and athLname == athlete.lname and athDOB == athlete.dob):
+                        index_Tracker.append(indiv_tests.index(test_result))
 
             # gets the z-scores for all the tests relating to this test type, date selection, and sports team 
             z_score_teamAVG_results = stats.zscore(indiv_tests, nan_policy='omit')
@@ -400,7 +401,7 @@ def kpiAjax(fname, lname, dob, date_one, date_two, rad, t_avg, g_avg, p_avg):
                 T_Scores_TeamAVG.append(calc)
 
             # Calls matplotlib t-score graph
-            z_score_bar.append(z_score_graph(results_x, T_Scores_TeamAVG))
+            z_score_bar.append(z_score_graph(raw_results_x[x], T_Scores_TeamAVG))
 
         elif (rad == '2'):
             # Z-SCORE GRAPH'S IN RELATION TO GENDER AVERAGE (RADIO BUTTON 2)
@@ -448,7 +449,7 @@ def kpiAjax(fname, lname, dob, date_one, date_two, rad, t_avg, g_avg, p_avg):
                 T_Scores_GenderAVG.append(calc)
 
             # Calls matplotlib t-score graph
-            z_score_bar.append(z_score_graph(results_x, T_Scores_GenderAVG))
+            z_score_bar.append(z_score_graph(raw_results_x[x], T_Scores_GenderAVG))
 
         elif (rad == '3'):
             # Z-SCORE GRAPH'S IN RELATION TO POSITION AVERAGE (RADIO BUTTON 3)
@@ -496,20 +497,15 @@ def kpiAjax(fname, lname, dob, date_one, date_two, rad, t_avg, g_avg, p_avg):
                 T_Scores_PositionAVG.append(calc)
 
             # Calls matplotlib t-score graph
-            z_score_bar.append(z_score_graph(results_x, T_Scores_PositionAVG))
+            z_score_bar.append(z_score_graph(raw_results_x[x], T_Scores_PositionAVG))
+        
             
         # Calls matplotlib bar graph with above data
-        kpi_line.append(line_graph(results_x, results_y, change, minBetterValue))
-        kpi_bar.append(bar_graph(results_x, results_y, T_AVG, G_AVG, P_AVG))
-
-    #end_time = time.time()
-    #print(f"Elapsed: {end_time - start_time: .2f}")
-
-        # Checking if the current test type's min is better ([0][0] is just indexing the first element of the list, true or false)
-        #minBetter = TestTypeT.objects.filter(tname=x).values_list() #.values_list('minbetter')[0][0]
-        #print(minBetter.minbetter)
-        # Append the current tests minBetter result to the list of minBetter results
-        #minBetter_list.append(minBetter.values_list("minbetter")[0][0])
+        kpi_line.append(line_graph(raw_results_x[x], raw_results_y[x], change, minBetterValue))
+        kpi_bar.append(bar_graph(raw_results_x[x], raw_results_y[x], T_AVG, G_AVG, P_AVG))
+        
+    end_time = time.time()
+    print(f"Elapsed: {end_time - start_time: .2f}")
 
     # Objects returned to frontend:
     # test_types = list of all test types for this athlete
@@ -519,15 +515,14 @@ def kpiAjax(fname, lname, dob, date_one, date_two, rad, t_avg, g_avg, p_avg):
     # kpi_bar and kpi_line: bar and line graphs respectively
     return JsonResponse(
         {
-            "test_types": list(test_type),
-            "Date1_results": list(Date1_results),
-            "Date2_results": list(Date2_results),
-            "changes": list(changes),
-            # List of true or false values for each test type
-            "minBetter": list(minBetter_list),
-            "kpi_bar": list(kpi_bar),
-            "kpi_line": list(kpi_line),
-            "z_score_bar": list(z_score_bar),
+            "test_types": test_types,
+            "Date1_results": Date1_results,
+            "Date2_results": Date2_results,
+            "changes": changes,
+            "minBetter": minBetter_list,
+            "kpi_bar": kpi_bar,
+            "kpi_line": kpi_line,
+            "z_score_bar": z_score_bar,
         }
     )
 
@@ -566,7 +561,7 @@ def AthleteProf(request, fname, lname, dob, id):
 
             # if we have data for "date1" and "date2", we have a kpi update request
             if data.get("date1") and data.get("date2" or data.get("AVG_Radio_BTN") or data.get("T_AVG_BTN") or data.get("G_AVG_BTN") or data.get("P_AVG_BTN")):
-                return kpiAjax(fname, lname, dob, data.get("date1"), data.get("date2"), data.get("AVG_Radio_BTN"), data.get("T_AVG_BTN"), data.get("G_AVG_BTN"), data.get("P_AVG_BTN"))
+                return kpiAjax(athleteProf, data.get("date1"), data.get("date2"), data.get("AVG_Radio_BTN"), data.get("T_AVG_BTN"), data.get("G_AVG_BTN"), data.get("P_AVG_BTN"))
 
             # if we have data for "wellnessdate", we have a wellness update request
             elif data.get("wellnessdate"):
