@@ -34,8 +34,25 @@
               <h1>Groups</h1>
             </div>
 
-            <div>
-              <h4>Populations</h4>
+          <div class="main-header d-flex justify-content-between">
+            <h1>Groups</h1>
+          </div>
+
+          <div style="margin-top: 20px;">
+            <h4>Populations</h4>
+            &nbsp;
+          </div>
+
+          <div class="btn-group-vertical" role="group" aria-label="Vertical radio toggle button group" style="width:100%;">
+            <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="vbtn-radio1" autocomplete="off" value="allAthletes">
+            <label class="btn btn-outline-theme" for="vbtn-radio1" style="display: flex; justify-content: space-between;">All Athletes<a href="/athletes"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
+            <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="vbtn-radio2" autocomplete="off" value="allMales">
+            <label class="btn btn-outline-theme" for="vbtn-radio2" style="display: flex; justify-content: space-between;">Males<a href="{% url 'MaleAthletes' %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
+            <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="vbtn-radio3" autocomplete="off" value="allFemales">
+            <label class="btn btn-outline-theme" for="vbtn-radio3" style="display: flex; justify-content: space-between;; border-radius: 0px 0px 5px 5px;">Females<a href="{% url 'FemaleAthletes' %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
+          
+            <div style="margin-top: 20px;">
+              <h4>Sports Teams</h4>
               &nbsp;
             </div>
 
