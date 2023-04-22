@@ -977,6 +977,33 @@ def recordKPI(request):
 
 
 @login_required(login_url="/")
+def addTestType(request):
+    # If parameter "request" is an XML request (AJAX)...
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        # ...AND it's also a POST request...
+        if request.method == "POST":
+            # Get the JSON data from the request
+            data = json.load(request)
+            tname = data.get('Tname')
+            minBetter = data.get('minBetter')
+
+            # If minBetter is true, set minBetter = 1
+            if minBetter:
+                minBetter = 1
+            # Otherwise set minBetter = 0
+            else:
+                minBetter = 0
+
+            # Make a data entry for the the new test 
+            TestTypeT.objects.create(
+                    tname=tname,
+                    minbetter=minBetter,
+                )
+
+            return JsonResponse({'success': True})
+
+
+@login_required(login_url="/")
 def WellnessDash(request):
     wellnessDates = WellnessT.objects.values("date").order_by("date").distinct()
     wellnessSportsTeams = TeamT.objects.values("sport").order_by("sport").distinct()
