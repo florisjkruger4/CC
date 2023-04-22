@@ -11,6 +11,18 @@
   <!-- SideNavbar -->
   {% include 'html/sidenav.html' %}
 
+  <div class="hide-template">
+    <div id="bar-template">
+      <h3 id="tname"></h3>
+      <img id="tgraph" style="width: 100%; height: auto;">
+    </div>
+
+    <div id="z-template">
+      <h3 id="zname"></h3>
+      <img id="zgraph" style="width: 100%; height: auto;">
+    </div>
+  </div>
+
   <main class="py-3 py-override">
     <div class="container" style="max-width: 1800px;">
       <div class="row">
@@ -27,69 +39,297 @@
             &nbsp;
           </div>
 
-          <table class="table table-dark table-striped table-hover table-customs">
-            <tr style="height: 50px; vertical-align:middle;">
-              <td>All Athletes</td>
-              <td style="text-align: right;"><a href="/athletes"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></td>
-            </tr>
-            <tr style="height: 50px; vertical-align:middle;">
-              <td>Males</td>
-              <td style="text-align: right;"><a href="{% url 'MaleAthletes' %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></td>
-            </tr>
-            <tr style="height: 50px; vertical-align:middle;">
-              <td>Females</td>
-              <td style="text-align: right;"><a href="{% url 'FemaleAthletes' %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></td>
-            </tr>
-          </table>
+          <div class="btn-group-vertical" role="group" aria-label="Vertical radio toggle button group" style="width:100%;">
+            <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="vbtn-radio1" autocomplete="off" value="allAthletes">
+            <label class="btn btn-outline-theme" for="vbtn-radio1" style="display: flex; justify-content: space-between;">All Athletes<a href="/athletes"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
+            <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="vbtn-radio2" autocomplete="off" value="allMales">
+            <label class="btn btn-outline-theme" for="vbtn-radio2" style="display: flex; justify-content: space-between;">Males<a href="{% url 'MaleAthletes' %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
+            <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="vbtn-radio3" autocomplete="off" value="allFemales">
+            <label class="btn btn-outline-theme" for="vbtn-radio3" style="display: flex; justify-content: space-between;; border-radius: 0px 0px 5px 5px;">Females<a href="{% url 'FemaleAthletes' %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
+          
+            <div style="margin-top: 20px;">
+              <h4>Sports Teams</h4>
+              &nbsp;
+            </div>
 
-          <div style="margin-top: 20px;">
-            <h4>Sports Teams</h4>
-            &nbsp;
+            {% for TeamT in teams %}
+            {% if forloop.counter == 1 %}
+            <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="{{ forloop.counter }}" autocomplete="off" value="{{ TeamT.sport }}">
+            <label class="btn btn-outline-theme" for="{{ forloop.counter }}" style="display: flex; justify-content: space-between; border-radius: 5px 5px 0px 0px;">{{ TeamT.sport }}<a href="{% url 'TeamSpecificAthletes' TeamT.sport %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
+            {% else %}
+            <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="{{ forloop.counter }}" autocomplete="off" value="{{ TeamT.sport }}">
+            <label class="btn btn-outline-theme" for="{{ forloop.counter }}" style="display: flex; justify-content: space-between;">{{ TeamT.sport }}<a href="{% url 'TeamSpecificAthletes' TeamT.sport %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
+            {% endif %}
+            {% endfor %}
           </div>
 
-          <table class="table table-dark table-striped table-hover table-customs">
-            {% for TeamT in teams %}
-            <tr style="height: 50px; vertical-align:middle;">
-              <td>{{ TeamT.sport }}</td>
-              <td style="text-align: right;"><a href="{% url 'TeamSpecificAthletes' TeamT.sport %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></td>
-            </tr>
-            {% endfor %}
-          </table>
         </div>
 
         <div class="col-lg-9 col-padding col-inner-padding-r">
 
-          <div class="main-header">
-            <form method="post" id="kpiform">
+          <div class="main-header" style="display: flex; justify-content: space-between;">
+            <form method="post" id="kpiform" style="opacity: 50%;">
               {% csrf_token %}
-              <select id="date1" name="date1">
+              <select id="date1" name="date1" disabled="true">
                 <option disabled hidden selected>Select Date</option>
                 {% for x in all_dates %}
                 <option>{{ x.datekpi }}</option>
                 {% endfor %}
               </select>
               to
-              <select id="date2" name="date2">
+              <select id="date2" name="date2" disabled="true">
                 <option disabled hidden selected>Select Date</option>
                 {% for x in all_dates %}
                 <option>{{ x.datekpi }}</option>
                 {% endfor %}
               </select>
-              <input type="submit" value="submit" class="submit">
             </form>
+            <i class="fa-solid fa-gear" id="settings" style="color: var(--acc-color-main); font-size: var(--icon-size); z-index: 2; float: right;"></i>
 
+            <div id="options-card" class="options-card overflow-scroll" style="display: none;">
+              <h4>Settings</h4>
+              <hr>
+              <ul id="test-list"></ul>
+            </div>
           </div>
 
-          <div style="height:85vh; background-color: var(--med-gray-2);" class="basicreport">
-            <div style="margin: auto; width: fit-content; height: 100%;">
-              <p style="margin-top: 37vh;">Select a Sports Team or a Population</p>
+          <div style="background-color: var(--med-gray-2); max-height: fit-content;" class="basicreport">
+            
+            <div id="bar-graphs">
+              <div class="btn-container">
+                  <div class="btn-group rt-toggle" role="group" aria-label="Basic radio toggle button group">
+                      <input type="radio" class="btn-check" name="btnradio" id="t-score-radio" autocomplete="off" value="Trad">
+                      <label class="btn btn-outline-primary" for="t-score-radio">T</label>
+                  
+                      <input type="radio" class="btn-check" name="btnradio" id="raw-score-radio" autocomplete="off" checked value="Rrad">
+                      <label class="btn btn-outline-primary" for="raw-score-radio">R</label>
+                  </div>
+              </div>
+              <div id="raw-score-graphs">
+                  <p id="no-data" style="margin-bottom: 0; align-self: center;">No data</p>
+              </div>
+              <div id="t-score-graphs">
+                  <p id="no-data" style="margin-bottom: 0; align-self: center;">No data</p>
+              </div>
             </div>
+
+            <div style="margin: auto; width: fit-content; height: 100%;" class="how-to-text-teams" id="how-to-teams">
+              <p style="margin-top: 37vh; margin-bottom: 40vh">Select a Sports Team or Population and a Date Range</p>
+            </div>
+
           </div>
         </div>
       </div>
     </div>
   </main>
 
+  <script>
+
+    // hide bar graph div
+    $("#bar-graphs").hide();
+
+    // selects all radio button options
+    let radioButtons = document.querySelectorAll('[type=radio]');
+
+    // gets the date selectors
+    let date1 = document.getElementById("date1");
+    let date2 = document.getElementById("date2");
+
+    // enables the date selectors when you select a radio button first
+    for (i of radioButtons) {
+      i.addEventListener('click', function(e) {
+        console.log("selected");
+        document.getElementById("kpiform").style.opacity = "100%";
+        date1.disabled = false;
+        date2.disabled = false;
+        if (date1.value != "Select Date" && date2.value != "Select Date"){
+          kpi_teams();
+        }
+      })
+    }
+
+    // checks when all 3 selection have been made (radio button, date1 and date2)
+    date1.onchange = function() {
+      if (date1.value != "Select Date" && date2.value != "Select Date"){
+        $("#settings").show();
+        $("#how-to-teams").hide();
+        $("#bar-graphs").show();
+        kpi_teams();
+      }
+    }
+    date2.onchange = function() {
+      if (date1.value != "Select Date" && date2.value != "Select Date"){
+        $("#settings").show();
+        $("#how-to-teams").hide();
+        $("#bar-graphs").show();
+        kpi_teams();
+      }
+    }
+
+    // hides/shows tests when their corresponding checkmark in the options tab is checked/unchecked
+    function hide_tests() {
+      document.querySelectorAll("[type=checkbox]").forEach(checkbox => {
+          checkbox.addEventListener("click", function (e) {
+
+              // get id of this checkbox
+              id = this.id;
+              console.log(id);
+              if (this.checked) {
+
+                  // concatenate respective ids of bar and trend graphs
+                  $("#bar_"+id).show();
+                  $("#z_"+id).show();
+              }
+              else {
+                  // concatenate respective ids of bar and trend graphs
+                  $("#bar_"+id).hide();
+                  $("#z_"+id).hide();
+              }
+              e.stopPropagation();
+          })
+      })
+  }
+
+    /* getCookie() function definition*/
+    // Definition for "getCookie" function, which will return a cookie from the document matching the parameter "name".
+    // This is a utility funciton utilized to send and AJAX request (see next code block)
+
+    // Cookie is initialized to null
+    // If there is are document cookies and they are NOT empty, the cookies in the document are fetched and placed in an array
+    // This array is searched for a cookie that matches parameter "name"
+    // If such a cookie is found, it is returned.
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            const cookies = document.cookie.split(";");
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    let is_loading_kpi = false;
+
+    function kpi_teams() {
+
+      if (!is_loading_kpi) {
+
+          $("#raw-score-graphs").empty()
+          $("#t-score-graphs").empty()
+          $("#test-list").empty()
+
+          $("#bar-graphs").append("<div id=\"loading-bar\" class=\"d-flex justify-content-center\"> <div class=\"lds-dual-ring\"></div></div>");
+
+          // Get radio button values for populations or teams
+          var Radio_BTN = $(".radiotest:checked").val();
+
+          // Get radio button values for r-score graph varients
+          var R_Radio_BTN = $("#raw-score-radio:checked").val();
+
+          // Get radio button values for t-score graph varients
+          var T_Radio_BTN = $("#t-score-radio:checked").val();
+
+          // AJAX function has been called! No other calls can be made until this one finishes
+          is_loading_kpi = true;
+
+          // get dates from selectors
+          var date_one = document.getElementById("date1")
+          var date_two = document.getElementById("date2")
+
+          $.ajax({
+              url: "{% url 'TeamDash' %}",
+              type: "POST",
+              dataType: "json",
+              data: JSON.stringify({ 
+                  date1: date_one.value, 
+                  date2: date_two.value, 
+                  radiotest: Radio_BTN,
+                  R_Radio_BTN: R_Radio_BTN,
+                  T_Radio_BTN: T_Radio_BTN,
+              }),
+              headers: {
+                  "X-Requested-With": "XMLHttpRequest",
+                  "X-CSRFToken": getCookie("csrftoken"),
+              },
+              success: (response) => {
+                  //shows info being passed from backend
+                  console.log(response);
+
+                  $("#loading-bar").remove()
+
+                  for (var key in response.all_testTypes) {
+                    let bar_template = document.getElementById("bar-template").cloneNode(true);
+                    let z_template = document.getElementById("z-template").cloneNode(true);
+
+                    // Construct URL for bar graph and add path to this node's img tag
+                    var bar_graphURL = "data:image/png;base64, " + response.kpi_bar[key];
+                    bar_template.querySelector("#tname").innerText = response.all_testTypes[key];
+                    bar_template.querySelector("#tgraph").setAttribute("src", bar_graphURL);
+
+                    // Construct URL for z-score graph and add path to this node's img tag
+                    var z_graphURL = "data:image/png;base64, " + response.z_score_bar[key];
+                    z_template.querySelector("#zname").innerText = response.all_testTypes[key];
+                    z_template.querySelector("#zgraph").setAttribute("src", z_graphURL);
+
+                    // Give graphs for each type an integer ID that will allow them to be maniuplated later
+                    bar_template.setAttribute("id", "bar_" + key);
+                    z_template.setAttribute("id", "z_" + key);
+
+                    $("#raw-score-graphs").append(bar_template);
+                    $("#t-score-graphs").append(z_template);
+
+                    var checkid = /*"check_" +*/ key;
+
+                    document.getElementById("test-list").innerHTML += "<li>" + response.all_testTypes[key] + "<input type=\"checkbox\" id=\"" + checkid + "\" checked=\"true\"></li>";
+
+                  }
+                hide_tests();
+                // AJAX call is done, so another one can go
+                is_loading_kpi = false;
+              },
+              error: (error) => {
+                  console.log("Error processing KPI request: " + error);
+
+                  // AJAX call is done, so another one can go
+                  is_loading_kpi = false;
+              }
+          })
+      }
+      else
+        alert("Dates changed too quickly! Please wait for this request to finish and try again.");
+    }
+
+    $(document).ready(function () {
+      $("#settings").hide();
+      $("#t-score-graphs").hide();
+      $("#raw-score-graphs").show();
+
+      $("#t-score-radio").click(function () {
+          $("#t-score-graphs").show();
+          $("#raw-score-graphs").hide();
+      });
+
+      $("#raw-score-radio").click(function () {
+          $("#raw-score-graphs").show();
+          $("#t-score-graphs").hide();
+      });
+
+      $("#settings").click(function () {
+          if ($('#options-card').is(':hidden')) {
+              $("#options-card").show();
+          } else {
+              $("#options-card").hide();
+          }
+      });
+    });
+
+  </script>
 </body>
 
 </html>

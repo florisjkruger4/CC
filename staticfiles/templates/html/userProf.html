@@ -51,7 +51,6 @@
                 <button class="submit" style="height: 45px; width: 30%; margin: auto; float: right;">Update
                   Changes</button>
               </div>
-
             </div>
           </form>
 
@@ -104,32 +103,33 @@
           </form>
         </div>
       </div>
-      <div class="col-md-4">
-        <div class="d-flex" style="gap: var(--inner-padding);">
-          <h4>Registered Users</h4>
-          <h4 id="userCount"></h4>
-        </div>
 
-        <div class="d-flex justify-content-between" style="margin-top: var(--inner-padding);">
-          <h6>Name</h6>
-          <h6>Username</h6>
-          <h6>Remove</h6>
-        </div>
-
-        <table class="table table-dark table-striped table-hover table-customs" id="usertable">
-          {% for x in allUsers %}
-          <tr style="height: 50px; vertical-align:middle;">
-            <td style="width: 37%;">{{ x.first_name }} {{ x.last_name }}</td>
-            <td>{{x.username}}</td>
-            <td style="text-align: right;">
-              <a onclick="return confirm('Are you sure?');" href="{% url 'DeleteUser' user.username x.id %}">
-                <button class="delkpibtn" style="background-color: #fc515100; font-size: var(--icon-size)" name="delete"
-                  value="delete"><i class="fa-solid fa-xmark"></i></button>
-              </a>
-            </td>
-          </tr>
-          {% endfor %}
-        </table>
+            <div class="col-md-3" style="padding-top: 10px; margin-left: 20px;">
+              <div style="display: flex;">
+                <h4 class="mainFont" style="padding-bottom: 10px; padding-right: 8%;">Registered Users</h4>
+                <h4 id="userCount"></h4>
+              </div>
+              
+              <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                <h6>Name</h6>
+                <h6>Username</h6>
+                <h6>Remove</h6>
+              </div>
+              <table class="table table-dark table-striped table-hover table-customs" id="usertable">
+                {% for x in allUsers %}
+                {% if forloop.counter != 1 %}
+                <tr style="height: 50px; vertical-align:middle;">
+                  <td style="width: 37%;">{{ x.first_name }} {{ x.last_name }}</td>
+                  <td>{{x.username}}</td>
+                  <td style="text-align: right;">
+                    <a onclick="return confirm('Are you sure?');" href="{% url 'DeleteUser' user.username x.id %}">
+                        <button class="delkpibtn" style="background-color: #fc515100; font-size: var(--icon-size)" name="delete" value="delete"><i class="fa-solid fa-x"></i></button>
+                    </a>
+                  </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+              </table>
 
       </div>
       {% else %}
@@ -143,9 +143,6 @@
     const fname_prof = "{{ user.first_name}}";
     const lname_prof = "{{ user.last_name}}";
 
-    var rowCount = document.getElementById('usertable').rows.length;
-    document.getElementById("userCount").innerHTML = "(" + rowCount + ")";
-
     // Formats first name with uppercase first letter
     form_fname = fname.charAt(0).toUpperCase() + fname.slice(1);
 
@@ -156,6 +153,9 @@
 
     // Injects initials and names into HTML
     document.getElementById("user-initials_profile").innerText = f_init_prof + l_init_prof;
+
+    var rowCount = document.getElementById('usertable').rows.length;
+    document.getElementById("userCount").innerHTML = "(" + rowCount + ")";
 
   </script>
 
