@@ -28,95 +28,89 @@
       <div class="row">
 
         <!-- Team_T -->
-        <div class="col-lg-3 col-padding col-inner-padding-l">
+        <div class="col-lg-3 col-padding col-inner-padding-l overflow-scroll">
+          <div class="col-scroll">
+            <div class="main-header d-flex justify-content-between">
+              <h1>Groups</h1>
+            </div>
 
-          <div class="main-header d-flex justify-content-between">
-            <h1>Teams</h1>
-          </div>
-
-          <div style="margin-top: 20px;">
-            <h4>Populations</h4>
-            &nbsp;
-          </div>
-
-          <div class="btn-group-vertical" role="group" aria-label="Vertical radio toggle button group" style="width:100%;">
-            <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="vbtn-radio1" autocomplete="off" value="allAthletes">
-            <label class="btn btn-outline-theme" for="vbtn-radio1" style="display: flex; justify-content: space-between;">All Athletes<a href="/athletes"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
-            <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="vbtn-radio2" autocomplete="off" value="allMales">
-            <label class="btn btn-outline-theme" for="vbtn-radio2" style="display: flex; justify-content: space-between;">Males<a href="{% url 'MaleAthletes' %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
-            <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="vbtn-radio3" autocomplete="off" value="allFemales">
-            <label class="btn btn-outline-theme" for="vbtn-radio3" style="display: flex; justify-content: space-between;; border-radius: 0px 0px 5px 5px;">Females<a href="{% url 'FemaleAthletes' %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
-          
-            <div style="margin-top: 20px;">
-              <h4>Sports Teams</h4>
+            <div>
+              <h4>Populations</h4>
               &nbsp;
             </div>
 
-            {% for TeamT in teams %}
-            {% if forloop.counter == 1 %}
-            <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="{{ forloop.counter }}" autocomplete="off" value="{{ TeamT.sport }}">
-            <label class="btn btn-outline-theme" for="{{ forloop.counter }}" style="display: flex; justify-content: space-between; border-radius: 5px 5px 0px 0px;">{{ TeamT.sport }}<a href="{% url 'TeamSpecificAthletes' TeamT.sport %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
-            {% else %}
-            <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="{{ forloop.counter }}" autocomplete="off" value="{{ TeamT.sport }}">
-            <label class="btn btn-outline-theme" for="{{ forloop.counter }}" style="display: flex; justify-content: space-between;">{{ TeamT.sport }}<a href="{% url 'TeamSpecificAthletes' TeamT.sport %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
-            {% endif %}
-            {% endfor %}
+            <div class="btn-group-vertical" role="group" aria-label="Vertical radio toggle button group" style="width:100%;">
+              <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="vbtn-radio1" autocomplete="off" value="allAthletes">
+              <label class="btn btn-outline-theme" for="vbtn-radio1" style="display: flex; justify-content: space-between;">All Athletes<a href="/athletes"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
+              <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="vbtn-radio2" autocomplete="off" value="allMales">
+              <label class="btn btn-outline-theme" for="vbtn-radio2" style="display: flex; justify-content: space-between;">Males<a href="{% url 'MaleAthletes' %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
+              <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="vbtn-radio3" autocomplete="off" value="allFemales">
+              <label class="btn btn-outline-theme" for="vbtn-radio3" style="display: flex; justify-content: space-between;; border-radius: 0px 0px 5px 5px;">Females<a href="{% url 'FemaleAthletes' %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
+            
+              <div style="margin-top: 20px;">
+                <h4>Sports Teams</h4>
+                &nbsp;
+              </div>
+
+              {% for TeamT in teams %}
+              {% if forloop.counter == 1 %}
+              <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="{{ forloop.counter }}" autocomplete="off" value="{{ TeamT.sport }}">
+              <label class="btn btn-outline-theme" for="{{ forloop.counter }}" style="display: flex; justify-content: space-between; border-radius: 5px 5px 0px 0px;">{{ TeamT.sport }}<a href="{% url 'TeamSpecificAthletes' TeamT.sport %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size-sm); margin-right: 5px;"></i></a></label>
+              {% else %}
+              <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="{{ forloop.counter }}" autocomplete="off" value="{{ TeamT.sport }}">
+              <label class="btn btn-outline-theme" for="{{ forloop.counter }}" style="display: flex; justify-content: space-between;">{{ TeamT.sport }}<a href="{% url 'TeamSpecificAthletes' TeamT.sport %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
+              {% endif %}
+              {% endfor %}
+            </div>
           </div>
 
         </div>
 
-        <div class="col-lg-9 col-padding col-inner-padding-r">
-
-          <div class="main-header" style="display: flex; justify-content: space-between;">
-            <form method="post" id="kpiform" style="opacity: 50%;">
+        <div class="col-lg-9 col-padding col-inner-padding-r overflow-scroll">
+          <div class="col-scroll">
+            <div class="main-header justify-content-between">
               {% csrf_token %}
-              <select id="date1" name="date1" disabled="true">
-                <option disabled hidden selected>Select Date</option>
-                {% for x in all_dates %}
-                <option>{{ x.datekpi }}</option>
-                {% endfor %}
-              </select>
-              to
-              <select id="date2" name="date2" disabled="true">
-                <option disabled hidden selected>Select Date</option>
-                {% for x in all_dates %}
-                <option>{{ x.datekpi }}</option>
-                {% endfor %}
-              </select>
-            </form>
-            <i class="fa-solid fa-gear" id="settings" style="color: var(--acc-color-main); font-size: var(--icon-size); z-index: 2; float: right;"></i>
 
-            <div id="options-card" class="options-card overflow-scroll" style="display: none;">
-              <h4>Settings</h4>
-              <hr>
-              <ul id="test-list"></ul>
-            </div>
-          </div>
+              <div class="d-flex align-items-center" style="gap: var(--inner-padding);">
+                <input type="date" id="date1" name="date1" disabled="true" class="form-control input-box">
+                <p>to</p>
+                <input type="date" id="date2" name="date2" disabled="true" class="form-control input-box">
+              </div>
 
-          <div style="background-color: var(--med-gray-2); max-height: fit-content;" class="basicreport">
-            
-            <div id="bar-graphs">
-              <div class="btn-container">
-                  <div class="btn-group rt-toggle" role="group" aria-label="Basic radio toggle button group">
-                      <input type="radio" class="btn-check" name="btnradio" id="t-score-radio" autocomplete="off" value="Trad">
-                      <label class="btn btn-outline-primary" for="t-score-radio">T</label>
-                  
-                      <input type="radio" class="btn-check" name="btnradio" id="raw-score-radio" autocomplete="off" checked value="Rrad">
-                      <label class="btn btn-outline-primary" for="raw-score-radio">R</label>
-                  </div>
-              </div>
-              <div id="raw-score-graphs">
-                  <p id="no-data" style="margin-bottom: 0; align-self: center;">No data</p>
-              </div>
-              <div id="t-score-graphs">
-                  <p id="no-data" style="margin-bottom: 0; align-self: center;">No data</p>
+              <i class="fa-solid fa-gear" id="settings" style="color: var(--acc-color-main); font-size: var(--icon-size); z-index: 2; float: right;"></i>
+
+              <div id="options-card" class="options-card overflow-scroll" style="display: none;">
+                <h4>Settings</h4>
+                <hr>
+                <ul id="test-list"></ul>
               </div>
             </div>
 
-            <div style="margin: auto; width: fit-content; height: 100%;" class="how-to-text-teams" id="how-to-teams">
-              <p style="margin-top: 37vh; margin-bottom: 40vh">Select a Sports Team or Population and a Date Range</p>
-            </div>
+            <div style="background-color: var(--med-gray-2); max-height: fit-content;" class="basicreport">
+              
+              <div id="bar-graphs">
+                <div class="btn-container">
+                    <div class="btn-group rt-toggle" role="group" aria-label="Basic radio toggle button group">
+                        <input type="radio" class="btn-check" name="btnradio" id="t-score-radio" autocomplete="off" value="Trad">
+                        <label class="btn btn-outline-primary" for="t-score-radio">T</label>
+                    
+                        <input type="radio" class="btn-check" name="btnradio" id="raw-score-radio" autocomplete="off" checked value="Rrad">
+                        <label class="btn btn-outline-primary" for="raw-score-radio">R</label>
+                    </div>
+                </div>
+                <div id="raw-score-graphs">
+                    <p id="no-data" style="margin-bottom: 0; align-self: center;">No data</p>
+                </div>
+                <div id="t-score-graphs">
+                    <p id="no-data" style="margin-bottom: 0; align-self: center;">No data</p>
+                </div>
+              </div>
 
+              <div style="margin: auto; width: fit-content; height: 100%;" class="how-to-text-teams" id="how-to-teams">
+                <p style="margin-top: 37vh; margin-bottom: 40vh">Select a Group and a Date Range</p>
+              </div>
+
+            </div>
           </div>
         </div>
       </div>
@@ -139,10 +133,10 @@
     for (i of radioButtons) {
       i.addEventListener('click', function(e) {
         console.log("selected");
-        document.getElementById("kpiform").style.opacity = "100%";
+        //document.getElementById("kpiform").style.opacity = "100%";
         date1.disabled = false;
         date2.disabled = false;
-        if (date1.value != "Select Date" && date2.value != "Select Date"){
+        if (date1.value && date2.value){
           kpi_teams();
         }
       })
@@ -150,7 +144,7 @@
 
     // checks when all 3 selection have been made (radio button, date1 and date2)
     date1.onchange = function() {
-      if (date1.value != "Select Date" && date2.value != "Select Date"){
+      if (date1.value && date2.value){
         $("#settings").show();
         $("#how-to-teams").hide();
         $("#bar-graphs").show();
@@ -158,7 +152,7 @@
       }
     }
     date2.onchange = function() {
-      if (date1.value != "Select Date" && date2.value != "Select Date"){
+      if (date1.value && date2.value){
         $("#settings").show();
         $("#how-to-teams").hide();
         $("#bar-graphs").show();
@@ -243,7 +237,7 @@
           var date_two = document.getElementById("date2")
 
           $.ajax({
-              url: "{% url 'TeamDash' %}",
+              url: "{% url 'GroupDash' %}",
               type: "POST",
               dataType: "json",
               data: JSON.stringify({ 

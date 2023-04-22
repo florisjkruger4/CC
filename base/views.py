@@ -1118,7 +1118,7 @@ def teamsAjax(date1, date2, selection, Rrad, Trad):
         })
 
 @login_required(login_url="/")
-def TeamDash(request):
+def GroupDash(request):
     athletes = TeamT.objects.all()
 
     # Access and store all dates
@@ -1143,7 +1143,7 @@ def TeamDash(request):
         "all_dates": all_dates,
         }
 
-    return render(request, "html/teams.html", context)
+    return render(request, "html/groups.html", context)
 
 
 @login_required(login_url="/")

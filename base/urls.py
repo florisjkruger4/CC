@@ -20,7 +20,7 @@ urlpatterns = [
     path('<str:fname>/<str:lname>/<path:dob>/<int:id>', views.AthleteProf, name="AthleteProf"),
     path('/editAthlete/<str:fname>/<str:lname>/<path:dob>/<int:id>', views.EditAthlete, name="EditAthlete"),
     
-    path('teams/', views.TeamDash, name="TeamDash"),
+    path('groups/', views.GroupDash, name="GroupDash"),
     path('recordKPI/', views.recordKPI, name="recordKPI"),
     path('addTestType/', views.addTestType, name="addTestType"),
     path('wellnessForm/', views.wellnessForm, name="wellnessForm"),
