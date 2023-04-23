@@ -2,6 +2,7 @@ asgiref==3.6.0
 contourpy==1.0.7
 cycler==0.11.0
 Django==4.1.7
+django-cors-headers==3.14.0
 django-widget-tweaks==1.4.12
 fonttools==4.38.0
 gunicorn==20.1.0
