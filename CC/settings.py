@@ -28,7 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['cc-production-832e.up.railway.app', '127.0.0.1']
 
-CSRF_TRUSTED_ORIGINS = ['https://cc-production-832e.up.railway.app/','https://127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['https://cc-production-832e.up.railway.app','https://127.0.0.1']
 
 # Application definition
 
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 
     'base.apps.BaseConfig',
     'widget_tweaks',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -52,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'CC.urls'
