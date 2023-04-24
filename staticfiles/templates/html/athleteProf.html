@@ -333,6 +333,8 @@
                                 $("#kpi-tab").click(function () {
                                     $("#kpireport").show();
                                     $("#wellnessreport").hide();
+                                    $("#spider-date-div").hide();
+                                    $("#kpi-dates-div").show();
                                     document.getElementById("kpi-tab").style.backgroundColor = "var(--color-secondary)";
                                     document.getElementById("wellness-tab").style.backgroundColor = "var(--color-bg)";
                                 });
@@ -342,7 +344,8 @@
                                 $("#spider-tab").click(function () {
                                     $("#bar-graphs").hide();
                                     $("#spider-graphs").show();
-
+                                    $("#spider-date-div").show();
+                                    $("#kpi-dates-div").hide();
                                     document.getElementById("spider-tab").style.backgroundColor = "var(--color-secondary)";
                                     document.getElementById("bar-tab").style.backgroundColor = "var(--color-bg)";
 
@@ -355,6 +358,8 @@
                                 $("#bar-tab").click(function () {
                                     $("#spider-graphs").hide();
                                     $("#bar-graphs").show();
+                                    $("#spider-date-div").hide();
+                                    $("#kpi-dates-div").show();
                                     document.getElementById("bar-tab").style.backgroundColor = "var(--color-secondary)";
                                     document.getElementById("spider-tab").style.backgroundColor = "var(--color-bg)";
 
@@ -546,7 +551,7 @@
                                     var layout = {
                                         // Set the graph size, title text, font color, and size
                                         width: '100%',
-                                        height: 500,
+                                        height: 620,
                                         title: {
                                         text: 'Results for ' + date,
                                         font: {
@@ -558,11 +563,11 @@
                                         y: 0.95
                                         },
                                         // Set the background color of the plot
-                                        paper_bgcolor: '#181a1f',
+                                        paper_bgcolor: '#1d1f26',
                                         // Update the styling of the radial axis
                                         polar: {
                                             // Set the background color of the circular chart
-                                            bgcolor: '#181a1f',
+                                            bgcolor: '#1d1f26',
                                             radialaxis: {
                                                 // Set the font color of the radial axis labels
                                                 tickfont: {
