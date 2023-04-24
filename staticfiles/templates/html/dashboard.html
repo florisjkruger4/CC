@@ -1,97 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <!-- Header -->
   {% include 'html/header.html' %}
 </head>
 
 <body>
-    
-    <!-- SideNavbar -->
-    {% include 'html/sidenav.html' %}
-    <main class="py-3 py-override">
+
+  <!-- SideNavbar -->
+  {% include 'html/sidenav.html' %}
+  <main class="py-3 py-override">
+    <div class="container" style="max-width: 1800px;">
       <div class="row">
-          <div class="col-md-4">
-            <div style="display: flex;">
-              <h2 style="padding-bottom: 10px; padding-right: 4%;">Recently Viewed</h2>
-            </div>
-            <div class="basicreport" style="display: flex; flex-direction: column; justify-content: space-evenly;">
+        <div class="col-lg-4 overflow-scroll col-padding col-inner-padding-l">
 
-              {% if sessionLength > 0 %}
-
-              {% for x in recentlyViewedAthletes %}
-              <div style="display: flex;">
-                {% if x.image == '' %}
-                <img style="width: 100px; height: 100px; border-radius: 7px;" src="/media/placeholder.jpg"></img>
-                {% elif x.image %}
-                <img style="width: 100px; height: 100px; border-radius: 7px;" src="/media/{{ x.image }}"></img>
-                {% endif %}
-                &nbsp;
-                &nbsp;
-                <div>
-                  <a href="{% url 'AthleteProf' x.fname x.lname x.dob x.id %}"><p class="recentViewedLink">{{x.fname}} {{x.lname}}</p></a>
-                  <p style="font-size: x-small;">{{x.sportsteam}}</p>
-                  <p style="font-size: x-small;">{{x.position}}</p>
-                  <p style="font-size: x-small;">{{x.year}}</p>
-                </div>
-              </div>
-              &nbsp;
-              {% endfor %}
-
-              {% else %}
-
-              <p>No Data in Session</p>
-
-              {% endif %}
-
-            </div>
+          <div class="main-header">
+            <h2>Recently Viewed</h2>
           </div>
-          <div class="col-md-5" style="padding-top: 20px; margin-left: 20px;">
-            <div style="display: flex;">
-              <h2 class="mainFont" style="padding-bottom: 10px; padding-right: 8%;">Recently Added KPIs</h2>
+
+          <div class="basicreport" style="display: flex; flex-direction: column; justify-content: space-evenly;">
+
+            {% if sessionLength > 0 %}
+
+            {% for x in recentlyViewedAthletes %}
+            <div class="d-flex">
+              {% if x.image == '' %}
+              <img style="width: 100px; height: 100px; border-radius: 7px;" src="/media/placeholder.jpg"></img>
+              {% elif x.image %}
+              <img style="width: 100px; height: 100px; border-radius: 7px;" src="/media/{{ x.image }}"></img>
+              {% endif %}
+              &nbsp;
+              &nbsp;
+              <div>
+                <a href="{% url 'AthleteProf' x.fname x.lname x.dob x.id %}">
+                  <p class="recentViewedLink">{{x.fname}} {{x.lname}}</p>
+                </a>
+                <p style="font-size: x-small;">{{x.sportsteam}}</p>
+                <p style="font-size: x-small;">{{x.position}}</p>
+                <p style="font-size: x-small;">{{x.year}}</p>
+              </div>
             </div>
-            <div class="basicreport" style="display: flex; flex-direction: column; justify-content: space-evenly;">
-              {% for x in addedKPIs %}
-                <div style="display: flex; justify-content: space-between;">
-                  <p>{{ x.fname }} {{ x.lname }}</p>
-                  <div>
-                    <a href="{% url 'EditKPI' x.id %}">
-                      <i class="fa-solid fa-pen" style="color: var(--yellow-accent); font-size: var(--icon-size);"></i>
-                    </a>
-                    &nbsp;
-                    <a onclick="return confirm('Are you sure?');" href="{% url 'DeleteKPI_Dash' x.id %}">
-                      <button class="delkpibtn" style="background-color: #fc515100; font-size: var(--icon-size)" name="delete" value="delete"><i class="fa-solid fa-x"></i></button>
-                  </a>
-                  </div>
-                </div>
-                <div style="display: flex; justify-content: space-between;">
-                  <p>{{x.testresult}}</p>
-                  <p>{{ x.testtype }}</p>
-                  <p style="opacity: 50%; font-style: italic;"">{{x.datekpi}}</p>
+            &nbsp;
+            {% endfor %}
+
+            {% else %}
+
+            <p>No Data in Session</p>
+
+            {% endif %}
+
+          </div>
+        </div>
+
+        <div class="col-lg-5 overflow-scroll col-padding col-inner-padding-r">
+
+          <div class="main-header">
+            <h2>Recent KPIs </h2>
+          </div>
+
+          <div class="basicreport d-flex flex-column justify-content">
+            {% for x in addedKPIs %}
+            <div class="d-flex justify-content-between">
+              <p>{{ x.fname }} {{ x.lname }}</p>
+              <div>
+                <a href="{% url 'EditKPI' x.id %}">
+                  <button class="pen" style="background-color: #fc515100; font-size: var(--icon-size)">
+                    <i class="fa-solid fa-pen" style="color: var(--yellow-accent); font-size: 20px;"></i>
+                  </button>
+                </a>
+                &nbsp;
+                <a onclick="return confirm('Are you sure?');" href="{% url 'DeleteKPI_Dash' x.id %}">
+                  <button class="delkpibtn" style="background-color: #fc515100; font-size: var(--icon-size)"
+                    name="delete" value="delete"><i class="fa-solid fa-xmark"></i></button>
+                </a>
+              </div>
+            </div>
+            <div class="d-flex justify-content-between">
+              <p>{{x.testresult}}</p>
+              <p>{{ x.testtype }}</p>
+              <p style="opacity: 50%; font-style: italic;"">{{x.datekpi}}</p>
                 </div>
                 {% if forloop.counter != 8 %}
                 <hr>
                 {% endif %}
               {% endfor %}
             </div>
+
           </div>
-          <div class="col-md-2" style="padding-top: 20px; margin-left: 20px;">
-            <div style="display: flex;">
-              <h2 class="mainFont" style="padding-bottom: 10px; padding-right: 8%;">Quick Actions</h2>
+          <div class="col-lg-3 col-padding col-inner-padding-r">
+
+            <div class="main-header">
+              <h2>Quick Actions</h2>
             </div>
+
             <a href="/recordKPI">
-              <button class="spanning-button" style="margin-top: 20px;">New KPI</button>
+              <button class="spanning-button" style="margin-top: 0;">New KPI</button>
             </a>
-            
+
             <a href="/addathlete">
               <button class="spanning-button" style="margin-top: 20px;">New Athlete</button>
             </a>
-            
-            <a href="/commingSoon">  
-              <button class="spanning-button" style="margin-top: 20px;">New Test</button>
+
+            <a href="/wellnessForm">
+              <button class="spanning-button" style="margin-top: 20px;">Wellness Form</button>
             </a>
+
           </div>
-       </div> 
-    </main>
+        </div>
+      </div>
+  </main>
 </body>
+
 </html>

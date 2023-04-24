@@ -32,7 +32,7 @@ nav {
 
 /* Override default nav-pill color to our accent color */
 .nav-pills {
-  --bs-nav-link-hover-color: var(--acc-color-main) !important;
+  --bs-nav-link-hover-color: var(--acc-color-2) !important;
 }
 
 /* Separate from the user nav header */

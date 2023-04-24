@@ -11,101 +11,95 @@
     <!-- SideNavbar -->
     {% include 'html/sidenav.html' %}
 
-    <main class="py-3">
+    <main class="py-3 py-override">
 
         <div class="main-header" style="gap: 25px;">
-            <a href="{% url 'AthleteProf' athleteProf.fname athleteProf.lname athleteProf.dob athleteProf.id %}"><i class="fa-solid fa-circle-arrow-left"></i></a>
+            <a href="{% url 'AthleteProf' athleteProf.fname athleteProf.lname athleteProf.dob athleteProf.id %}"><i
+                    class="fa-solid fa-circle-arrow-left"></i></a>
             <h1>Add/Edit KPI Data: {{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
         </div>
-        <div class="row" style="margin-left: 30px;">
-            <div class="col-md-7">
+        <div class="row">
+            <div class="col-md-12">
                 <form method="post" id="addkpiform">
                     {% csrf_token %}
                     &nbsp;
                     <h4>New Report</h4>
                     &nbsp;
                     <div class="basicreport">
-                        <div style="display: flex; justify-content: space-between;">
+                        <div class="d-flex" style="gap: var(--inner-padding);">
                             <div style="width: 30%;">
                                 <h6>Test Type</h6>
+                                <select id="testtype" name="testtype">
+                                    <option disabled hidden selected>Select Test Type</option>
+                                    {% for x in test_types %}
+                                    <option>{{ x }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                             <div style="width: 20%;">
                                 <h6>Result</h6>
+                                <input type="text" name="testresult" id="testresult" class="form-control">
+
                             </div>
                             <div style="width: 30%;">
                                 <h6>Date Recorded</h6>
+                                <input type="date" name="datekpi" id="datekpi" class="form-control">
+
                             </div>
-                            <div style="width: 10%"></div>
+                            <button class="spanning-button"
+                                style="width: 10%; margin-top: auto; margin-bottom: inherit; margin-left: auto; margin-right: inherit;" type="submit"
+                                value="Submit">Add</button>
                         </div>
-                        <div style="display: flex; justify-content: space-between; padding-top: 5px;">
-                            <select id="testtype" name="testtype" style="width: 30%; background-color: white; color: black;">
-                                <option disabled hidden selected></option>
-                                {% for x in test_types %}
-                                <option>{{ x }}</option>
-                                {% endfor %}   
-                            </select>
-            
-                            <input type="text" name="testresult" id="testresult" style="width: 20%; color: black; border-radius: 10px;">
-                            <input type="date" name="datekpi" id="datekpi" style="background-color: white; color-scheme: dark; border-radius: 10px; width: 30%; color: black;">
-                            <button class="spanning-button" style="width: 10%;" type="submit" value="Submit">Add</button>
-                        </div>
-        
+
                         <script>
-                            const date = new Date();
-        
-                            let day = date.getDate();
-                            let month = date.getMonth() + 1;
-                            let year = date.getFullYear();
-        
-                            if (month < 10)
-                                month = "0" + month;
-        
-                            if (day < 10)
-                                month = "0" + month;
-        
-                            let currentDate = `${year}-${month}-${day}`;
-        
-                            console.log(document.getElementById("date-selector").value);
-        
-                            document.getElementById("date-selector").value = currentDate;
+                            /* This block of code sets the default date in the selector to today's date */
+                            // Get today's date as a string in the format "yyyy-mm-dd"
+                            var today = new Date().toISOString().substr(0, 10);
+
+                            // Set the value of the date input to today's date
+                            document.getElementById("datekpi").value = today;
+
+                            /* End of date block */
                         </script>
                     </div>
                 </form>
-            </div>
-        </div>
-        <div class="row" style="margin-left: 30px; margin-right: 30px;">
-            <div class="col-md-12">
-                &nbsp;
-                <h4>Previous Reports</h4>
-                &nbsp;
-                <div style="display: flex; justify-content: space-between;">
-                    <h6>Name</h6>
-                    <h6>Test Type</h6>
-                    <h6>Result</h6>
-                    <div style="display: flex; justify-content: space-between; width: 25%;">
-                        <h6>Date</h6>
-                        <h6>Edit/Delete</h6>
+
+                <div>
+                    &nbsp;
+                    <h4>Previous Reports</h4>
+                    &nbsp;
+                    <div class="d-flex justify-content-between">
+                        <h6>Name</h6>
+                        <h6>Test Type</h6>
+                        <h6>Result</h6>
+                        <div style="display: flex; justify-content: space-between; width: 25%;">
+                            <h6>Date</h6>
+                            <h6>Edit/Delete</h6>
+                        </div>
                     </div>
+                    <table class="table table-dark table-striped table-hover table-customs">
+                        {% for x in athlete_KPI_Reports %}
+                        <tr style="height: 50px; vertical-align:middle;">
+                            <td style="width: 24%;">{{ x.fname }} {{ x.lname }}</td>
+                            <td style="width: 26%;">{{ x.testtype }}</td>
+                            <td style="width: 24%;">{{ x.testresult }}</td>
+                            <td>{{ x.datekpi }}</td>
+                            <td style="text-align: right;">
+                                <a href="{% url 'EditKPI' x.id %}">
+                                    <i class="fa-solid fa-pen"
+                                        style="color: var(--yellow-accent); font-size: 20px;"></i>
+                                </a>
+                                &nbsp;
+                                <a onclick="return confirm('Are you sure?');" href="{% url 'DeleteKPI' x.id %}">
+                                    <button class="delkpibtn"
+                                        style="background-color: #fc515100; font-size: var(--icon-size)" name="delete"
+                                        value="delete"><i class="fa-solid fa-xmark"></i></button>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
                 </div>
-                <table class="table table-dark table-striped table-hover table-customs">
-                    {% for x in athlete_KPI_Reports %}
-                    <tr style="height: 50px; vertical-align:middle;">
-                      <td style="width: 24%;">{{ x.fname }} {{ x.lname }}</td>
-                      <td style="width: 26%;">{{ x.testtype }}</td>
-                      <td style="width: 24%;">{{ x.testresult }}</td>
-                      <td>{{ x.datekpi }}</td>
-                      <td style="text-align: right;">
-                        <a href="{% url 'EditKPI' x.id %}">
-                            <i class="fa-solid fa-pen" style="color: var(--yellow-accent); font-size: var(--icon-size);"></i>
-                        </a>
-                        &nbsp;
-                        <a onclick="return confirm('Are you sure?');" href="{% url 'DeleteKPI' x.id %}">
-                            <button class="delkpibtn" style="background-color: #fc515100; font-size: var(--icon-size)" name="delete" value="delete"><i class="fa-solid fa-x"></i></button>
-                        </a>
-                      </td>
-                    </tr>
-                    {% endfor %}
-                </table>
             </div>
         </div>
     </main>

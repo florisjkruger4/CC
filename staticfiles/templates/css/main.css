@@ -15,10 +15,10 @@
 :root {
 
   /* Color variables */
-  --color-primary: #252932;
-  --color-secondary: #181a20;
-  --color-tertiary: #14151a;
-  --color-bg: #0d0f11;
+  --color-primary: hsl(223, 15%, 17%);
+  --color-secondary: hsl(223, 15%, 13%);
+  --color-tertiary: hsl(223, 15%, 9%);
+  --color-bg: hsl(223, 12%, 6%);
   --color-separator: #404245;
 
   /* Light Theme */
@@ -30,7 +30,7 @@
   /* Dark Theme */
   --dark-bg: hsl(223, 12%, 6%);
   --med-gray-1: hsl(223, 15%, 17%);
-  --med-gray-2:hsl(223, 15%, 11%);
+  --med-gray-2:hsl(223, 15%, 13%);
   --med-gray-3: hsl(223, 15%, 9%);
 
   /* Text Colors */
@@ -50,6 +50,7 @@
   --radius-big: 10px;
   --radius-small: 5px;
   --icon-size: 25px;
+  --icon-size-sm: 20px;
 }
 
 /* 2. Responsiveness
@@ -82,6 +83,7 @@ body {
   font-family: 'Titillium Web', sans-serif;
   background-color: var(--color-bg);
   color: var(--white-text);
+  scrollbar-width: none;
 }
 
 /* For titles on all pages */
@@ -147,7 +149,8 @@ select {
 .table-customs {
   --bs-table-bg: var(--color-primary) !important;
   --bs-table-striped-bg: var(--color-secondary) !important;
-  --bs-table-hover-bg: var(--acc-color-main) !important;
+  --bs-table-hover-bg: var(--acc-color-2) !important;
+  --bs-table-border-color: var(--color-secondary) !important;
 }
 
 .table-customs th {
@@ -282,15 +285,25 @@ select {
 
 .delkpibtn {
   transition: transform 0.3s;
-  border-radius: var(--radius-small);
   border: none;
   align-self: center;
-  border: 1px solid var(--acc-color-neg);
   color: var(--white-text)
 }
 
 .delkpibtn:hover {
   color: var(--acc-color-neg);
+  transform: (1.2);
+}
+
+.pen {
+  transition: transform 0.3s;
+  border: none;
+  align-self: center;
+  color: var(--white-text)
+}
+
+.pen:hover {
+  color: var( --acc-color-main);
   transform: (1.2);
 }
 
@@ -358,6 +371,36 @@ select {
 }
 
 .recentViewedLink:hover{
-  color: #99C7FF;
+  color: var(--acc-color-main);
   transform: (1.2);
 }
+
+.fa-gear{
+  cursor: pointer;
+}
+
+.btn-outline-theme {
+  --bs-btn-color: hsl(0, 0%, 100%);
+  --bs-btn-border-color: hsl(46, 34%, 60%);
+  --bs-btn-hover-color: #000000;
+  --bs-btn-hover-bg: hsl(46, 34%, 60%);
+  --bs-btn-hover-border-color: hsl(46, 34%, 60%);
+ /* --bs-btn-focus-shadow-rgb: 13, 15, 17; */
+  --bs-btn-active-color: #000000; 
+  --bs-btn-active-bg: hsl(46, 34%, 60%);
+  --bs-btn-active-border-color: hsl(46, 34%, 60%);
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(56, 53, 53, 0.83);
+  --bs-btn-disabled-color: hsl(46, 34%, 60%);
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: hsl(46, 34%, 60%);
+  --bs-gradient: none;
+}
+
+.btn-outline-theme:hover i{
+  color: #000000;
+}
+
+.radiotest[type="radio"]:checked+label i{
+  color: #000000;
+}
+

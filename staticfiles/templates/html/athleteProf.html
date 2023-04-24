@@ -18,7 +18,8 @@
             <h3 id="tname"></h3>
             <img id="tgraph" style="width: 100%; height: auto;">
         </div>
-        <div id=trend-template>
+
+        <div id="trend-template">
             <div class="d-flex justify-content-between align-items-center kpi-img">
                 <div id="kpi-name" style="width: 25%;">
                     <p></p>
@@ -35,6 +36,11 @@
             </div>
             <hr>
         </div>
+
+        <div id="z-template">
+            <h3 id="zname"></h3>
+            <img id="zgraph" style="width: 100%; height: auto;">
+        </div>
     </div>
 
     <main class="py-3 py-override">
@@ -44,11 +50,9 @@
                     <div class="col-scroll">
 
                         <!-- Athlete Info/Header -->
-                        <div class="main-header justify-content-between">
+                        <div class="main-header justify-content-between" style="position: sticky; top:0; z-index: 2;">
                             <div class="d-flex align-items-center" style="gap: 15px;">
-                                <h1
-                                    style="position: fixed; background-color: var(--color-bg); border-radius: 0px 5px 5px 0px; padding: 5px;">
-                                    {{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
+                                <h1>{{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
                             </div>
                             <div class="justify-content-between">
                                 <label for="id_image">
@@ -107,35 +111,6 @@
                             <button id="wellness-tab" class="report-tab">Wellness</button>
                         </div>
 
-                        <script>
-                            //jQuery for kpi and wellness "tabs", allowing only one or the other to be shown
-                            //at a given time
-                            $(document).ready(function () {
-
-                                //initially hide wellness report and show only kpi trends
-                                $("#wellnessreport").hide();
-                                document.getElementById("wellness-tab").style.backgroundColor = "var(--color-tertiary)";
-
-                                //upon click of wellness tab, show wellnessreport div & hide kpireport div
-                                //swap color of tab
-                                $("#wellness-tab").click(function () {
-                                    $("#kpireport").hide();
-                                    $("#wellnessreport").show();
-                                    document.getElementById("wellness-tab").style.backgroundColor = "var(--color-secondary)";
-                                    document.getElementById("kpi-tab").style.backgroundColor = "var(--color-tertiary)";
-                                });
-
-                                //upon click of kpi tab, show kpireport div & hide wellnessreport div
-                                //swap color of tab
-                                $("#kpi-tab").click(function () {
-                                    $("#kpireport").show();
-                                    $("#wellnessreport").hide();
-                                    document.getElementById("kpi-tab").style.backgroundColor = "var(--color-secondary)";
-                                    document.getElementById("wellness-tab").style.backgroundColor = "var(--color-tertiary)";
-                                });
-                            });
-                        </script>
-
                         <!-- KPI Trends -->
                         <div id="kpireport" class="report tab-corner bottom-margin">
 
@@ -156,8 +131,7 @@
                             </div>
 
                             <a href="{% url 'AddKPI' athleteProf.fname athleteProf.lname athleteProf.dob %}">
-                                <button class="spanning-button" style="margin-top: var(--inner-padding);">Add
-                                    KPI</button>
+                                <button class="spanning-button" style="margin-top: var(--inner-padding);">KPI History</button>
                             </a>
 
                         </div>
@@ -282,28 +256,44 @@
                                     </select>
                                 </div>
                             </form>
-                            <div class="d-flex align-items-center" style="gap:var(--inner-padding); margin-top: 10px;">
+                            <div class="d-flex align-items-center" style="gap:var(--inner-padding); margin-top: 8px;">
                                 <!-- Bar/Spider Chart Tabs-->
                                 <div class="d-flex h-100">
-                                    <button id="bar-tab" class="report-tab"
-                                        style="padding-top: 16px; padding-bottom: 16px;">Bar
-                                        Chart</button>
-                                    <button id="spider-tab" class="report-tab">Spider
-                                        Chart</button>
-                                    <button id="z-scores-tab" class="report-tab">Z-Scores</button>
+                                    <button id="bar-tab" class="report-tab">
+                                        <i class="fa-solid fa-chart-simple" style="color: var(--acc-color-main); font-size: var(--icon-size);""></i>
+                                    </button>
+                                    <button id="spider-tab" class="report-tab">
+                                        <i class="fa-solid fa-spider" style="color: var(--acc-color-main); font-size: var(--icon-size);"></i>
+                                    </button>
+                                    <!--<button id="z-scores-tab" class="report-tab">T-Scores</button>-->
                                 </div>
                                 <i class="fa-solid fa-gear" id="settings"
                                     style="color: var(--acc-color-main); font-size: var(--icon-size); z-index: 2;"></i>
 
                                 <div id="options-card" class="options-card overflow-scroll" style="display: none;">
                                     <h4>Settings</h4>
-                                    <ul>
-                                        <li>Show Team Avg<input id="i-show_fullname" type="checkbox" checked="true">
-                                        </li>
-                                        <li>Show Gender Avg<input id="i-show_trends" type="checkbox" checked="true">
-                                        </li>
-                                        <li>Show Position Avg<input id="i-show_pos" type="checkbox" checked="true"></li>
-                                    </ul>
+                                    <div id="raw-score-selections">
+                                        <ul>
+                                            <li>Bar Graph Selections:</li>
+                                            </li>
+                                            <li>Team Avg<input class="check_box" id="t_AVG" type="checkbox" name="t_avg" value="1">
+                                            </li>
+                                            <li>Gender Avg<input class="check_box" id="g_AVG" type="checkbox" name="g_avg" value="1">
+                                            </li>
+                                            <li>Position Avg<input class="check_box" id="p_AVG" type="checkbox" name="p_avg" value="1"></li>
+                                        </ul>
+                                    </div>
+                                    <div id="t-score-selections">
+                                        <ul>
+                                            <li>T-Score Selections:</li>
+                                            </li>
+                                            <li>Team Avg<input class="radioBTN" id="teamAVG" type="radio" name="z_avg" value="1" checked="true">
+                                            </li>
+                                            <li>Gender Avg<input class="radioBTN" id="genderAVG" type="radio" name="z_avg" value="2">
+                                            </li>
+                                            <li>Position Avg<input class="radioBTN" id="positionAVG" type="radio" name="z_avg" value="3"></li>
+                                        </ul>
+                                    </div>
                                     <hr>
                                     <ul id="test-list"></ul>
                                 </div>
@@ -311,54 +301,81 @@
                         </div>
 
                         <script>
-                            //jQuery for kpi and wellness "tabs", allowing only one or the other to be shown
-                            //at a given time
+                            //jQuery for functionality of "tabs"
                             $(document).ready(function () {
 
                                 //initially hide wellness report and show only kpi trends
+                                $("#wellnessreport").hide();
+                                document.getElementById("wellness-tab").style.backgroundColor = "var(--color-bg)";
+
+                                //initially hide spider graph, only show bar graph to begin with
                                 $("#bar-graphs").show();
-                                document.getElementById("spider-tab").style.backgroundColor = "var(--color-tertiary)";
-                                document.getElementById("z-scores-tab").style.backgroundColor = "var(--color-tertiary)";
+                                document.getElementById("spider-tab").style.backgroundColor = "var(--color-bg)";
+
+                                // initially show raw scores options in options card (since this will be the graphs that are shown first)
+                                $("#t-score-graphs").hide();
+                                $("#raw-score-graphs").show();
+
+                                $("#raw-score-selections").show();
+                                $("#t-score-selections").hide();
 
                                 //upon click of wellness tab, show wellnessreport div & hide kpireport div
                                 //swap color of tab
+                                $("#wellness-tab").click(function () {
+                                    $("#kpireport").hide();
+                                    $("#wellnessreport").show();
+                                    document.getElementById("wellness-tab").style.backgroundColor = "var(--color-secondary)";
+                                    document.getElementById("kpi-tab").style.backgroundColor = "var(--color-bg)";
+                                });
+
+                                //upon click of kpi tab, show kpireport div & hide wellnessreport div
+                                //swap color of tab
+                                $("#kpi-tab").click(function () {
+                                    $("#kpireport").show();
+                                    $("#wellnessreport").hide();
+                                    document.getElementById("kpi-tab").style.backgroundColor = "var(--color-secondary)";
+                                    document.getElementById("wellness-tab").style.backgroundColor = "var(--color-bg)";
+                                });
+
+                                //upon click of spider-tab, show spider-graphs div & hide bar-graph div
+                                //swap color of tab
                                 $("#spider-tab").click(function () {
                                     $("#bar-graphs").hide();
-                                    $("#z-scores").hide();
-                                    $("#kpi-dates-div").hide();
-
-                                    $("#spider-date-div").show();
                                     $("#spider-graphs").show();
 
                                     document.getElementById("spider-tab").style.backgroundColor = "var(--color-secondary)";
-                                    document.getElementById("bar-tab").style.backgroundColor = "var(--color-tertiary)";
-                                    document.getElementById("z-scores-tab").style.backgroundColor = "var(--color-tertiary)";
+                                    document.getElementById("bar-tab").style.backgroundColor = "var(--color-bg)";
+
+                                    $("#t-score-selections").hide();
+                                    $("#raw-score-selections").hide();
                                 });
 
-                                //upon click of kpi tab, show kpireport div & hide wellnessreport div
+                                //upon click of bar-tab, show bar-graph  div & hide spider-graphs div
                                 //swap color of tab
                                 $("#bar-tab").click(function () {
                                     $("#spider-graphs").hide();
-                                    $("#z-scores").hide();
-                                    $("#kpi-dates-div").show();
-                                    $("#spider-date-div").hide();
                                     $("#bar-graphs").show();
                                     document.getElementById("bar-tab").style.backgroundColor = "var(--color-secondary)";
-                                    document.getElementById("spider-tab").style.backgroundColor = "var(--color-tertiary)";
-                                    document.getElementById("z-scores-tab").style.backgroundColor = "var(--color-tertiary)";
+                                    document.getElementById("spider-tab").style.backgroundColor = "var(--color-bg)";
+
+                                    $("#raw-score-selections").show();
+                                    $("#t-score-selections").hide();
                                 });
 
-                                //upon click of kpi tab, show kpireport div & hide wellnessreport div
-                                //swap color of tab
-                                $("#z-scores-tab").click(function () {
-                                    $("#spider-graphs").hide();
-                                    $("#bar-graphs").hide();
-                                    $("#kpi-dates-div").show();
-                                    $("#spider-date-div").hide();
-                                    $("#z-scores").show();
-                                    document.getElementById("z-scores-tab").style.backgroundColor = "var(--color-secondary)";
-                                    document.getElementById("bar-tab").style.backgroundColor = "var(--color-tertiary)";
-                                    document.getElementById("spider-tab").style.backgroundColor = "var(--color-tertiary)";
+                                $("#t-score-radio").click(function () {
+                                    $("#t-score-graphs").show();
+                                    $("#raw-score-graphs").hide();
+
+                                    $("#raw-score-selections").hide();
+                                    $("#t-score-selections").show();
+                                });
+
+                                $("#raw-score-radio").click(function () {
+                                    $("#raw-score-graphs").show();
+                                    $("#t-score-graphs").hide();
+                                    
+                                    $("#raw-score-selections").show();
+                                    $("#t-score-selections").hide();
                                 });
 
                                 // upon click of cog wheel "settings", show the options card
@@ -570,7 +587,21 @@
 
                         <!-- This is where bar graphs will populate -->
                         <div id="bar-graphs" class="graphprof">
-                            <p id="no-data" style="margin-bottom: 0; align-self: center;">No data</p>
+                            <div class="btn-container">
+                                <div class="btn-group rt-toggle" role="group" aria-label="Basic radio toggle button group">
+                                    <input type="radio" class="btn-check" name="btnradio" id="t-score-radio" autocomplete="off">
+                                    <label class="btn btn-outline-primary" for="t-score-radio">T</label>
+                                
+                                    <input type="radio" class="btn-check" name="btnradio" id="raw-score-radio" autocomplete="off" checked>
+                                    <label class="btn btn-outline-primary" for="raw-score-radio">R</label>
+                                </div>
+                            </div>
+                            <div id="raw-score-graphs">
+                                <p id="no-data" style="margin-bottom: 0; align-self: center;">No data</p>
+                            </div>
+                            <div id="t-score-graphs">
+                                <p id="no-data" style="margin-bottom: 0; align-self: center;">No data</p>
+                            </div>
                         </div>
 
                         <script>
@@ -590,6 +621,14 @@
                                 // if a date selector changes, call ajax to update the page
                                 document.getElementById("date1").addEventListener("change", kpi_ajax);
                                 document.getElementById("date2").addEventListener("change", kpi_ajax);
+
+                                document.getElementById("t_AVG").addEventListener("click", kpi_ajax);
+                                document.getElementById("g_AVG").addEventListener("click", kpi_ajax);
+                                document.getElementById("p_AVG").addEventListener("click", kpi_ajax);
+
+                                document.getElementById("teamAVG").addEventListener("click", kpi_ajax);
+                                document.getElementById("genderAVG").addEventListener("click", kpi_ajax);
+                                document.getElementById("positionAVG").addEventListener("click", kpi_ajax);
 
                                 //if a date selector changes, call ajax to update the page 
                                 document.getElementById("wellnessdate").addEventListener("change", wellness_ajax);
@@ -649,13 +688,15 @@
                                         if (this.checked) {
 
                                             // concatenate respective ids of bar and trend graphs
-                                            $("#bar_" + id).show();
-                                            $("#trend_" + id).show();
+                                            $("#bar_"+id).show();
+                                            $("#trend_"+id).show();
+                                            $("#z_"+id).show();
                                         }
                                         else {
                                             // concatenate respective ids of bar and trend graphs
-                                            $("#bar_" + id).hide();
-                                            $("#trend_" + id).hide();
+                                            $("#bar_"+id).hide();
+                                            $("#trend_"+id).hide();
+                                            $("#z_"+id).hide();
                                         }
                                         e.stopPropagation();
                                     })
@@ -673,6 +714,14 @@
 
                                 if (!is_loading_kpi) {
 
+                                    // Get check box values for bar graph averages
+                                    var T_AVG_BTN = $("#t_AVG:checked").val()
+                                    var G_AVG_BTN = $("#g_AVG:checked").val()
+                                    var P_AVG_BTN = $("#p_AVG:checked").val()
+
+                                    // Get radio button values for z-score graph varients
+                                    var AVG_Radio_BTN = $(".radioBTN:checked").val();
+
                                     // AJAX function has been called! No other calls can be made until this one finishes
                                     is_loading_kpi = true;
 
@@ -685,17 +734,27 @@
 
                                     // clear trends and graphs 
                                     $("#kpi-trend").empty()
-                                    $("#bar-graphs").empty()
+                                    $("#raw-score-graphs").empty()
+                                    $("#t-score-graphs").empty()
+                                    $("#test-list").empty()
 
                                     // add loading circle
                                     $("#kpi-trend").append("<div id=\"loading-line\" class=\"d-flex justify-content-center\"> <div class=\"lds-dual-ring\"></div></div>");
                                     $("#bar-graphs").append("<div id=\"loading-bar\" class=\"d-flex justify-content-center\"> <div class=\"lds-dual-ring\"></div></div>");
+                                    //$("#z-scores").append("<div id=\"loading-z\" class=\"d-flex justify-content-center\"> <div class=\"lds-dual-ring\"></div></div>");
 
                                     $.ajax({
                                         url: "{% url 'AthleteProf' athleteProf.fname athleteProf.lname athleteProf.dob athleteProf.id %}",
                                         type: "POST",
                                         dataType: "json",
-                                        data: JSON.stringify({ date1: date_one.value, date2: date_two.value }),
+                                        data: JSON.stringify({ 
+                                            date1: date_one.value, 
+                                            date2: date_two.value, 
+                                            T_AVG_BTN: T_AVG_BTN,
+                                            G_AVG_BTN: G_AVG_BTN,
+                                            P_AVG_BTN: P_AVG_BTN,
+                                            AVG_Radio_BTN: AVG_Radio_BTN,
+                                        }),
                                         headers: {
                                             "X-Requested-With": "XMLHttpRequest",
                                             "X-CSRFToken": getCookie("csrftoken"),
@@ -708,12 +767,14 @@
                                             //remove loading circle after info arrives from db
                                             $("#loading-line").remove()
                                             $("#loading-bar").remove()
+                                            //$("#loading-z").remove()
 
                                             //loop thru each test type and get its info
                                             for (var key in response.test_types) {
 
                                                 let bar_template = document.getElementById("bar-template").cloneNode(true);
                                                 let trend_template = document.getElementById("trend-template").cloneNode(true);
+                                                let z_template = document.getElementById("z-template").cloneNode(true);
 
                                                 // If the change is increasing
                                                 if (response.changes[key] > 0) {
@@ -757,14 +818,21 @@
                                                 bar_template.querySelector("#tname").innerText = response.test_types[key];
                                                 bar_template.querySelector("#tgraph").setAttribute("src", bar_graphURL);
 
+                                                // Construct URL for z-score graph and add path to this node's img tag
+                                                var z_graphURL = "data:image/png;base64, " + response.z_score_bar[key];
+                                                z_template.querySelector("#zname").innerText = response.test_types[key];
+                                                z_template.querySelector("#zgraph").setAttribute("src", z_graphURL);
+
                                                 // Give both graphs for each type an integer ID that will allow them to be maniuplated later
                                                 trend_template.setAttribute("id", "trend_" + key);
                                                 bar_template.setAttribute("id", "bar_" + key);
+                                                z_template.setAttribute("id", "z_" + key);
 
                                                 // Add this completed graph template to the div containing all graphs
                                                 $("#kpi-trend").append(trend_template);
                                                 //$("#kpi-trend").append("<hr>");
-                                                $("#bar-graphs").append(bar_template);
+                                                $("#raw-score-graphs").append(bar_template);
+                                                $("#t-score-graphs").append(z_template);
 
                                                 var checkid = /*"check_" +*/ key;
 

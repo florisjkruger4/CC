@@ -109,3 +109,23 @@
     transform: (1.2);
 }
 
+.btn-container{
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.rt-toggle{
+    position: relative;
+    float: right;
+    z-index: 0;
+}
+
+.btn-outline-primary, .btn-outline-primary:hover, .btn-outline-primary:active {
+    --bs-btn-color: var(--acc-color-main);
+    --bs-btn-border-color: var(--acc-color-main);
+    --bs-btn-active-bg: var(--acc-color-main);
+    --bs-btn-active-border-color: var(--acc-color-main);
+    --bs-btn-focus-shadow-rgb: none;
+    --bs-btn-hover-bg: var(--acc-color-main);
+    --bs-btn-hover-border-color: var(--acc-color-main);
+}
