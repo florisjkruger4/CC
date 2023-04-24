@@ -65,6 +65,48 @@ def bar_graph(x, y, T_AVG, G_AVG, P_AVG):
 
     return graph
 
+def bar_graph_groups(x, y, G_AVG, P_AVG):
+
+    plt.switch_backend('AGG')
+
+    if(len(x) > 7):
+        plt.figure(figsize=(12,5), facecolor="#1F2126")
+        plt.gcf().subplots_adjust(bottom=0.25)
+        plt.xticks(rotation=45)
+        
+    else:
+        plt.figure(figsize=(9,3.75), facecolor="#1F2126")
+        plt.xticks(rotation=0)
+
+    
+    plt.bar(x, y, color="#99C7FF")
+    plt.tight_layout()
+    ax = plt.gca()
+    ax.spines['bottom'].set_color("white")
+    ax.spines['left'].set_color("white")
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.tick_params(axis='x', colors='white')
+    ax.tick_params(axis='y', colors='white')
+
+    if (len(y) > 0):
+        avg = sum(y)/len(y)
+        ax.axhline(avg, color='#F2CD49', linewidth=2, label="Team Avg")
+
+    if (G_AVG != None):
+        ax.axhline(G_AVG, color='#0051b5', linewidth=2, label="Gender Avg")
+    
+    if (P_AVG != None):
+        ax.axhline(P_AVG, color='#FC5151', linewidth=2, label="Position Avg")
+
+    plt.bar_label(ax.containers[0], label_type='center')
+
+    plt.legend(loc="upper right", labelcolor="white", facecolor="#1C2230", fontsize="x-small")
+
+    graph = get_graph()
+
+    return graph
+
 def line_graph(x, y, change, minBetter):
 
     plt.switch_backend('AGG')
