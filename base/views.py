@@ -2,7 +2,7 @@ import json, time
 from django.shortcuts import render, redirect
 from django.db.models import Q
 from .models import AthleteT, TeamT, WellnessT, KpiT, TestTypeT
-from .utils import bar_graph, line_graph, radar_chart
+from .utils import bar_graph, line_graph
 from django.db.models import Count
 from django.http import JsonResponse
 from django.contrib.auth.models import User
@@ -315,33 +315,29 @@ def wellnessAjax(fname, lname, dob, wellnessdate):
     # Return the list of athletes
     return JsonResponse({"wellness": list(wellness.values())})
 
-def spiderAjax(fname, lname, dob, sportsteam, gender, position, radar_date, selected_radar_tests, compare_avg):
-
-    # Selected KPI date and tests
-    #radar_date = request.POST.get("radar_date")
-    #selected_radar_tests = request.POST.getlist("selected_radar_tests")
+def spiderAjax(fname, lname, dob, sportsteam, gender, position, spider_date, selected_spider_tests, compare_avg):
 
     # Athletes results for selected KPI's and Date
     # Dictioanry of test_type and result key:value pairs
     # Dictioanry of test_type and result key:value pairs
-    athlete_radar_results = {}
-    for test in selected_radar_tests:
+    athlete_spider_results = {}
+    for test in selected_spider_tests:
         # Get the kpi result <=/lte to the given date
-        result = KpiT.objects.filter(fname=fname, lname=lname, dob=dob, datekpi__lte=radar_date, testtype=test).order_by('datekpi').values_list('testresult', flat=True).first()
-        athlete_radar_results[test] = result
+        result = KpiT.objects.filter(fname=fname, lname=lname, dob=dob, datekpi__lte=spider_date, testtype=test).order_by('datekpi').values_list('testresult', flat=True).first()
+        athlete_spider_results[test] = result
 
     # List to hold nested dictionaries of averages test data
-    average_radar_results = []
+    average_spider_results = []
 
     # Sportsteam: generate averages in each selected test for athletes of the same Sportsteam 
     if "team_avg" in compare_avg:
         same_team_athletes = AthleteT.objects.filter(sportsteam=sportsteam).exclude(fname=fname, lname=lname, dob=dob).values_list('fname', 'lname', 'dob')
-        # Queryset of KPI data for each athlete of the same team where test type is in the selected tests and datekpi is less than or equal to the specified radar date
+        # Queryset of KPI data for each athlete of the same team where test type is in the selected tests and datekpi is less than or equal to the specified spider date
         kpi_results = KpiT.objects.filter(fname__in=same_team_athletes.values_list('fname', flat=True),
                             lname__in=same_team_athletes.values_list('lname', flat=True),
                             dob__in=same_team_athletes.values_list('dob', flat=True),
-                            testtype__in=selected_radar_tests,
-                            datekpi__lte=radar_date).values('fname', 'lname', 'dob', 'testtype', 'testresult')
+                            testtype__in=selected_spider_tests,
+                            datekpi__lte=spider_date).values('fname', 'lname', 'dob', 'testtype', 'testresult')
         # Loop through kpi_results and add up the test results for each test type
         test_results = {}
         for result in kpi_results:
@@ -359,17 +355,17 @@ def spiderAjax(fname, lname, dob, sportsteam, gender, position, radar_date, sele
             average = round(result['total'] / result['count'])
             test_results[test_type] = average
         # Append the test_type and average result key:value pair to the result
-        average_radar_results.append({'group': 'team', 'results': test_results})
+        average_spider_results.append({'group': 'team', 'results': test_results})
 
     # Position: generate averages in each selected test for athletes of the same position 
     if "position_avg" in compare_avg:
         same_position_athletes = AthleteT.objects.filter(sportsteam=sportsteam, position=position).exclude(fname=fname, lname=lname, dob=dob).values_list('fname', 'lname', 'dob')
-        # Queryset of KPI data for each athlete of the same position where test type is in the selected tests and datekpi is less than or equal to the specified radar date
+        # Queryset of KPI data for each athlete of the same position where test type is in the selected tests and datekpi is less than or equal to the specified spider date
         kpi_results = KpiT.objects.filter(fname__in=same_position_athletes.values_list('fname', flat=True),
                             lname__in=same_position_athletes.values_list('lname', flat=True),
                             dob__in=same_position_athletes.values_list('dob', flat=True),
-                            testtype__in=selected_radar_tests,
-                            datekpi__lte=radar_date).values('fname', 'lname', 'dob', 'testtype', 'testresult')
+                            testtype__in=selected_spider_tests,
+                            datekpi__lte=spider_date).values('fname', 'lname', 'dob', 'testtype', 'testresult')
         # Loop through kpi_results and add up the test results for each test type
         test_results = {}
         for result in kpi_results:
@@ -387,18 +383,18 @@ def spiderAjax(fname, lname, dob, sportsteam, gender, position, radar_date, sele
             average = round(result['total'] / result['count'])
             test_results[test_type] = average
         # Append the test_type and average result key:value pair to the result
-        average_radar_results.append({'group': 'position', 'results': test_results})
+        average_spider_results.append({'group': 'position', 'results': test_results})
 
     # Gender: generate averages in each selected test for athletes of the same gender 
     if "gender_avg" in compare_avg:
         # Queryset of athletes of the same gender not including the current athlete
         same_gender_athletes = AthleteT.objects.filter(gender=gender).exclude(fname=fname, lname=lname, dob=dob).values_list('fname', 'lname', 'dob')
-        # Queryset of KPI data for each athlete of the same gender where test type is in the selected tests and datekpi is less than or equal to the specified radar date
+        # Queryset of KPI data for each athlete of the same gender where test type is in the selected tests and datekpi is less than or equal to the specified spider date
         kpi_results = KpiT.objects.filter(fname__in=same_gender_athletes.values_list('fname', flat=True),
                             lname__in=same_gender_athletes.values_list('lname', flat=True),
                             dob__in=same_gender_athletes.values_list('dob', flat=True),
-                            testtype__in=selected_radar_tests,
-                            datekpi__lte=radar_date).values('fname', 'lname', 'dob', 'testtype', 'testresult')
+                            testtype__in=selected_spider_tests,
+                            datekpi__lte=spider_date).values('fname', 'lname', 'dob', 'testtype', 'testresult')
         # Loop through kpi_results and add up the test results for each test type
         test_results = {}
         for result in kpi_results:
@@ -416,21 +412,14 @@ def spiderAjax(fname, lname, dob, sportsteam, gender, position, radar_date, sele
             average = round(result['total'] / result['count'])
             test_results[test_type] = average
         # Append the test_type and average result key:value pair to the result
-        average_radar_results.append({'group': 'gender', 'results': test_results})
-
-    print(athlete_radar_results)
-    print(average_radar_results)
-
-    # Render the graph if 3 or more tests were selected 
-    if len(selected_radar_tests) >= 3:
-        Radar_chart = radar_chart(athlete_radar_results, average_radar_results, radar_date)
-    else:
-        Radar_chart = None
+        average_spider_results.append({'group': 'gender', 'results': test_results})
 
     return JsonResponse({
-        "radar_date": radar_date, 
-        "radar_chart": Radar_chart,
-        #"athlete_radar_results": athlete_radar_results,
+        "spider_date": spider_date, 
+        # "spider_chart": spider_chart,
+        "athlete_spider_results": athlete_spider_results,
+        "average_spider_results": average_spider_results,
+        #"athlete_spider_results": athlete_spider_results,
         })
 
 @login_required(login_url="/")
@@ -445,7 +434,7 @@ def AthleteProf(request, fname, lname, dob, id):
     # Django documentation says to use ._meta("field name") but that never worked for me)
     instanceImg = AthleteT.objects.filter(id=id).only("image").first()
 
-    radar_date = None
+    spider_date = None
     all_tests = None
 
     # If parameter "request" is an XML request (AJAX)...
@@ -463,9 +452,9 @@ def AthleteProf(request, fname, lname, dob, id):
             elif data.get("wellnessdate"):
                 return wellnessAjax(fname, lname, dob, data.get("wellnessdate"))
             
-            # if we have data for "radar_date", we have a radar/spider chart update request
-            elif data.get("radar_date"):
-                return spiderAjax(fname, lname, dob, sportsteam, gender, position, data.get("radar_date"), data.get("selected_radar_tests"), data.get("compare_avg"))
+            # if we have data for "spider_date", we have a spider chart update request
+            elif data.get("spider_date"):
+                return spiderAjax(fname, lname, dob, sportsteam, gender, position, data.get("spider_date"), data.get("selected_spider_tests"), data.get("compare_avg"))
 
             # data passed did not fit criteria above, so it is invalid
             else:
@@ -578,11 +567,11 @@ def AthleteProf(request, fname, lname, dob, id):
         "wellnessReportDates": wellness_dates,
         "mostRecentWellnessReportDate": wellness_most_recent,
         "wellness_count": wellness_count,
-        # Radar/Spider
-        #"Radar_chart": Radar_chart,
-        "radar_date": radar_date,
+        # Spider
+        #"spider_chart": spider_chart,
+        "spider_date": spider_date,
         "all_tests": all_tests,
-        #"selected_radar_tests": selected_radar_tests,
+        #"selected_spider_tests": selected_spider_tests,
         # dashboard session stuff
         "recentlyViewedAthletes": recentlyViewedAthletes,
         # img form stuff

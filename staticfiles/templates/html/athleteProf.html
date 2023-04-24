@@ -273,8 +273,8 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-                                <div id="radar-date-div" style="display: none;">
-                                    <select id="radar_date" name="radar_date" style="font-size:20px;">
+                                <div id="spider-date-div" style="display: none;">
+                                    <select id="spider_date" name="spider_date" style="font-size:20px;">
                                         <option selected>{{ kpi_most_recent }}</option>
                                         {% for x in all_dates %}
                                         <option>{{ x.datekpi }}</option>
@@ -327,7 +327,7 @@
                                     $("#z-scores").hide();
                                     $("#kpi-dates-div").hide();
 
-                                    $("#radar-date-div").show();
+                                    $("#spider-date-div").show();
                                     $("#spider-graphs").show();
 
                                     document.getElementById("spider-tab").style.backgroundColor = "var(--color-secondary)";
@@ -341,7 +341,7 @@
                                     $("#spider-graphs").hide();
                                     $("#z-scores").hide();
                                     $("#kpi-dates-div").show();
-                                    $("#radar-date-div").hide();
+                                    $("#spider-date-div").hide();
                                     $("#bar-graphs").show();
                                     document.getElementById("bar-tab").style.backgroundColor = "var(--color-secondary)";
                                     document.getElementById("spider-tab").style.backgroundColor = "var(--color-tertiary)";
@@ -354,7 +354,7 @@
                                     $("#spider-graphs").hide();
                                     $("#bar-graphs").hide();
                                     $("#kpi-dates-div").show();
-                                    $("#radar-date-div").hide();
+                                    $("#spider-date-div").hide();
                                     $("#z-scores").show();
                                     document.getElementById("z-scores-tab").style.backgroundColor = "var(--color-secondary)";
                                     document.getElementById("bar-tab").style.backgroundColor = "var(--color-tertiary)";
@@ -378,38 +378,35 @@
                             <p style="margin-bottom: 0; align-self: center;">No data</p>
                         </div>
 
+                        <!-- Spider Chart -->
                         <div id="spider-graphs" class="graphprof">
-                            <!-- Radar/Spider Graph -->
-                            <form method="post" id="kpi_radar_form">
+                            <form method="post" id="kpi_spider_form">
                                 {% csrf_token %}
-
                                 <form method="post" >
                                     {% csrf_token %}
-
-                                    <div id="selected_radar_tests">
+                                    <!-- Checkboxes to select tests -->
+                                    <div id="selected_spider_tests">
                                         {% for test in all_tests %}
-                                        <input type="checkbox" id="{{ test }}" name="selected_radar_tests" value="{{ test }}">
+                                        <input type="checkbox" id="{{ test }}" name="selected_spider_tests" value="{{ test }}">
                                         <label for="{{ test }}">{{ test }}</label><br>
                                         {% endfor %}
                                     </div>
-
                                     <hr>
-
+                                    <!-- Checkboxes to select comparison averages -->
                                     <div id="spider-avgs"> 
                                         <input type="checkbox" id="team_avg" name="compare_avg" value="team_avg">
                                         <label for="team_avg">Team Avg</label><br>
-
                                         <input type="checkbox" id="position_avg" name="compare_avg" value="position_avg">
                                         <label for="position_avg">Position Avg</label><br>
-
                                         <input type="checkbox" id="gender_avg" name="compare_avg" value="gender_avg">
                                         <label for="gender_avg">Gender Avg</label><br>
                                         <br>
-                                        <input type="submit" id="radar-submit" class="submit">
+                                        <input type="submit" id="spider-submit" class="submit">
                                     </div>
                                 </form>
                             </form>
 
+                            <!-- JavaScript for the spider chart -->
                             <script>
                                 /* getCookie() function definition*/
                                 // Definition for "getCookie" function, which will return a cookie from the document matching the parameter "name".
@@ -432,18 +429,17 @@
                                             }
                                         }
                                     }
-
                                     return cookieValue;
                                 }
 
-                                document.getElementById("radar-submit").addEventListener("click", spider_ajax, false);
-
+                                // Call the spider_ajax function when the submit button is clicked
+                                document.getElementById("spider-submit").addEventListener("click", spider_ajax, false);
                                 function spider_ajax(event) {
                                     event.preventDefault();
 
                                     // Values to be passed to backend
-                                    const radar_date = document.getElementById("radar_date").value;
-                                    const test_selection = document.getElementById("selected_radar_tests");
+                                    const spider_date = document.getElementById("spider_date").value;
+                                    const test_selection = document.getElementById("selected_spider_tests");
                                     const avg_selection = document.getElementById("spider-avgs");
 
                                     // Select checkboxes 
@@ -462,45 +458,113 @@
                                         url: "{% url 'AthleteProf' athleteProf.fname athleteProf.lname athleteProf.dob athleteProf.id %}",
                                         type: "POST",
                                         dataType: "json",
-                                        data: JSON.stringify({ "radar_date": radar_date, "selected_radar_tests": selected_tests, "compare_avg": selected_avgs }),
+                                        data: JSON.stringify({ "spider_date": spider_date, "selected_spider_tests": selected_tests, "compare_avg": selected_avgs }),
                                         headers: {
                                             "X-Requested-With": "XMLHttpRequest",
                                             "X-CSRFToken": getCookie("csrftoken"),
                                         },
                                         success: (response) => {
-
-                                            const chart = response.radar_chart;
-
-                                            document.getElementById("spider-graphs").innerHTML += chart;
-
-                                            //const max_y = Math.max(...response.athlete_radar_results);
-                                            /*data = [{
-                                                type: 'scatterpolar',
-                                                r: response.athlete_radar_results,
-                                                theta: selected_tests,
-                                                fill: 'toself'
-                                                }]
-
-                                            layout = {
-                                            polar: {
-                                                radialaxis: {
-                                                visible: true,
-                                                range: [0, max_y]
-                                                },
-                                                bgcolor: "#181a20",
-                                                color: '#ffffff'
-                                            },
-                                            showlegend: false,
-                                            paper_bgcolor: "#181a20",
-                                            
-                                            }
-                                            
-
-                                            Plotly.newPlot("spider-graphs", data, layout)*/
+                                            // Call the spider chart function to display the chart
+                                            spider_chart(response.athlete_spider_results, response.average_spider_results, response.spider_date);
                                         }
                                     })
                                 }
 
+                                function spider_chart(athlete_results, average_results, date) {
+                                    // Create arrays for the test names and results
+                                    var test_names = Object.keys(athlete_results);
+                                    var athlete_results_arr = Object.values(athlete_results);
+
+                                    // Create an array of average group names
+                                    var group_names = average_results.map(function(group_dict) {
+                                        return group_dict.group;
+                                    });
+
+                                    // Create an array of arrays of average group results
+                                    var group_results_arr = average_results.map(function(group_dict) {
+                                        return Object.values(group_dict.results);
+                                    });
+
+                                    // Create the spider chart with Plotly
+                                    var data = [{
+                                        type: 'scatterpolar',
+                                        r: athlete_results_arr, // Define the radius values for each data point
+                                        theta: test_names, // Define the angle values for each data point
+                                        fill: 'toself', // Fill the area enclosed by each data point's line
+                                        name: 'Athlete', // Assign a label to this data series
+                                        line: {
+                                            color: '#96b7ff', // Set the color of the line connecting each data point
+                                            width: 2 // Set the width of the line
+                                        },
+                                        // Customize the tooltip displayed when hovering over each data point
+                                        hovertemplate: '<b>Result:</b> %{r}<br><b>Test Type:</b> %{theta}<extra></extra>'
+                                    }];
+
+                                    // Colors for team, position, and gender respectively
+                                    var average_colors = ['green', 'yellow', 'purple'];
+                                    var color_index = 0;
+                                    for (var i = 0; i < group_names.length; i++) {
+                                        // Add a trace for the group to the spider chart
+                                        data.push({
+                                            type: 'scatterpolar',
+                                            r: group_results_arr[i],
+                                            theta: test_names,
+                                            fill: 'toself',
+                                            name: group_names[i],
+                                            line: {
+                                                color: average_colors[color_index],
+                                                width: 2
+                                            },
+                                            // Customize the hover over info for each data point  
+                                            hovertemplate: '<b>Result:</b> %{r}<br><b>Test Type:</b> %{theta}<extra></extra>'
+                                        });
+                                        // The next trace will have a new color
+                                        color_index += 1;
+                                        if (color_index >= average_colors.length) {
+                                            color_index = 0;
+                                        }
+                                    }
+
+                                    // Update the layout of the chart
+                                    var layout = {
+                                        // Set the graph size, title text, font color, and size
+                                        width: '100%',
+                                        height: 500,
+                                        title: {
+                                        text: 'Results for ' + date,
+                                        font: {
+                                            color: '#ffffff',
+                                            size: 24
+                                        },
+                                        // Set the position of the title
+                                        x: 0.005,
+                                        y: 0.95
+                                        },
+                                        // Set the background color of the plot
+                                        paper_bgcolor: '#181a1f',
+                                        // Update the styling of the radial axis
+                                        polar: {
+                                            // Set the background color of the circular chart
+                                            bgcolor: '#181a1f',
+                                            radialaxis: {
+                                                // Set the font color of the radial axis labels
+                                                tickfont: {
+                                                color: '#ffffff'
+                                                }
+                                            },
+                                            // Update the styling of the angular axis
+                                            angularaxis: {
+                                                // Set the font color of the angular axis labels
+                                                tickfont: {
+                                                color: '#ffffff'
+                                                }
+                                            }
+                                        }
+                                    };
+
+                                    // Display the chart
+                                    Plotly.newPlot('spider-graphs', data, layout);
+                                }
                             </script>
                         </div>
 
