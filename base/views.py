@@ -2,7 +2,7 @@ import json, time
 from django.shortcuts import render, redirect
 from django.db.models import Q
 from .models import AthleteT, TeamT, WellnessT, KpiT, TestTypeT
-from .utils import bar_graph, line_graph, z_score_graph
+from .utils import bar_graph, line_graph, z_score_graph, bar_graph_groups
 from django.db.models import Count
 from django.http import JsonResponse
 from django.contrib.auth.models import User
@@ -965,13 +965,14 @@ def EditAthlete(request, fname, lname, dob, id):
 
     return render(request, "html/editathlete.html", context)
 
-def teamsAjax(date1, date2, selection, Rrad, Trad):
+def teamsAjax(date1, date2, selection, rad):
 
     kpi_bar = []
     z_score_bar = []
 
     # Gets test types within selected date range for all athletes
     if selection == "allAthletes":
+        rad = '0'
         all_testTypes = (
             KpiT.objects.filter(
                 datekpi__range=(date1, date2),
@@ -985,6 +986,7 @@ def teamsAjax(date1, date2, selection, Rrad, Trad):
     male_athletes = AthleteT.objects.filter(gender="M").values_list('fname', 'lname', 'dob')
     # gets all test types within selected date range for male athletes
     if selection == "allMales":
+        rad = '0'
         all_testTypes = (
             KpiT.objects.filter(
             fname__in=male_athletes.values_list('fname', flat=True),
@@ -1001,6 +1003,7 @@ def teamsAjax(date1, date2, selection, Rrad, Trad):
     female_athletes = AthleteT.objects.filter(gender="F").values_list('fname', 'lname', 'dob')
     # gets all test types within selected date range for female athletes
     if selection == "allFemales":
+        rad = '0'
         all_testTypes = (
             KpiT.objects.filter(
             fname__in=female_athletes.values_list('fname', flat=True),
@@ -1029,6 +1032,8 @@ def teamsAjax(date1, date2, selection, Rrad, Trad):
         .order_by("testtype")
         .distinct()
     )
+        
+    print(rad)
         
     for x in all_testTypes:
 
@@ -1108,7 +1113,7 @@ def teamsAjax(date1, date2, selection, Rrad, Trad):
                 .distinct()
             )
 
-            # gets all the male athlete's kpi record's in respected date
+            # gets all the female athlete's kpi record's in respected date
             kpi_results = (KpiT.objects.filter(
                     fname__in=female_athletes.values_list('fname', flat=True),
                     lname__in=female_athletes.values_list('lname', flat=True),
@@ -1143,7 +1148,7 @@ def teamsAjax(date1, date2, selection, Rrad, Trad):
                 .distinct()
             )
 
-            # gets all the male athlete's kpi record's in respected date
+            # gets all the team specific athlete's kpi record's in respected date
             kpi_results = (KpiT.objects.filter(
                     fname__in=team_athletes.values_list('fname', flat=True),
                     lname__in=team_athletes.values_list('lname', flat=True),
@@ -1165,7 +1170,72 @@ def teamsAjax(date1, date2, selection, Rrad, Trad):
                     avg = (sum(vals) / 1)
                 averages.append(avg)
 
-        if Trad == "Trad":
+        if rad == "1":
+
+            indiv_tests = []
+            for q in kpi_results:
+                indiv_tests.append(q.testresult)
+
+            team_z_scores = []
+            for i in averages:
+                indiv_tests.append(i)
+                z = stats.zscore(indiv_tests, nan_policy='omit')
+                z_list = z.tolist()
+                if (np.any(np.isnan(z_list))):
+                # if it is nan, then initialize to 0
+                    z_list = [0];
+                team_z_scores.append(z_list[-1])
+                indiv_tests.pop()
+
+            # Convert to t-scores
+            T_Scores = []
+            for i in range(0, len(team_z_scores)):
+                calc = ((team_z_scores[i]*10)+50)
+                T_Scores.append(calc)
+
+            # Calls matplotlib t-score graph
+            z_score_bar.append(z_score_graph(all_dates, T_Scores))
+
+        elif rad == "2":
+
+            # gets all athletes on team to determine gender
+            athlete_on_team = AthleteT.objects.filter(sportsteam=selection).values_list('gender')
+            # gets all the gender of selected teams's kpi record's in respected date
+            same_gender_athletes = AthleteT.objects.filter(gender__in=athlete_on_team.values_list('gender', flat=True)).values_list('fname', 'lname', 'dob')
+            # Queryset of KPI data for each athlete of the same gender as selected team gender
+            kpi_results = KpiT.objects.filter(fname__in=same_gender_athletes.values_list('fname', flat=True),
+                                lname__in=same_gender_athletes.values_list('lname', flat=True),
+                                dob__in=same_gender_athletes.values_list('dob', flat=True),
+                                testtype__exact=x,
+                                datekpi__range=(date1, date2)).order_by('datekpi')
+            
+            indiv_tests = []
+            for q in kpi_results:
+                indiv_tests.append(q.testresult)
+
+            gender_z_scores = []
+            for i in averages:
+                indiv_tests.append(i)
+                z = stats.zscore(indiv_tests, nan_policy='omit')
+                z_list = z.tolist()
+                if (np.any(np.isnan(z_list))):
+                # if it is nan, then initialize to 0
+                    z_list = [0];
+                gender_z_scores.append(z_list[-1])
+                indiv_tests.pop()
+
+            # Convert to t-scores
+            T_Scores = []
+            for i in range(0, len(gender_z_scores)):
+                calc = ((gender_z_scores[i]*10)+50)
+                T_Scores.append(calc)
+
+            # Calls matplotlib t-score graph
+            z_score_bar.append(z_score_graph(all_dates, T_Scores))
+
+       # elif rad == "3": not applicable for the groups page...
+
+        else:   # rad == '0'
             z_scores = stats.zscore(averages, nan_policy='omit')
             # converts to list type
             z_scores_list = z_scores.tolist()
@@ -1173,7 +1243,7 @@ def teamsAjax(date1, date2, selection, Rrad, Trad):
             if (np.any(np.isnan(z_scores_list))):
                 # if it is nan, then initialize to 0
                 z_scores_list = [0];
-    
+
             # Convert to t-scores
             T_Scores = []
             for i in range(0, len(z_scores_list)):
@@ -1186,7 +1256,7 @@ def teamsAjax(date1, date2, selection, Rrad, Trad):
         results_x = all_dates
         results_y = averages
         
-        kpi_bar.append(bar_graph(results_x, results_y, None, None, None))
+        kpi_bar.append(bar_graph_groups(results_x, results_y, None, None))
 
     return JsonResponse({
         "all_testTypes": list(all_testTypes),
@@ -1210,7 +1280,7 @@ def GroupDash(request):
 
             # if we have data for "date1" and "date2", we have a kpi update request
             if data.get("date1") and data.get("date2") and data.get("radiotest"):
-                return teamsAjax(data.get("date1"), data.get("date2"), data.get("radiotest"), data.get("R_Radio_BTN"), data.get("T_Radio_BTN"))
+                return teamsAjax(data.get("date1"), data.get("date2"), data.get("radiotest"), data.get("AVG_Radio_BTN"))
 
         else:
             return JsonResponse({"status": "Invalid request"}, status=400)

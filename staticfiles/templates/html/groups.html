@@ -81,6 +81,19 @@
 
               <div id="options-card" class="options-card overflow-scroll" style="display: none;">
                 <h4>Settings</h4>
+                <div id="t-score-selections">
+                  <ul>
+                      <li>T-Score Selections:</li>
+                      </li>
+                      <li>Team Data<input class="radioBTN" id="teamAVG" type="radio" name="z_avg" value="1" checked="true">
+                      </li>
+                      <li>Gender Data<input class="radioBTN" id="genderAVG" type="radio" name="z_avg" value="2">
+                      </li>
+                      <!--
+                      <li>Position Avg<input class="radioBTN" id="positionAVG" type="radio" name="z_avg" value="3"></li>
+                      -->
+                  </ul>
+                </div>
                 <hr>
                 <ul id="test-list"></ul>
               </div>
@@ -123,7 +136,7 @@
     $("#bar-graphs").hide();
 
     // selects all radio button options
-    let radioButtons = document.querySelectorAll('[type=radio]');
+    let radioButtons = document.querySelectorAll('.radiotest');
 
     // gets the date selectors
     let date1 = document.getElementById("date1");
@@ -141,6 +154,15 @@
         }
       })
     }
+
+    let T_score_radio_buttons = document.querySelectorAll('.radioBTN');
+    for (j of T_score_radio_buttons) {
+        j.addEventListener('click', function(e) {
+        console.log("T-score radio selected");
+        kpi_teams();
+      })
+    }
+   
 
     // checks when all 3 selection have been made (radio button, date1 and date2)
     date1.onchange = function() {
@@ -214,6 +236,15 @@
 
       if (!is_loading_kpi) {
 
+          var all_Athletes = document.getElementById("vbtn-radio1")
+          var all_Males = document.getElementById("vbtn-radio2")
+          var all_Females = document.getElementById("vbtn-radio3")
+
+          if (all_Athletes.checked == true || all_Males.checked == true || all_Females.checked == true){
+            console.log("weird case to hide t-scores")
+            $("#t-score-selections").hide();
+          }
+
           $("#raw-score-graphs").empty()
           $("#t-score-graphs").empty()
           $("#test-list").empty()
@@ -223,11 +254,8 @@
           // Get radio button values for populations or teams
           var Radio_BTN = $(".radiotest:checked").val();
 
-          // Get radio button values for r-score graph varients
-          var R_Radio_BTN = $("#raw-score-radio:checked").val();
-
-          // Get radio button values for t-score graph varients
-          var T_Radio_BTN = $("#t-score-radio:checked").val();
+          // Get radio button values for z-score graph varients
+          var AVG_Radio_BTN = $(".radioBTN:checked").val();
 
           // AJAX function has been called! No other calls can be made until this one finishes
           is_loading_kpi = true;
@@ -244,8 +272,7 @@
                   date1: date_one.value, 
                   date2: date_two.value, 
                   radiotest: Radio_BTN,
-                  R_Radio_BTN: R_Radio_BTN,
-                  T_Radio_BTN: T_Radio_BTN,
+                  AVG_Radio_BTN: AVG_Radio_BTN,
               }),
               headers: {
                   "X-Requested-With": "XMLHttpRequest",
@@ -300,18 +327,33 @@
     }
 
     $(document).ready(function () {
+
       $("#settings").hide();
       $("#t-score-graphs").hide();
       $("#raw-score-graphs").show();
+      $("#t-score-selections").hide();
 
       $("#t-score-radio").click(function () {
           $("#t-score-graphs").show();
           $("#raw-score-graphs").hide();
+          
+          var all_Athletes = document.getElementById("vbtn-radio1")
+          var all_Males = document.getElementById("vbtn-radio2")
+          var all_Females = document.getElementById("vbtn-radio3")
+
+          if (all_Athletes.checked == true || all_Males.checked == true || all_Females.checked == true){
+            console.log("weird case to hide t-scores")
+            $("#t-score-selections").hide();
+          }
+          else{
+            $("#t-score-selections").show();
+          }
       });
 
       $("#raw-score-radio").click(function () {
           $("#raw-score-graphs").show();
           $("#t-score-graphs").hide();
+          $("#t-score-selections").hide();
       });
 
       $("#settings").click(function () {
