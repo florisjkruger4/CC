@@ -1,3 +1,11 @@
+.athlete-pic-holder{
+    max-width: 250px;
+    max-height: 250px;
+    width: 100%;
+    height: auto;
+    position: relative;
+}
+
 .athlete-pic {
     width: 100%;
     height: auto;
@@ -5,6 +13,23 @@
     max-height: 250px;
     background-color: white;
     border-radius: var(--radius-big);
+}
+
+.athlete-pic:hover + .cam {
+    display: block;
+}
+.athlete-pic:hover {
+    opacity: 50%;
+}
+
+.cam {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 50px;
+    pointer-events: none;
 }
 
 .tab-corner{

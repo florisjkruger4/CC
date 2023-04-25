@@ -81,7 +81,7 @@ def bar_graph(x, y, T_AVG, G_AVG, P_AVG):
     finally:
         semaphore.release()
 
-def bar_graph_groups(x, y, G_AVG, P_AVG):
+def bar_graph_groups(x, y, T_AVG, G_AVG):
 
     plt.switch_backend('AGG')
 
@@ -105,15 +105,11 @@ def bar_graph_groups(x, y, G_AVG, P_AVG):
     ax.tick_params(axis='x', colors='white')
     ax.tick_params(axis='y', colors='white')
 
-    if (len(y) > 0):
-        avg = sum(y)/len(y)
-        ax.axhline(avg, color='#F2CD49', linewidth=2, label="Team Avg")
+    if (T_AVG != None):
+        ax.axhline(T_AVG, color='#F2CD49', linewidth=2, label="Team Avg")
 
     if (G_AVG != None):
         ax.axhline(G_AVG, color='#0051b5', linewidth=2, label="Gender Avg")
-    
-    if (P_AVG != None):
-        ax.axhline(P_AVG, color='#FC5151', linewidth=2, label="Position Avg")
 
     plt.bar_label(ax.containers[0], label_type='center')
 
