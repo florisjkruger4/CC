@@ -57,16 +57,20 @@ def bar_graph(x, y, T_AVG, G_AVG, P_AVG):
 
         if (len(y) > 0):
             avg = sum(y)/len(y)
-            ax.axhline(avg, color='#F2CD49', linewidth=2, label="Athlete Avg")
+            roundedAVG = round(avg, 3)
+            ax.axhline(avg, color='#F2CD49', linewidth=2, label="Athlete Avg: %.3f" %roundedAVG)
 
         if (T_AVG != None):
-            ax.axhline(T_AVG, color='#58E767', linewidth=2, label="Team Avg")
+            rounded_T_AVG = round(T_AVG, 3)
+            ax.axhline(T_AVG, color='#58E767', linewidth=2, label="Team Avg: %.3f" %rounded_T_AVG)
 
         if (G_AVG != None):
-            ax.axhline(G_AVG, color='#0051b5', linewidth=2, label="Gender Avg")
+            rounded_G_AVG = round(G_AVG, 3)
+            ax.axhline(G_AVG, color='#0051b5', linewidth=2, label="Gender Avg: %.3f" %rounded_G_AVG)
         
         if (P_AVG != None):
-            ax.axhline(P_AVG, color='#FC5151', linewidth=2, label="Position Avg")
+            rounded_P_AVG = round(P_AVG, 3)
+            ax.axhline(P_AVG, color='#FC5151', linewidth=2, label="Position Avg: %.3f" %rounded_P_AVG)
 
         if (ax.containers):
             plt.bar_label(ax.containers[0], label_type='center')
@@ -106,10 +110,12 @@ def bar_graph_groups(x, y, T_AVG, G_AVG):
     ax.tick_params(axis='y', colors='white')
 
     if (T_AVG != None):
-        ax.axhline(T_AVG, color='#F2CD49', linewidth=2, label="Team Avg")
+        rounded_T_AVG = round(T_AVG, 3)
+        ax.axhline(T_AVG, color='#58E767', linewidth=2, label="Team Avg: %.3f" %rounded_T_AVG)
 
     if (G_AVG != None):
-        ax.axhline(G_AVG, color='#0051b5', linewidth=2, label="Gender Avg")
+        rounded_G_AVG = round(G_AVG, 3)
+        ax.axhline(G_AVG, color='#0051b5', linewidth=2, label="Gender Avg: %.3f" %rounded_G_AVG)
 
     plt.bar_label(ax.containers[0], label_type='center')
 
@@ -203,7 +209,8 @@ def z_score_graph(x, y):
 
         if (len(y) > 0):
             avg = sum(y)/len(y)
-            ax.axhline(avg, color='#F2CD49', linewidth=2, label="T-Score Avg")
+            rounded_AVG = round(avg, 3)
+            ax.axhline(avg, color='#F2CD49', linewidth=2, label="T-Score Avg: %.3f" %rounded_AVG)
         
         plt.bar_label(ax.containers[0], label_type='center')
 

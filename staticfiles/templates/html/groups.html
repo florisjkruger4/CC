@@ -34,10 +34,10 @@
               <h1>Groups</h1>
             </div>
 
-          <div style="margin-top: 20px;">
-            <h4>Populations</h4>
-            &nbsp;
-          </div>
+            <div style="margin-top: 20px;">
+              <h4>Populations</h4>
+              &nbsp;
+            </div>
 
           <div class="btn-group-vertical" role="group" aria-label="Vertical radio toggle button group" style="width:100%;">
             <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="vbtn-radio1" autocomplete="off" value="allAthletes">
@@ -256,6 +256,8 @@
 
       if (!is_loading_kpi) {
 
+          disable_inputs();
+
           var all_Athletes = document.getElementById("vbtn-radio1")
           var all_Males = document.getElementById("vbtn-radio2")
           var all_Females = document.getElementById("vbtn-radio3")
@@ -358,6 +360,7 @@
                 hide_tests();
                 // AJAX call is done, so another one can go
                 is_loading_kpi = false;
+                enable_inputs();
               },
               error: (error) => {
                   console.log("Error processing KPI request: " + error);
@@ -421,6 +424,33 @@
           }
       });
     });
+
+    function disable_inputs() {
+        document.querySelectorAll("[type=checkbox]").forEach(checkbox => {
+            checkbox.disabled = true;
+        })
+        document.querySelectorAll("date").forEach(select => {
+            select.disabled = true;
+        })
+        document.querySelectorAll("[type=radio]").forEach(select => {
+            select.disabled = true;
+        })
+        date1.disabled = true;
+        date2.disabled = true;
+    }
+    function enable_inputs() {
+        document.querySelectorAll("[type=checkbox]").forEach(checkbox => {
+            checkbox.disabled = false;
+        })
+        document.querySelectorAll("date").forEach(select => {
+            select.disabled = false;
+        })
+        document.querySelectorAll("[type=radio]").forEach(select => {
+            select.disabled = false;
+        })
+        date1.disabled = false;
+        date2.disabled = false;
+    }
 
   </script>
 </body>

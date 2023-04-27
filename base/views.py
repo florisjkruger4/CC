@@ -514,9 +514,6 @@ def rawScoreAjax(all_kpi, athlete, date_one, date_two, t_avg, g_avg, p_avg):
         raw_results_y[x['testtype']].append(x['testresult'])
 
     #raw_results_x, raw_results_y, test_types = graphData(athlete, date_one, date_two)
-
-    print(raw_results_x)
-    print(raw_results_y)
     
     # init/reset variables to 0 before next use
     kpi_bar = []
@@ -1039,6 +1036,8 @@ def teamsAjax(date1, date2, selection, rad, t_avg, g_avg):
         averages = []
 
         if selection == "allAthletes":
+            gender_avg = None
+            team_average = None
 
             # selects all the dates relavant to to the specific test type
             all_dates = KpiT.objects.filter(datekpi__range=(date1, date2), testtype__exact=x).values_list("datekpi", flat=True).order_by("datekpi").distinct()
@@ -1062,6 +1061,8 @@ def teamsAjax(date1, date2, selection, rad, t_avg, g_avg):
                 averages.append(avg)
 
         elif selection == "allMales":
+            gender_avg = None
+            team_average = None
 
             # selects all the dates relavant to to the specific test type
             all_dates = (KpiT.objects.filter(
@@ -1098,6 +1099,8 @@ def teamsAjax(date1, date2, selection, rad, t_avg, g_avg):
                 averages.append(avg)
 
         elif selection == "allFemales":
+            gender_avg = None
+            team_average = None
 
             # selects all the dates relavant to to the specific test type
             all_dates = (KpiT.objects.filter(
