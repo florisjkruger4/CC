@@ -129,3 +129,10 @@
     --bs-btn-hover-bg: var(--acc-color-main);
     --bs-btn-hover-border-color: var(--acc-color-main);
 }
+
+input[type="date"] + span::before {
+    content: "•";
+    position: absolute;
+    top: 0;
+    right: 5px;
+  }

@@ -1,7 +1,17 @@
 /* Global variables for current athlete's information */
-let a_fname, a_lname, a_dob, a_id, kpi_count, wellness_count;
+let a_fname, a_lname, a_dob, a_id, kpi_count, wellness_count, kpi_earliest, all_dates;
 let ajaxURL;
-let tscore_loaded = false, raw_score_loaded = false;
+let tscore_loaded, raw_score_loaded;
+let tscore_loading, raw_score_loading;
+let graph_type_selected = "rawscore";
+
+// get dates from selectors
+let date_one;
+let date_two;
+let today;
+
+// false = calendar (date) input, true = exact (select) input
+let date_selector_type = false;
 
 /* Initial Page Load */
 document.addEventListener("DOMContentLoaded", function () {
@@ -11,12 +21,43 @@ document.addEventListener("DOMContentLoaded", function () {
     a_id = window.athleteData.id;
     kpi_count = window.athleteData.kpi_count;
     wellness_count = window.athleteData.wellness_count;
+    kpi_earliest = window.athleteData.kpi_earliest;
+    all_dates = window.athleteData.all_dates;
+
+    tscore_loaded = false, raw_score_loaded = false;
+    tscore_loading = false, raw_score_loading = false;
 
     ajaxURL = "/" + a_fname + "/" + a_lname + "/" + a_dob + "/" + a_id;
 
     // screen inits with raw score bar graphs, kpi trends, and wellness data
     // does NOT init with t-scores or spider graph
+
+    today = new Date().toISOString().substr(0, 10);
+
+    document.getElementById("cal-date1").value = kpi_earliest;
+    document.getElementById("cal-date2").value = today;
+    document.getElementById("exact-date1").value = all_dates[0];
+    document.getElementById("exact-date2").value = all_dates[all_dates.length-1];
+
+    document.getElementById("cal-date1").max = today;
+    document.getElementById("cal-date2").max = today;
+    document.getElementById("cal-date1").min = all_dates[0];
+    document.getElementById("cal-date2").min = all_dates[0];
+
+    date_one = kpi_earliest;
+    date_two = today;
+
+    spider_date = today;
+    document.getElementById("spider_date").value = today;
+    document.getElementById("spider_date").min = all_dates[0];
+    document.getElementById("spider_date").max = today;
+
+    
+
     if (kpi_count > 0) {
+        raw_score_loaded = false;
+        tscore_loaded = false;
+
         raw_score_ajax();
         trends_ajax();
     }
@@ -24,32 +65,12 @@ document.addEventListener("DOMContentLoaded", function () {
     if (wellness_count > 0)
         wellness_ajax();
 
-    // Create Event Listeners
-    // Listens for KPI date range changes to submit new AJAX request
-    document.getElementById("date1").addEventListener("change", function () {
-        raw_score_loaded = false;
-        tscore_loaded = false;
-
-        raw_score_ajax();
-        tscore_ajax();
-        trends_ajax();
-    });
-    document.getElementById("date2").addEventListener("change", function () {
-        raw_score_loaded = false;
-        tscore_loaded = false;
-
-        raw_score_ajax();
-        tscore_ajax();
-        trends_ajax();
-    });
-
     // Listens for checked boxes for for various averages for Raw Scores
     document.getElementById("t_AVG").addEventListener("click", function () {
         raw_score_loaded = false;
         raw_score_ajax();
     });
     document.getElementById("g_AVG").addEventListener("click", function () {
-
         raw_score_loaded = false;
         raw_score_ajax();
     });
@@ -83,7 +104,39 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Call the spider_ajax function when the submit button is clicked
     document.getElementById("spider-submit").addEventListener("click", spider_ajax, false);
+
+    enable_inputs();
 });
+
+function update_dates() {
+
+    console.log(date_selector_type);
+
+    // get dates from selectors (depending on which is being used)
+    if(!date_selector_type) {
+        date_one = document.getElementById("cal-date1").value;
+        date_two = document.getElementById("cal-date2").value;
+    }
+    else {
+        date_one = document.getElementById("exact-date1").value;
+        date_two = document.getElementById("exact-date2").value;
+    }
+
+    // if there are 2 dates selected, proceed
+    if(date_one && date_two) {
+        raw_score_loaded = false;
+        tscore_loaded = false;
+
+        if(graph_type_selected == "rawscore") {
+            raw_score_ajax();
+            trends_ajax();
+        }
+        else if(graph_type_selected == "tscore") {
+            tscore_ajax();
+            trends_ajax();
+        }
+    }
+}
 
 /* Spider Graph */
 function spider_chart(athlete_results, average_results, date) {
@@ -233,28 +286,22 @@ function spider_ajax(event) {
 //grabs info from the database without refreshing page and screwing everything up
 function raw_score_ajax() {
 
-    if (!raw_score_loaded) {
-
-        disable_inputs();
+    if (!raw_score_loaded && !raw_score_loading) {
 
         // Get check box values for bar graph averages
         let T_AVG_BTN = $("#t_AVG:checked").val()
         let G_AVG_BTN = $("#g_AVG:checked").val()
         let P_AVG_BTN = $("#p_AVG:checked").val()
 
-        // get dates from selectors
-        let date_one = document.getElementById("date1")
-        let date_two = document.getElementById("date2")
-
-        resultone.innerText = date_one.options[date_one.selectedIndex].text;
-        resulttwo.innerText = date_two.options[date_two.selectedIndex].text;
-
         // clear trends and graphs 
         $("#raw-score-graphs").empty()
         $("#test-list").empty()
 
         // add loading circle
-        $("#bar-graphs").append("<div id=\"loading-bar\" class=\"d-flex justify-content-center\"> <div class=\"lds-dual-ring\"></div></div>");
+        $("#raw-score-graphs").append("<div id=\"loading-raw-score\" class=\"d-flex justify-content-center\"> <div class=\"lds-dual-ring\"></div></div>");
+
+        raw_score_loading = true;
+        disable_inputs();
 
         $.ajax({
             url: ajaxURL,
@@ -262,8 +309,8 @@ function raw_score_ajax() {
             dataType: "json",
             data: JSON.stringify({
                 req_type: "raw-score",
-                date1: date_one.value,
-                date2: date_two.value,
+                date1: date_one,
+                date2: date_two,
                 T_AVG_BTN: T_AVG_BTN,
                 G_AVG_BTN: G_AVG_BTN,
                 P_AVG_BTN: P_AVG_BTN,
@@ -272,13 +319,13 @@ function raw_score_ajax() {
                 "X-Requested-With": "XMLHttpRequest",
                 "X-CSRFToken": getCookie("csrftoken"),
             },
-            success: (response) => {
-
+            success: (response) => {           
+    
                 //shows info being passed from backend
                 console.log(response);
 
                 //remove loading circle after info arrives from db
-                $("#loading-bar").remove()
+                $("#loading-raw-score").remove()
 
                 //loop thru each test type and get its info
                 for (let key in response.test_types) {
@@ -299,28 +346,108 @@ function raw_score_ajax() {
                     let checkid = /*"check_" +*/ key;
 
                     document.getElementById("test-list").innerHTML += "<li>" + response.test_types[key] + "<input type=\"checkbox\" id=\"" + checkid + "\" checked=\"true\"></li>";
+
+                    raw_score_loaded = true;
+                    raw_score_loading = false;
+                    hide_tests();
+                    enable_inputs();
                 }
-                raw_score_loaded = true;
-                hide_tests();
-                enable_inputs();
                 
             },
             error: (error) => {
                 console.log("Error processing KPI request: " + error);
+
+                raw_score_loaded = true;
+                raw_score_loading = false;
+                hide_tests();
+                enable_inputs();
             }
         })
     }
 }
+//grabs info from the database without refreshing page and screwing everything up
+function tscore_ajax() {
 
+    if (!tscore_loaded && !tscore_loading) {
+
+        // Get radio button values for z-score graph varients
+        let AVG_Radio_BTN = $(".radioBTN:checked").val();
+
+        // clear trends and graphs 
+        $("#t-score-graphs").empty()
+        $("#test-list").empty()
+
+        // add loading circle
+        $("#t-score-graphs").append("<div id=\"loading-t\" class=\"d-flex justify-content-center\"> <div class=\"lds-dual-ring\"></div></div>");
+
+        tscore_loading = true;
+        disable_inputs();
+
+        $.ajax({
+            url: ajaxURL,
+            type: "POST",
+            dataType: "json",
+            data: JSON.stringify({
+                req_type: "t-score",
+                date1: date_one,
+                date2: date_two,
+                AVG_Radio_BTN: AVG_Radio_BTN,
+            }),
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
+            success: (response) => {
+
+                //shows info being passed from backend
+                console.log(response);
+
+                //remove loading circle after info arrives from db
+                $("#loading-t").remove();
+
+                //loop thru each test type and get its info
+                for (let key in response.test_types) {
+
+                    let z_template = document.getElementById("z-template").cloneNode(true);
+
+                    // Construct URL for z-score graph and add path to this node's img tag
+                    let z_graphURL = "data:image/png;base64, " + response.z_score_bar[key];
+                    z_template.querySelector("#zname").innerText = response.test_types[key];
+                    z_template.querySelector("#zgraph").setAttribute("src", z_graphURL);
+
+                    // Give both graphs for each type an integer ID that will allow them to be maniuplated later
+                    z_template.setAttribute("id", "z_" + key);
+
+                    // Add this completed graph template to the div containing all graphs
+                    $("#t-score-graphs").append(z_template);
+
+                    let checkid = key;
+
+                    document.getElementById("test-list").innerHTML += "<li>" + response.test_types[key] + "<input type=\"checkbox\" id=\"" + checkid + "\" checked=\"true\"></li>";
+
+                    tscore_loaded = true;
+                    tscore_loading = false;
+                    hide_tests();
+                    enable_inputs();
+                }
+            },
+            error: (error) => {
+                console.log("Error processing T-Scores request: " + error);
+
+                tscore_loaded = true;
+                tscore_loading = false;
+                hide_tests();
+                enable_inputs();
+            }
+        })
+
+    }
+}
 
 function trends_ajax() {
 
-    // get dates from selectors
-    let date_one = document.getElementById("date1")
-    let date_two = document.getElementById("date2")
-
-    resultone.innerText = date_one.options[date_one.selectedIndex].text;
-    resulttwo.innerText = date_two.options[date_two.selectedIndex].text;
+    resultone.innerText = date_one;
+    resulttwo.innerText = date_two;
 
     // clear trends and graphs 
     $("#kpi-trend").empty()
@@ -334,8 +461,8 @@ function trends_ajax() {
         dataType: "json",
         data: JSON.stringify({
             req_type: "trend",
-            date1: date_one.value,
-            date2: date_two.value,
+            date1: date_one,
+            date2: date_two,
         }),
         headers: {
             "X-Requested-With": "XMLHttpRequest",
@@ -402,84 +529,6 @@ function trends_ajax() {
             console.log("Error processing KPI Trends request: " + error);
         }
     })
-}
-
-//grabs info from the database without refreshing page and screwing everything up
-function tscore_ajax() {
-
-    if (!tscore_loaded) {
-
-        disable_inputs();
-
-        // Get radio button values for z-score graph varients
-        let AVG_Radio_BTN = $(".radioBTN:checked").val();
-
-        // get dates from selectors
-        let date_one = document.getElementById("date1")
-        let date_two = document.getElementById("date2")
-
-        resultone.innerText = date_one.options[date_one.selectedIndex].text;
-        resulttwo.innerText = date_two.options[date_two.selectedIndex].text;
-
-        // clear trends and graphs 
-        $("#t-score-graphs").empty()
-        $("#test-list").empty()
-
-        // add loading circle
-        $("#t-score-graphs").append("<div id=\"loading-z\" class=\"d-flex justify-content-center\"> <div class=\"lds-dual-ring\"></div></div>");
-
-        $.ajax({
-            url: ajaxURL,
-            type: "POST",
-            dataType: "json",
-            data: JSON.stringify({
-                req_type: "t-score",
-                date1: date_one.value,
-                date2: date_two.value,
-                AVG_Radio_BTN: AVG_Radio_BTN,
-            }),
-            headers: {
-                "X-Requested-With": "XMLHttpRequest",
-                "X-CSRFToken": getCookie("csrftoken"),
-            },
-            success: (response) => {
-
-                //shows info being passed from backend
-                console.log(response);
-
-                //remove loading circle after info arrives from db
-                $("#loading-z").remove();
-
-                //loop thru each test type and get its info
-                for (let key in response.test_types) {
-
-                    let z_template = document.getElementById("z-template").cloneNode(true);
-
-                    // Construct URL for z-score graph and add path to this node's img tag
-                    let z_graphURL = "data:image/png;base64, " + response.z_score_bar[key];
-                    z_template.querySelector("#zname").innerText = response.test_types[key];
-                    z_template.querySelector("#zgraph").setAttribute("src", z_graphURL);
-
-                    // Give both graphs for each type an integer ID that will allow them to be maniuplated later
-                    z_template.setAttribute("id", "z_" + key);
-
-                    // Add this completed graph template to the div containing all graphs
-                    $("#t-score-graphs").append(z_template);
-
-                    let checkid = key;
-
-                    document.getElementById("test-list").innerHTML += "<li>" + response.test_types[key] + "<input type=\"checkbox\" id=\"" + checkid + "\" checked=\"true\"></li>";
-                }
-
-                tscore_loaded = true;
-                hide_tests();
-                enable_inputs();
-            },
-            error: (error) => {
-                console.log("Error processing T-Scores request: " + error);
-            }
-        })
-    }
 }
 /* Wellness AJAX function */
 
@@ -588,18 +637,33 @@ function hide_tests() {
 }
 
 function disable_inputs() {
-    document.querySelectorAll("[type=checkbox]").forEach(checkbox => {
+    //console.log("disable inputs");
+    document.querySelectorAll("input[type=checkbox]").forEach(checkbox => {
         checkbox.disabled = true;
     })
-    document.querySelectorAll("select").forEach(select => {
+    document.querySelectorAll("input[type=radio]").forEach(radio => {
+        radio.disabled = true;
+    })
+    document.querySelectorAll("input[type=date]").forEach(date => {
+        date.disabled = true;
+    })
+    document.querySelectorAll("input[type=select]").forEach(select => {
         select.disabled = true;
     })
 }
 function enable_inputs() {
-    document.querySelectorAll("[type=checkbox]").forEach(checkbox => {
+    //console.log("enable inputs");
+
+    document.querySelectorAll("input[type=checkbox]").forEach(checkbox => {
         checkbox.disabled = false;
     })
-    document.querySelectorAll("select").forEach(select => {
+    document.querySelectorAll("input[type=radio]").forEach(radio => {
+        radio.disabled = false;
+    })
+    document.querySelectorAll("input[type=date]").forEach(date => {
+        date.disabled = false;
+    })
+    document.querySelectorAll("input[type=select]").forEach(select => {
         select.disabled = false;
     })
 }
@@ -678,6 +742,8 @@ $(document).ready(function () {
         $("#raw-score-selections").hide();
         $("#t-score-selections").show();
 
+        graph_type_selected = "tscore";
+
         if (!tscore_loaded)
             tscore_ajax();
 
@@ -689,6 +755,8 @@ $(document).ready(function () {
 
         $("#raw-score-selections").show();
         $("#t-score-selections").hide();
+
+        graph_type_selected = "rawscore";
 
         if (!raw_score_loaded)
             raw_score_ajax();
@@ -702,6 +770,25 @@ $(document).ready(function () {
         } else {
             $("#options-card").hide();
         }
+    });
 
+    $("#cal-toggle").click(function () {
+        if ($('#exact-date').is(':hidden')) {
+            $("#exact-date").show();
+            $("#cal-date").hide();
+            date_selector_type = true;
+        } else {
+            $("#cal-date").show();
+            $("#exact-date").hide();
+            date_selector_type = false;
+        }
+    });
+
+    let options_card = document.getElementById("settings");
+
+    document.addEventListener('click', (event) => {
+        if (!options_card.contains(event.target)) {
+            $("#options-card").hide();
+        }
     });
 });

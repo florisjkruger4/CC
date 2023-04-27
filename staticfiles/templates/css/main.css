@@ -314,6 +314,31 @@ select {
   transform: translate(-50%, -50%);
 }
 
+.options-card {
+  background-color: var(--color-secondary);
+  border-radius: var(--radius-big);
+  padding: var(--inner-padding);
+  position: fixed; 
+  top: calc(var(--gutter) - 15px); 
+  right: calc(var(--gutter) - 15px); 
+  z-index: 3;
+  
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.options-card ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  padding-top: 40px;
+}
+
+.options-card li {
+  display: flex;
+  justify-content: space-between;
+  gap: 25px;
+}
+
 /* 8. Animations
    ********************************** */
 

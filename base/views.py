@@ -11,11 +11,13 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from .forms import AthleteForm, ImageForm, RegisterForm, UpdateUserForm
-import concurrent.futures
+from django.utils import timezone
+from datetime import timedelta
 
 import numpy as np
 import pandas as pd
 import scipy.stats as stats
+
 
 
 def LoginRegister(request):
@@ -512,11 +514,6 @@ def rawScoreAjax(all_kpi, athlete, date_one, date_two, t_avg, g_avg, p_avg):
         
         raw_results_x[x['testtype']].append(x['datekpi'])
         raw_results_y[x['testtype']].append(x['testresult'])
-
-    #raw_results_x, raw_results_y, test_types = graphData(athlete, date_one, date_two)
-
-    print(raw_results_x)
-    print(raw_results_y)
     
     # init/reset variables to 0 before next use
     kpi_bar = []
@@ -613,7 +610,8 @@ def wellnessAjax(athlete, wellnessdate):
     # Return the list of athletes
     return JsonResponse({"wellness": wellness})
 
-def spiderAjax(fname, lname, dob, sportsteam, gender, position, spider_date, selected_spider_tests, compare_avg):
+def spiderAjax(athlete, spider_date, selected_spider_tests, compare_avg):
+
 
     # Athletes results for selected KPI's and Date
     # Dictioanry of test_type and result key:value pairs
@@ -621,7 +619,7 @@ def spiderAjax(fname, lname, dob, sportsteam, gender, position, spider_date, sel
     athlete_spider_results = {}
     for test in selected_spider_tests:
         # Get the kpi result <=/lte to the given date
-        result = KpiT.objects.filter(fname=fname, lname=lname, dob=dob, datekpi__lte=spider_date, testtype=test).order_by('datekpi').values_list('testresult', flat=True).first()
+        result = KpiT.objects.filter(fname=athlete.fname, lname=athlete.lname, dob=athlete.dob, datekpi__lte=spider_date, testtype=test).order_by('datekpi').values_list('testresult', flat=True).first()
         athlete_spider_results[test] = result
 
     # List to hold nested dictionaries of averages test data
@@ -629,7 +627,7 @@ def spiderAjax(fname, lname, dob, sportsteam, gender, position, spider_date, sel
 
     # Sportsteam: generate averages in each selected test for athletes of the same Sportsteam 
     if "team_avg" in compare_avg:
-        same_team_athletes = AthleteT.objects.filter(sportsteam=sportsteam).exclude(fname=fname, lname=lname, dob=dob).values_list('fname', 'lname', 'dob')
+        same_team_athletes = AthleteT.objects.filter(sportsteam=athlete.sportsteam).exclude(fname=athlete.fname, lname=athlete.lname, dob=athlete.dob).values_list('fname', 'lname', 'dob')
         # Queryset of KPI data for each athlete of the same team where test type is in the selected tests and datekpi is less than or equal to the specified spider date
         kpi_results = KpiT.objects.filter(fname__in=same_team_athletes.values_list('fname', flat=True),
                             lname__in=same_team_athletes.values_list('lname', flat=True),
@@ -657,7 +655,7 @@ def spiderAjax(fname, lname, dob, sportsteam, gender, position, spider_date, sel
 
     # Position: generate averages in each selected test for athletes of the same position 
     if "position_avg" in compare_avg:
-        same_position_athletes = AthleteT.objects.filter(sportsteam=sportsteam, position=position).exclude(fname=fname, lname=lname, dob=dob).values_list('fname', 'lname', 'dob')
+        same_position_athletes = AthleteT.objects.filter(sportsteam=athlete.sportsteam, position=athlete.position).exclude(fname=athlete.fname, lname=athlete.lname, dob=athlete.dob).values_list('fname', 'lname', 'dob')
         # Queryset of KPI data for each athlete of the same position where test type is in the selected tests and datekpi is less than or equal to the specified spider date
         kpi_results = KpiT.objects.filter(fname__in=same_position_athletes.values_list('fname', flat=True),
                             lname__in=same_position_athletes.values_list('lname', flat=True),
@@ -686,7 +684,7 @@ def spiderAjax(fname, lname, dob, sportsteam, gender, position, spider_date, sel
     # Gender: generate averages in each selected test for athletes of the same gender 
     if "gender_avg" in compare_avg:
         # Queryset of athletes of the same gender not including the current athlete
-        same_gender_athletes = AthleteT.objects.filter(gender=gender).exclude(fname=fname, lname=lname, dob=dob).values_list('fname', 'lname', 'dob')
+        same_gender_athletes = AthleteT.objects.filter(gender=athlete.gender).exclude(fname=athlete.fname, lname=athlete.lname, dob=athlete.dob).values_list('fname', 'lname', 'dob')
         # Queryset of KPI data for each athlete of the same gender where test type is in the selected tests and datekpi is less than or equal to the specified spider date
         kpi_results = KpiT.objects.filter(fname__in=same_gender_athletes.values_list('fname', flat=True),
                             lname__in=same_gender_athletes.values_list('lname', flat=True),
@@ -723,9 +721,6 @@ def spiderAjax(fname, lname, dob, sportsteam, gender, position, spider_date, sel
 @login_required(login_url="/")
 def AthleteProf(request, fname, lname, dob, id):
     athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob, id=id)
-    sportsteam = athleteProf.sportsteam
-    gender = athleteProf.gender
-    position = athleteProf.position
 
     # instance of an image in order to edit profile picture...
     # (I have no idea what this means, it took me so long to get it working, if it works, it works.
@@ -733,6 +728,7 @@ def AthleteProf(request, fname, lname, dob, id):
     instanceImg = AthleteT.objects.filter(id=id).only("image").first()
 
     spider_date = None
+    kpi_dates = []
 
     # If parameter "request" is an XML request (AJAX)...
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
@@ -746,7 +742,7 @@ def AthleteProf(request, fname, lname, dob, id):
             date_two = data.get("date2")
             req_type = data.get("req_type")
 
-            # if we have data for "date1" and "date2", we have a kpi update request
+            # AJAX requests
             if req_type == "raw-score":
                 all_kpi = graphData(athleteProf, date_one, date_two)
                 return rawScoreAjax(all_kpi, athleteProf, date_one, date_two, data.get("T_AVG_BTN"), data.get("G_AVG_BTN"), data.get("P_AVG_BTN"))
@@ -763,7 +759,7 @@ def AthleteProf(request, fname, lname, dob, id):
                 return wellnessAjax(athleteProf, data.get("wellnessdate"))
             
             elif req_type == "spider":
-                return spiderAjax(fname, lname, dob, sportsteam, gender, position, data.get("spider_date"), data.get("selected_spider_tests"), data.get("compare_avg"))
+                return spiderAjax(athleteProf, data.get("spider_date"), data.get("selected_spider_tests"), data.get("compare_avg"))
 
             # data passed did not fit criteria above, so it is invalid
             else:
@@ -816,7 +812,7 @@ def AthleteProf(request, fname, lname, dob, id):
 
         if kpi_count > 0:
 
-            # Access and store all dates
+            # Access and store all dates athlete has KPIs on
             kpi_dates = (
                 KpiT.objects.filter(fname=fname, lname=lname, dob=dob)
                 .values("datekpi")
@@ -824,10 +820,24 @@ def AthleteProf(request, fname, lname, dob, id):
                 .distinct()
             )
 
-            # Gets earlies and latest kpi dates for specific athlete
-            kpi_earliest = kpi_dates.first()["datekpi"]
+            # Get list (array) of all dates; will be used by JS
+            all_dates = list(kpi_dates.values_list("datekpi", flat=True))
+
+            # Get date 6 months ago today 
+            six_months_ago = timezone.now() - timedelta(days=30*6)
+            six_months_ago_str = six_months_ago.strftime('%Y-%m-%d')
+
+            # If an athlete only has records before 6 months ago, just grab the
+            # first recorded kpi
+            if all_dates[0] <= six_months_ago_str:
+                kpi_earliest = six_months_ago_str
+            else:
+                kpi_earliest = kpi_dates.first()["datekpi"]
+
+            # Get most recent kpi date
             kpi_most_recent = kpi_dates.last()["datekpi"]
 
+            # Get all test types recorded for athlete
             all_tests = KpiT.objects.filter(fname=fname, lname=lname, dob=dob).values_list('testtype', flat=True).distinct()
 
         else: #if there are no kpi records for this athlete but there are wellness records... still loads their page
@@ -863,7 +873,8 @@ def AthleteProf(request, fname, lname, dob, id):
     context = {
         "athleteProf": athleteProf,
         # KPI
-        "all_dates": kpi_dates,
+        "all_dates": json.dumps(all_dates),
+        "kpi_dates": kpi_dates,
         "kpi_earliest": kpi_earliest,
         "kpi_most_recent": kpi_most_recent,
         "kpi_count": kpi_count,
@@ -1032,8 +1043,6 @@ def teamsAjax(date1, date2, selection, rad):
         .order_by("testtype")
         .distinct()
     )
-        
-    print(rad)
         
     for x in all_testTypes:
 

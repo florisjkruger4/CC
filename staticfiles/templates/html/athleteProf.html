@@ -14,7 +14,6 @@
     {% include 'html/sidenav.html' %}
 
     <!-- HTML Templates for KPI Trends and Bar Graphs -->
-    <!-- See "kpi_ajax()" below for context -->
     <div class="hide-template">
         <div id="bar-template">
             <h3 id="tname"></h3>
@@ -96,8 +95,8 @@
                                 </div>
                                 <hr>
                                 <div class="d-flex justify-content-between">
-                                    <h6>Year</h6>
-                                    <h6 class="text-end">{{ athleteProf.year }}</h6>
+                                    <h6>DOB</h6>
+                                    <h6 class="text-end">{{ athleteProf.dob }}</h6>
                                 </div>
                                 <hr>
                                 <div class="d-flex justify-content-between">
@@ -232,32 +231,41 @@
 
                         <!-- Date Selector + Settings-->
                         <div class="main-header justify-content-between" style="padding-top: var(--inner-padding)">
-                            <form method="post" id="kpiform" name="kpiform">
-                                {% csrf_token %}
-                                <div id="kpi-dates-div">
-                                    <select id="date1" name="date1" style="font-size:20px;">
-                                        <option selected>{{ kpi_earliest }}</option>
-                                        {% for x in all_dates %}
-                                        <option>{{ x.datekpi }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    to
-                                    <select id="date2" name="date2" style="font-size:20px;">
-                                        <option selected>{{ kpi_most_recent }}</option>
-                                        {% for x in all_dates %}
-                                        <option>{{ x.datekpi }}</option>
-                                        {% endfor %}
-                                    </select>
+                
+                            <div id="kpi-dates-div">
+                                <div class="d-flex align-items-center" style="gap: 10px;">
+
+                                    <div id="exact-date" style="display: none;">
+                                        {% csrf_token %}
+                                        <select id="exact-date1" name="date1" style="font-size:20px;" onchange="update_dates()">
+                                            {% for x in kpi_dates %}
+                                            <option>{{ x.datekpi }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        to
+                                        <select id="exact-date2" name="date2" style="font-size:20px;" onchange="update_dates()">
+                                            {% for x in kpi_dates %}
+                                            <option>{{ x.datekpi }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div id="cal-date">
+                                        <div class="d-flex align-items-center" style="gap: 10px;">
+                                            <input type="date" id="cal-date1" name="date1" class="form-control input-box" onchange="update_dates()">
+                                            <p>to</p>
+                                            <input type="date" id="cal-date2" name="date2" class="form-control input-box" onchange="update_dates()">
+                                        </div>
+                                    </div>
+                                    <i id="cal-toggle" class="fa-regular fa-calendar"></i>
                                 </div>
-                                <div id="spider-date-div" style="display: none;">
-                                    <select id="spider_date" name="spider_date" style="font-size:20px;">
-                                        <option selected>{{ kpi_most_recent }}</option>
-                                        {% for x in all_dates %}
-                                        <option>{{ x.datekpi }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </form>
+                            </div>
+                         
+                           
+                            <div id="spider-date-div" style="display: none;">
+                                <input type="date" id="spider_date" name="spider_date" class="form-control input-box">
+                            </div>
+
+
                             <div class="d-flex align-items-center" style="gap:var(--inner-padding); margin-top: 8px;">
                                 <!-- Bar/Spider Chart Tabs-->
                                 <div class="d-flex h-100">
@@ -270,10 +278,14 @@
                                     <!--<button id="z-scores-tab" class="report-tab">T-Scores</button>-->
                                 </div>
                                 <i class="fa-solid fa-gear" id="settings"
-                                    style="color: var(--acc-color-main); font-size: var(--icon-size); z-index: 2;"></i>
+                                    style="color: var(--acc-color-main); font-size: var(--icon-size);"></i>
 
                                 <div id="options-card" class="options-card overflow-scroll" style="display: none;">
-                                    <h4>Settings</h4>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h4>Settings</h4>
+                                        <i class="fa-solid fa-xmark" style="font-size: var(--icon-size);"></i>
+                                    </div>
+                                    
                                     <div id="raw-score-selections">
                                         <ul>
                                             <li>Bar Graph Selections:</li>
@@ -304,7 +316,7 @@
 
                         <!-- Spider Chart -->
                         <div id="spider-graphs" class="graphprof">
-                            <div id="spider-graph" style="width:100%; height: 70vh; display: none;"></div>
+                            <div id="spider-graph" style="width:100%; height: 65vh; display: none;"></div>
                             <form method="post" id="kpi_spider_form">
                                 {% csrf_token %}
                                 <form method="post" >
@@ -365,7 +377,10 @@
                                 dob: '{{ athleteProf.dob }}',
                                 id: '{{ athleteProf.id }}',
                                 kpi_count: '{{ kpi_count }}',
-                                wellness_count: '{{ wellness_count }}'
+                                wellness_count: '{{ wellness_count }}',
+                                kpi_earliest: '{{ kpi_earliest }}',
+                                kpi_most_recent: '{{ kpi_most_recent }}',
+                                all_dates: JSON.parse('{{ all_dates|safe }}')
                             };
                             
                         </script>
