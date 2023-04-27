@@ -56,10 +56,6 @@
                                 <h1>{{ athleteProf.fname }} {{ athleteProf.lname }}</h1>
                             </div>
                             <div class="justify-content-between">
-                                <label for="id_image">
-                                    <i class="fa-solid fa-camera"
-                                        style="color: var(--acc-color-main); font-size: var(--icon-size); cursor: pointer;"></i>
-                                </label>
                                 &nbsp;
                                 <a
                                     href="{% url 'EditAthlete' athleteProf.fname athleteProf.lname athleteProf.dob athleteProf.id %}">
@@ -77,11 +73,14 @@
 
                         <div class="d-flex">
 
-                            {% if athleteProf.image == '' %}
-                            <img class="athlete-pic" src="/media/placeholder.jpg" id="profileImg"></img>
-                            {% elif athleteProf.image %}
-                            <img class="athlete-pic" src="/media/{{ athleteProf.image }}" id="profileImg"></img>
-                            {% endif %}
+                            <label for="id_image" class="athlete-pic-holder" style="cursor: pointer;">
+                                {% if athleteProf.image == '' %}
+                                <img class="athlete-pic" src="/media/placeholder.jpg" id="profileImg"></img>
+                                {% elif athleteProf.image %}
+                                <img class="athlete-pic" src="/media/{{ athleteProf.image }}" id="profileImg"></img>
+                                {% endif %}   
+                                <i class="fa-solid fa-camera cam"></i>
+                            </label>
 
                             <div class="w-100" style="margin-left: var(--inner-padding);">
                                 <div class="d-flex justify-content-between">
@@ -299,7 +298,7 @@
                                     </div>
                                     <div id="t-score-selections">
                                         <ul>
-                                            <li>T-Score Selections:</li>
+                                            <li>T-Score Comparisons:</li>
                                             </li>
                                             <li>Team Data<input class="radioBTN" id="teamAVG" type="radio" name="z_avg" value="1" checked="true">
                                             </li>

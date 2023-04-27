@@ -46,15 +46,6 @@
           <i class="fs-4 fa-solid fa-heart fa-fw"></i> <span class="ms-1 d-none d-md-inline">Wellness</span>
         </a>
       </li>
-      {% if request.user.is_authenticated %}
-      <hr class="w-100 my-2 d-none d-md-inline" />
-      <li>
-        <a href="{% url 'LogoutUser' %}" class="nav-link px-0 align-middle">
-          <i class="fs-4 fa-solid fa-arrow-right-from-bracket fa-fw"></i> <span
-            class="ms-1 d-none d-md-inline">Logout</span>
-        </a>
-      </li>
-      {% endif %}
     </ul>
   </div>
 

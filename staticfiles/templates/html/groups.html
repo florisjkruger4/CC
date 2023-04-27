@@ -34,10 +34,10 @@
               <h1>Groups</h1>
             </div>
 
-          <div style="margin-top: 20px;">
-            <h4>Populations</h4>
-            &nbsp;
-          </div>
+            <div style="margin-top: 20px;">
+              <h4>Populations</h4>
+              &nbsp;
+            </div>
 
           <div class="btn-group-vertical" role="group" aria-label="Vertical radio toggle button group" style="width:100%;">
             <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="vbtn-radio1" autocomplete="off" value="allAthletes">
@@ -69,7 +69,6 @@
         <div class="col-lg-9 col-padding col-inner-padding-r overflow-scroll">
           <div class="col-scroll">
             <div class="main-header justify-content-between">
-              {% csrf_token %}
 
               <div class="d-flex align-items-center" style="gap: var(--inner-padding);">
                 <input type="date" id="date1" name="date1" disabled="true" class="form-control input-box">
@@ -81,9 +80,22 @@
 
               <div id="options-card" class="options-card overflow-scroll" style="display: none;">
                 <h4>Settings</h4>
+                <div id="raw-score-selections">
+                  <ul>
+                      <li>Bar Graph Selections:</li>
+                      </li>
+                      <li>Team Avg<input class="check_box" id="t_AVG" type="checkbox" name="t_avg" value="1">
+                      </li>
+                      <li>Gender Avg<input class="check_box" id="g_AVG" type="checkbox" name="g_avg" value="1">
+                      </li>
+                      <!--
+                      <li>Position Avg<input class="check_box" id="p_AVG" type="checkbox" name="p_avg" value="1"></li>
+                      -->
+                  </ul>
+                </div>
                 <div id="t-score-selections">
                   <ul>
-                      <li>T-Score Selections:</li>
+                      <li>T-Score Comparisons:</li>
                       </li>
                       <li>Team Data<input class="radioBTN" id="teamAVG" type="radio" name="z_avg" value="1" checked="true">
                       </li>
@@ -158,11 +170,19 @@
     let T_score_radio_buttons = document.querySelectorAll('.radioBTN');
     for (j of T_score_radio_buttons) {
         j.addEventListener('click', function(e) {
-        console.log("T-score radio selected");
         kpi_teams();
       })
     }
+
+    let raw_graph_teamAVG_selection = document.getElementById("t_AVG");
+    raw_graph_teamAVG_selection.onclick = function() {
+      kpi_teams();
+    }
    
+    let raw_graph_genderAVG_selection = document.getElementById("g_AVG");
+    raw_graph_genderAVG_selection.onclick = function() {
+      kpi_teams();
+    }
 
     // checks when all 3 selection have been made (radio button, date1 and date2)
     date1.onchange = function() {
@@ -236,13 +256,24 @@
 
       if (!is_loading_kpi) {
 
+          disable_inputs();
+
           var all_Athletes = document.getElementById("vbtn-radio1")
           var all_Males = document.getElementById("vbtn-radio2")
           var all_Females = document.getElementById("vbtn-radio3")
 
+          var t_rad = document.getElementById("t-score-radio")
+          var r_rad = document.getElementById("raw-score-radio")
+
           if (all_Athletes.checked == true || all_Males.checked == true || all_Females.checked == true){
-            console.log("weird case to hide t-scores")
             $("#t-score-selections").hide();
+            $("#raw-score-selections").hide();
+          }
+          else if (t_rad.checked == true){
+            $("#t-score-selections").show();
+          }
+          else if (r_rad.checked == true){
+            $("#raw-score-selections").show();
           }
 
           $("#raw-score-graphs").empty()
@@ -256,6 +287,12 @@
 
           // Get radio button values for z-score graph varients
           var AVG_Radio_BTN = $(".radioBTN:checked").val();
+
+          // gets checkbox val for gender average for raw-graphs
+          var T_Avg = $("#t_AVG:checked").val();
+
+          // gets checkbox val for gender average for raw-graphs
+          var G_Avg = $("#g_AVG:checked").val();
 
           // AJAX function has been called! No other calls can be made until this one finishes
           is_loading_kpi = true;
@@ -273,6 +310,8 @@
                   date2: date_two.value, 
                   radiotest: Radio_BTN,
                   AVG_Radio_BTN: AVG_Radio_BTN,
+                  t_AVG: T_Avg,
+                  g_AVG: G_Avg,
               }),
               headers: {
                   "X-Requested-With": "XMLHttpRequest",
@@ -281,6 +320,14 @@
               success: (response) => {
                   //shows info being passed from backend
                   console.log(response);
+
+                  if (response.kpi_bar.length < 1){
+                    $("#raw-score-graphs").append("No Data");
+                  }
+
+                  if (response.z_score_bar.length < 1){
+                    $("#t-score-graphs").append("No Data");
+                  }
 
                   $("#loading-bar").remove()
 
@@ -313,6 +360,7 @@
                 hide_tests();
                 // AJAX call is done, so another one can go
                 is_loading_kpi = false;
+                enable_inputs();
               },
               error: (error) => {
                   console.log("Error processing KPI request: " + error);
@@ -331,18 +379,19 @@
       $("#settings").hide();
       $("#t-score-graphs").hide();
       $("#raw-score-graphs").show();
+      $("#raw-score-selections").show();
       $("#t-score-selections").hide();
 
       $("#t-score-radio").click(function () {
           $("#t-score-graphs").show();
           $("#raw-score-graphs").hide();
+          $("#raw-score-selections").hide();
           
           var all_Athletes = document.getElementById("vbtn-radio1")
           var all_Males = document.getElementById("vbtn-radio2")
           var all_Females = document.getElementById("vbtn-radio3")
 
           if (all_Athletes.checked == true || all_Males.checked == true || all_Females.checked == true){
-            console.log("weird case to hide t-scores")
             $("#t-score-selections").hide();
           }
           else{
@@ -354,6 +403,17 @@
           $("#raw-score-graphs").show();
           $("#t-score-graphs").hide();
           $("#t-score-selections").hide();
+
+          var all_Athletes = document.getElementById("vbtn-radio1")
+          var all_Males = document.getElementById("vbtn-radio2")
+          var all_Females = document.getElementById("vbtn-radio3")
+
+          if (all_Athletes.checked == true || all_Males.checked == true || all_Females.checked == true){
+            $("#raw-score-selections").hide();
+          }
+          else{
+            $("#raw-score-selections").show();
+          }
       });
 
       $("#settings").click(function () {
@@ -364,6 +424,33 @@
           }
       });
     });
+
+    function disable_inputs() {
+        document.querySelectorAll("[type=checkbox]").forEach(checkbox => {
+            checkbox.disabled = true;
+        })
+        document.querySelectorAll("date").forEach(select => {
+            select.disabled = true;
+        })
+        document.querySelectorAll("[type=radio]").forEach(select => {
+            select.disabled = true;
+        })
+        date1.disabled = true;
+        date2.disabled = true;
+    }
+    function enable_inputs() {
+        document.querySelectorAll("[type=checkbox]").forEach(checkbox => {
+            checkbox.disabled = false;
+        })
+        document.querySelectorAll("date").forEach(select => {
+            select.disabled = false;
+        })
+        document.querySelectorAll("[type=radio]").forEach(select => {
+            select.disabled = false;
+        })
+        date1.disabled = false;
+        date2.disabled = false;
+    }
 
   </script>
 </body>

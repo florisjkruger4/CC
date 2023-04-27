@@ -976,7 +976,7 @@ def EditAthlete(request, fname, lname, dob, id):
 
     return render(request, "html/editathlete.html", context)
 
-def teamsAjax(date1, date2, selection, rad):
+def teamsAjax(date1, date2, selection, rad, t_avg, g_avg):
 
     kpi_bar = []
     z_score_bar = []
@@ -1050,6 +1050,8 @@ def teamsAjax(date1, date2, selection, rad):
         averages = []
 
         if selection == "allAthletes":
+            gender_avg = None
+            team_average = None
 
             # selects all the dates relavant to to the specific test type
             all_dates = KpiT.objects.filter(datekpi__range=(date1, date2), testtype__exact=x).values_list("datekpi", flat=True).order_by("datekpi").distinct()
@@ -1073,6 +1075,8 @@ def teamsAjax(date1, date2, selection, rad):
                 averages.append(avg)
 
         elif selection == "allMales":
+            gender_avg = None
+            team_average = None
 
             # selects all the dates relavant to to the specific test type
             all_dates = (KpiT.objects.filter(
@@ -1109,6 +1113,8 @@ def teamsAjax(date1, date2, selection, rad):
                 averages.append(avg)
 
         elif selection == "allFemales":
+            gender_avg = None
+            team_average = None
 
             # selects all the dates relavant to to the specific test type
             all_dates = (KpiT.objects.filter(
@@ -1178,6 +1184,36 @@ def teamsAjax(date1, date2, selection, rad):
                 else:
                     avg = (sum(vals) / 1)
                 averages.append(avg)
+
+            if t_avg == '1':
+                indiv_tests = []
+                for q in kpi_results:
+                    indiv_tests.append(q.testresult)
+                team_average = sum(indiv_tests) / len(indiv_tests)
+                
+            else:
+                team_average = None
+                
+            if g_avg == '1':
+                # gets all athletes on team to determine gender
+                athlete_on_team = AthleteT.objects.filter(sportsteam=selection).values_list('gender')
+                # gets all the gender of selected teams's kpi record's in respected date
+                same_gender_athletes = AthleteT.objects.filter(gender__in=athlete_on_team.values_list('gender', flat=True)).values_list('fname', 'lname', 'dob')
+                # Queryset of KPI data for each athlete of the same gender as selected team gender
+                kpi_results_same_gender = KpiT.objects.filter(fname__in=same_gender_athletes.values_list('fname', flat=True),
+                                    lname__in=same_gender_athletes.values_list('lname', flat=True),
+                                    dob__in=same_gender_athletes.values_list('dob', flat=True),
+                                    testtype__exact=x,
+                                    datekpi__range=(date1, date2)).order_by('datekpi')
+                
+                same_gender_kpi_results = []
+                for z in kpi_results_same_gender:
+                    same_gender_kpi_results.append(z.testresult)
+
+                gender_avg = sum(same_gender_kpi_results) / len(same_gender_kpi_results)
+
+            else:
+                gender_avg = None
 
         if rad == "1":
 
@@ -1265,7 +1301,7 @@ def teamsAjax(date1, date2, selection, rad):
         results_x = all_dates
         results_y = averages
         
-        kpi_bar.append(bar_graph_groups(results_x, results_y, None, None))
+        kpi_bar.append(bar_graph_groups(results_x, results_y, team_average, gender_avg))
 
     return JsonResponse({
         "all_testTypes": list(all_testTypes),
@@ -1289,7 +1325,7 @@ def GroupDash(request):
 
             # if we have data for "date1" and "date2", we have a kpi update request
             if data.get("date1") and data.get("date2") and data.get("radiotest"):
-                return teamsAjax(data.get("date1"), data.get("date2"), data.get("radiotest"), data.get("AVG_Radio_BTN"))
+                return teamsAjax(data.get("date1"), data.get("date2"), data.get("radiotest"), data.get("AVG_Radio_BTN"), data.get("t_AVG"), data.get("g_AVG"))
 
         else:
             return JsonResponse({"status": "Invalid request"}, status=400)
