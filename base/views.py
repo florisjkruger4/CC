@@ -621,7 +621,7 @@ def spiderAjax(fname, lname, dob, sportsteam, gender, position, spider_date, sel
     athlete_spider_results = {}
     for test in selected_spider_tests:
         # Get the kpi result <=/lte to the given date
-        result = KpiT.objects.filter(fname=fname, lname=lname, dob=dob, datekpi__lte=spider_date, testtype=test).order_by('datekpi').values_list('testresult', flat=True).first()
+        result = KpiT.objects.filter(fname=fname, lname=lname, dob=dob, datekpi__lte=spider_date, testtype=test).order_by('datekpi').values_list('testresult', flat=True).last()
         athlete_spider_results[test] = result
 
     # List to hold nested dictionaries of averages test data
