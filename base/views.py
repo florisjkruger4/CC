@@ -797,6 +797,7 @@ def AthleteProf(request, fname, lname, dob, id):
 
         # We don't have any wellness or kpi data, so just return
         if kpi_count == 0 and wellness_count == 0:
+            all_dates = None
             # Image handling for if there is no data in an athletes profile (no kpi records or wellness records)
             if request.method == "POST":
                 form = ImageForm(request.POST, request.FILES, instance=instanceImg)
@@ -846,6 +847,7 @@ def AthleteProf(request, fname, lname, dob, id):
             kpi_most_recent = None
             kpi_count = None
             all_tests = None
+            all_dates = None
 
         if wellness_count > 0:
             # Access and store all dates
