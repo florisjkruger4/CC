@@ -145,6 +145,7 @@
     z-index: 0;
 }
 
+/* Bootstrap custom color override */
 .btn-outline-primary, .btn-outline-primary:hover, .btn-outline-primary:active {
     --bs-btn-color: var(--acc-color-main);
     --bs-btn-border-color: var(--acc-color-main);
@@ -154,10 +155,3 @@
     --bs-btn-hover-bg: var(--acc-color-main);
     --bs-btn-hover-border-color: var(--acc-color-main);
 }
-
-input[type="date"] + span::before {
-    content: "•";
-    position: absolute;
-    top: 0;
-    right: 5px;
-  }

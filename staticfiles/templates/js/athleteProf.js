@@ -1,20 +1,20 @@
-/* Global variables for current athlete's information */
+/* Global variable declaration for current athlete's information */
 let a_fname, a_lname, a_dob, a_id, kpi_count, wellness_count, kpi_earliest, all_dates;
 let ajaxURL;
 let tscore_loaded, raw_score_loaded;
 let tscore_loading, raw_score_loading;
-let graph_type_selected = "rawscore";
+let graph_type_selected;
 
-// get dates from selectors
+// Global variables for dates
 let date_one;
 let date_two;
 let today;
 
-// false = calendar (date) input, true = exact (select) input
-let date_selector_type = false;
+let date_selector_type;
 
 /* Initial Page Load */
 document.addEventListener("DOMContentLoaded", function () {
+    // initialize athlete data
     a_fname = window.athleteData.fname;
     a_lname = window.athleteData.lname;
     a_dob = window.athleteData.dob;
@@ -24,36 +24,46 @@ document.addEventListener("DOMContentLoaded", function () {
     kpi_earliest = window.athleteData.kpi_earliest;
     all_dates = window.athleteData.all_dates;
 
+    // initialize "lock" variables
     tscore_loaded = false, raw_score_loaded = false;
     tscore_loading = false, raw_score_loading = false;
+    graph_type_selected = "rawscore";
+    date_selector_type = "cal";
 
+    // assemble AJAX URL
+    // this will be used by all AJAX functions and doesn't change
     ajaxURL = "/" + a_fname + "/" + a_lname + "/" + a_dob + "/" + a_id;
 
-    // screen inits with raw score bar graphs, kpi trends, and wellness data
-    // does NOT init with t-scores or spider graph
-
+    // get today's date
     today = new Date().toISOString().substr(0, 10);
 
+    // set initial values for date selectors
     document.getElementById("cal-date1").value = kpi_earliest;
     document.getElementById("cal-date2").value = today;
     document.getElementById("exact-date1").value = all_dates[0];
     document.getElementById("exact-date2").value = all_dates[all_dates.length-1];
 
+    // set min and max values for calendar selector so the user can only use
+    // dates within a certain range (which is the first recorded kpi -> today)
     document.getElementById("cal-date1").max = today;
     document.getElementById("cal-date2").max = today;
     document.getElementById("cal-date1").min = all_dates[0];
     document.getElementById("cal-date2").min = all_dates[0];
 
+    // initialize date_one and date_two
+    // these will hold the current date selections for both selectors & are used
+    // for ajax requests
     date_one = kpi_earliest;
     date_two = today;
 
+    // spider graph date stuff. same as above
     spider_date = today;
     document.getElementById("spider_date").value = today;
     document.getElementById("spider_date").min = all_dates[0];
     document.getElementById("spider_date").max = today;
 
-    
-
+    // if there is at least 1 kpi report, submit ajax request to load raw score bar graphs
+    // and trend reports
     if (kpi_count > 0) {
         raw_score_loaded = false;
         tscore_loaded = false;
@@ -62,6 +72,8 @@ document.addEventListener("DOMContentLoaded", function () {
         trends_ajax();
     }
 
+    // if there is at least 1 wellness report, submit ajax request to load most
+    // recent wellness report
     if (wellness_count > 0)
         wellness_ajax();
 
@@ -104,20 +116,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Call the spider_ajax function when the submit button is clicked
     document.getElementById("spider-submit").addEventListener("click", spider_ajax, false);
-
-    enable_inputs();
 });
 
+// handles when user selects a date
 function update_dates() {
 
-    console.log(date_selector_type);
-
     // get dates from selectors (depending on which is being used)
-    if(!date_selector_type) {
+    if(date_selector_type = "cal") {
         date_one = document.getElementById("cal-date1").value;
         date_two = document.getElementById("cal-date2").value;
     }
-    else {
+    else if(date_selector_type = "exact"){
         date_one = document.getElementById("exact-date1").value;
         date_two = document.getElementById("exact-date2").value;
     }
@@ -237,6 +246,7 @@ function spider_chart(athlete_results, average_results, date) {
 function spider_ajax(event) {
     event.preventDefault();
 
+    // section is loading; don't allow user input while loading!
     disable_inputs();
 
     // Values to be passed to backend
@@ -276,7 +286,7 @@ function spider_ajax(event) {
             enable_inputs();
         },
         error: (error) => {
-
+            alert("Error processing Spider Graph AJAX Request: " + error);
         }
     })
 }
@@ -286,6 +296,7 @@ function spider_ajax(event) {
 //grabs info from the database without refreshing page and screwing everything up
 function raw_score_ajax() {
 
+    // this section is NOT up to date and is currently NOT loading, so a request is allowed
     if (!raw_score_loaded && !raw_score_loading) {
 
         // Get check box values for bar graph averages
@@ -300,6 +311,7 @@ function raw_score_ajax() {
         // add loading circle
         $("#raw-score-graphs").append("<div id=\"loading-raw-score\" class=\"d-flex justify-content-center\"> <div class=\"lds-dual-ring\"></div></div>");
 
+        // section is loading; don't allow user input while loading!
         raw_score_loading = true;
         disable_inputs();
 
@@ -343,10 +355,14 @@ function raw_score_ajax() {
                     // Add this completed graph template to the div containing all graphs
                     $("#raw-score-graphs").append(bar_template);
 
-                    let checkid = /*"check_" +*/ key;
-
+                    // add this test to list of test types within settings (option card)
+                    let checkid = key;
                     document.getElementById("test-list").innerHTML += "<li>" + response.test_types[key] + "<input type=\"checkbox\" id=\"" + checkid + "\" checked=\"true\"></li>";
 
+                    // section IS loaded
+                    // section is no longer loading
+                    // give display test options back 
+                    // enable inputs
                     raw_score_loaded = true;
                     raw_score_loading = false;
                     hide_tests();
@@ -355,8 +371,12 @@ function raw_score_ajax() {
                 
             },
             error: (error) => {
-                console.log("Error processing KPI request: " + error);
+                alert("Error processing Bar Graph (Raw Scores) AJAX Request: " + error);
 
+                // section IS loaded
+                // section is no longer loading
+                // give display test options back 
+                // enable inputs
                 raw_score_loaded = true;
                 raw_score_loading = false;
                 hide_tests();
@@ -365,9 +385,11 @@ function raw_score_ajax() {
         })
     }
 }
-//grabs info from the database without refreshing page and screwing everything up
+
+/* T-Score AJAX Function */
 function tscore_ajax() {
 
+    // this section is NOT up to date and is currently NOT loading, so a request is allowed
     if (!tscore_loaded && !tscore_loading) {
 
         // Get radio button values for z-score graph varients
@@ -380,6 +402,7 @@ function tscore_ajax() {
         // add loading circle
         $("#t-score-graphs").append("<div id=\"loading-t\" class=\"d-flex justify-content-center\"> <div class=\"lds-dual-ring\"></div></div>");
 
+        // section is loading; don't allow user input while loading!
         tscore_loading = true;
         disable_inputs();
 
@@ -421,10 +444,14 @@ function tscore_ajax() {
                     // Add this completed graph template to the div containing all graphs
                     $("#t-score-graphs").append(z_template);
 
+                    // add this test to list of test types within settings (option card)
                     let checkid = key;
-
                     document.getElementById("test-list").innerHTML += "<li>" + response.test_types[key] + "<input type=\"checkbox\" id=\"" + checkid + "\" checked=\"true\"></li>";
 
+                    // section IS loaded
+                    // section is no longer loading
+                    // give display test options back 
+                    // enable inputs
                     tscore_loaded = true;
                     tscore_loading = false;
                     hide_tests();
@@ -432,8 +459,12 @@ function tscore_ajax() {
                 }
             },
             error: (error) => {
-                console.log("Error processing T-Scores request: " + error);
+                alert("Error processing Bar Graph (T-Scores) AJAX Request: " + error);
 
+                // section IS loaded
+                // section is no longer loading
+                // give display test options back 
+                // enable inputs
                 tscore_loaded = true;
                 tscore_loading = false;
                 hide_tests();
@@ -444,6 +475,7 @@ function tscore_ajax() {
     }
 }
 
+/* Trends AJAX function */
 function trends_ajax() {
 
     resultone.innerText = date_one;
@@ -526,12 +558,12 @@ function trends_ajax() {
             hide_tests();
         },
         error: (error) => {
-            console.log("Error processing KPI Trends request: " + error);
+            alert("Error processing KPI Trend AJAX Request: " + error);
         }
     })
 }
-/* Wellness AJAX function */
 
+/* Wellness AJAX function */
 /* When the "#wellnessform" form is submitted, this function will send an AJAX request to fetch the new data. */
 function wellness_ajax() {
     // Get value of #wellnessdate
@@ -581,6 +613,7 @@ function wellness_ajax() {
             document.getElementById("stat").innerHTML = status;
             document.getElementById("total").innerHTML = "Readiness: " + total;
 
+            // depending on status, change bg color of "stat-box" to either red for out, or green for good
             if (status == "Out") {
                 document.getElementById("stat-box").style.color = "var(--black-text)";
                 document.getElementById("stat-box").style.backgroundColor = "var(--acc-color-neg)";
@@ -636,8 +669,13 @@ function hide_tests() {
     })
 }
 
+
+// used to prevent additional user input while an ajax request is processing
+// prevents garbled data
+
 function disable_inputs() {
-    //console.log("disable inputs");
+    
+    //disable all checkboxes, radios, dates, and selectors
     document.querySelectorAll("input[type=checkbox]").forEach(checkbox => {
         checkbox.disabled = true;
     })
@@ -652,8 +690,8 @@ function disable_inputs() {
     })
 }
 function enable_inputs() {
-    //console.log("enable inputs");
 
+    // enable all checkboxes, radios, dates, and selectors
     document.querySelectorAll("input[type=checkbox]").forEach(checkbox => {
         checkbox.disabled = false;
     })
@@ -686,78 +724,107 @@ $(document).ready(function () {
     $("#raw-score-selections").show();
     $("#t-score-selections").hide();
 
-    //upon click of wellness tab, show wellnessreport div & hide kpireport div
-    //swap color of tab
+    // if wellness "tab" is clicked...
     $("#wellness-tab").click(function () {
+        // hide kpi report & show wellness report
         $("#kpireport").hide();
         $("#wellnessreport").show();
+        
+        // change color of tabs
         document.getElementById("wellness-tab").style.backgroundColor = "var(--color-secondary)";
         document.getElementById("kpi-tab").style.backgroundColor = "var(--color-bg)";
     });
 
-    //upon click of kpi tab, show kpireport div & hide wellnessreport div
-    //swap color of tab
+    // if kpi "tab" is clicked...
     $("#kpi-tab").click(function () {
+        // hide wellness report and show kpi report
         $("#kpireport").show();
         $("#wellnessreport").hide();
-        $("#spider-date-div").hide();
-        $("#kpi-dates-div").show();
+
+        //change color of tabs
         document.getElementById("kpi-tab").style.backgroundColor = "var(--color-secondary)";
         document.getElementById("wellness-tab").style.backgroundColor = "var(--color-bg)";
     });
 
-    //upon click of spider-tab, show spider-graphs div & hide bar-graph div
-    //swap color of tab
+    // if spider graph "tab" is clicked...
     $("#spider-tab").click(function () {
+        // hide bar graphs and show spider graph
         $("#bar-graphs").hide();
         $("#spider-graphs").show();
+
+        // display spider graph date input & hide bar graph date input
         $("#spider-date-div").show();
         $("#kpi-dates-div").hide();
+
+        // change color of tabs
         document.getElementById("spider-tab").style.backgroundColor = "var(--color-secondary)";
         document.getElementById("bar-tab").style.backgroundColor = "var(--color-bg)";
 
+        // hide raw score and t-score settings (option card)
         $("#t-score-selections").hide();
         $("#raw-score-selections").hide();
     });
 
-    //upon click of bar-tab, show bar-graph  div & hide spider-graphs div
-    //swap color of tab
+    // if bar graph "tab" is clicked...
     $("#bar-tab").click(function () {
+        // show bar graphs and hide spider graph
         $("#spider-graphs").hide();
         $("#bar-graphs").show();
+
+        // display bar graph date input & hide spider graph date input
         $("#spider-date-div").hide();
         $("#kpi-dates-div").show();
+
+        // change color of tabs
         document.getElementById("bar-tab").style.backgroundColor = "var(--color-secondary)";
         document.getElementById("spider-tab").style.backgroundColor = "var(--color-bg)";
 
-        $("#raw-score-selections").show();
-        $("#t-score-selections").hide();
-
+        // change settings (option card) depending on current bar graph type selection
+        if(graph_type_selected == "rawscore") {
+            $("#raw-score-selections").show();
+            $("#t-score-selections").hide();
+        }
+        else if(graph_type_selected == "tscore") {
+            $("#raw-score-selections").hide();
+            $("#t-score-selections").show();
+        }
     });
 
+    // if "T" button is clicked...
     $("#t-score-radio").click(function () {
+        // show t-score graphs and hide raw score graphs
         $("#t-score-graphs").show();
         $("#raw-score-graphs").hide();
 
+        // change settings (option card)
         $("#raw-score-selections").hide();
         $("#t-score-selections").show();
 
+        // tscore graph has been selected
         graph_type_selected = "tscore";
 
+        // if this button is clicked and tscore has NOT yet been loaded, load it
+        // otherwise, don't waste time rendering it again (because none of the inputs have changed)
         if (!tscore_loaded)
             tscore_ajax();
 
     });
 
+    // if "R" button is clicked...
     $("#raw-score-radio").click(function () {
+        // show raw score graphs and hide t-score graphs
         $("#raw-score-graphs").show();
         $("#t-score-graphs").hide();
 
+        // change settings (option card)
         $("#raw-score-selections").show();
         $("#t-score-selections").hide();
 
+        // raw score graph has been selected
         graph_type_selected = "rawscore";
 
+        // if this button is clicked and raw score has NOT yet been loaded, load it
+        // otherwise, don't waste time rendering it again (because none of the inputs have changed)
         if (!raw_score_loaded)
             raw_score_ajax();
     });
@@ -772,20 +839,21 @@ $(document).ready(function () {
         }
     });
 
+    // toggle for calendar/selector date input
     $("#cal-toggle").click(function () {
         if ($('#exact-date').is(':hidden')) {
             $("#exact-date").show();
             $("#cal-date").hide();
-            date_selector_type = true;
+            date_selector_type =  "exact";
         } else {
             $("#cal-date").show();
             $("#exact-date").hide();
-            date_selector_type = false;
+            date_selector_type = "cal";
         }
     });
 
+    // if the user clicks anywhere but the options card, close the settings menu
     let options_card = document.getElementById("settings");
-
     document.addEventListener('click', (event) => {
         if (!options_card.contains(event.target)) {
             $("#options-card").hide();
