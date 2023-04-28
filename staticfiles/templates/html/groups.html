@@ -28,7 +28,7 @@
       <div class="row">
 
         <!-- Team_T -->
-        <div class="col-lg-3 col-padding col-inner-padding-l overflow-scroll">
+        <div class="col-lg-3 col-padding col-inner-padding-l overflow-scroll" style="height: 100vh;">
           <div class="col-scroll">
             <div class="main-header d-flex justify-content-between">
               <h1>Groups</h1>
@@ -66,7 +66,7 @@
 
         </div>
 
-        <div class="col-lg-9 col-padding col-inner-padding-r overflow-scroll">
+        <div class="col-lg-9 col-padding col-inner-padding-r overflow-scroll" style="height: 100vh;">
           <div class="col-scroll">
             <div class="main-header justify-content-between">
 
@@ -79,7 +79,10 @@
               <i class="fa-solid fa-gear" id="settings" style="color: var(--acc-color-main); font-size: var(--icon-size); z-index: 2; float: right;"></i>
 
               <div id="options-card" class="options-card overflow-scroll" style="display: none;">
-                <h4>Settings</h4>
+                <div class="d-flex justify-content-between align-items-center">
+                  <h4>Settings</h4>
+                  <i class="fa-solid fa-xmark" style="font-size: var(--icon-size);"></i>
+                </div>
                 <div id="raw-score-selections">
                   <ul>
                       <li>Bar Graph Selections:</li>
@@ -413,14 +416,6 @@
           }
           else{
             $("#raw-score-selections").show();
-          }
-      });
-
-      $("#settings").click(function () {
-          if ($('#options-card').is(':hidden')) {
-              $("#options-card").show();
-          } else {
-              $("#options-card").hide();
           }
       });
     });

@@ -32,7 +32,10 @@
                 style="color: var(--acc-color-main); font-size: var(--icon-size); z-index: 2;"></i>
 
               <div id="options-card" class="options-card" style="display: none;">
-                <h4>Settings</h4>
+                <div class="d-flex justify-content-between align-items-center">
+                  <h4>Settings</h4>
+                  <i class="fa-solid fa-xmark" style="font-size: var(--icon-size);"></i>
+                </div>
                 <ul>
                   <li>Show Full Name<input id="i-show_fullname" type="checkbox" checked="true"></li>
                   <li>Show Trend Graphs<input id="i-show_trends" type="checkbox" checked="true"></li>
@@ -40,25 +43,6 @@
                 </ul>
               </div>
             </div>
-
-            <script>
-              $(document).ready(function () {
-
-                //initially hide options tab
-                $("#options-card").hide();
-
-                // upon click of cog wheel "settings", show the options card
-                // if it's already showing, close it. functions as a toggle
-                $("#settings").click(function () {
-                  if ($('#options-card').is(':hidden')) {
-                    $("#options-card").show();
-                  } else {
-                    $("#options-card").hide();
-                  }
-
-                });
-              });
-            </script>
           </div>
 
           <form method="post" id="wellnessdisplayform">

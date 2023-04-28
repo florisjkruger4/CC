@@ -829,16 +829,6 @@ $(document).ready(function () {
             raw_score_ajax();
     });
 
-    // upon click of cog wheel "settings", show the options card
-    // if it's already showing, close it. functions as a toggle
-    $("#settings").click(function () {
-        if ($('#options-card').is(':hidden')) {
-            $("#options-card").show();
-        } else {
-            $("#options-card").hide();
-        }
-    });
-
     // toggle for calendar/selector date input
     $("#cal-toggle").click(function () {
         if ($('#exact-date').is(':hidden')) {
@@ -849,14 +839,6 @@ $(document).ready(function () {
             $("#cal-date").show();
             $("#exact-date").hide();
             date_selector_type = "cal";
-        }
-    });
-
-    // if the user clicks anywhere but the options card, close the settings menu
-    let options_card = document.getElementById("settings");
-    document.addEventListener('click', (event) => {
-        if (!options_card.contains(event.target)) {
-            $("#options-card").hide();
         }
     });
 });

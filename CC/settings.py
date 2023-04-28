@@ -87,8 +87,13 @@ WSGI_APPLICATION = 'CC.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'database.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'lindenwood',
+        'USER': 'a5group',
+        'PASSWORD': '@spring2023',
+        'HOST': '137.184.106.207',
+        'PORT': '3306'
+        #'NAME': os.path.join(BASE_DIR, 'database.sqlite3'),
     }
 }
 

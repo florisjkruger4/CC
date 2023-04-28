@@ -21,3 +21,25 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
+//jQuery for functionality of "tabs"
+$(document).ready(function () {
+    // upon click of cog wheel "settings", show the options card
+    // if it's already showing, close it. functions as a toggle
+    $("#settings").click(function () {
+        if ($('#options-card').is(':hidden')) {
+            $("#options-card").show();
+        } else {
+            $("#options-card").hide();
+        }
+    });
+
+    // if the user clicks anywhere but the options card, close the settings menu
+    let options_card = document.getElementById("settings");
+    document.addEventListener('click', (event) => {
+        if (!options_card.contains(event.target)) {
+            $("#options-card").hide();
+        }
+    });
+
+});
