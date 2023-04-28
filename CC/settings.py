@@ -91,9 +91,8 @@ DATABASES = {
         'NAME': 'lindenwood',
         'USER': 'a5group',
         'PASSWORD': '@spring2023',
+        'PORT': '3306',
         'HOST': '137.184.106.207',
-        'PORT': '3306'
-        #'NAME': os.path.join(BASE_DIR, 'database.sqlite3'),
     }
 }
 
