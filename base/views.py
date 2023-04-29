@@ -1033,28 +1033,11 @@ def wellnessForm(request):
     )
 
     # This is for adding a new wellness entry
-    """
-    Fname = q.fname
-    Lname = q.lname
-    DOB = q.dob
-
-    Sports = AthleteT.objects.filter(fname=fname, lname=lname, dob=dob).values(
-        "sportsteam"
-    )
-    for x in Sports:
-        SportsTeam = x["sportsteam"]
-
-    Positions = AthleteT.objects.filter(fname=fname, lname=lname, dob=dob).values(
-        "position"
-    )
-    for x in Positions:
-        Position = x["position"]
-
-    Images = AthleteT.objects.filter(fname=fname, lname=lname, dob=dob).values("image")
-    for x in Images:
-        Img = x["image"]
-
     if request.method == "POST":
+
+        selectedAthlete = request.POST.get("name")
+        Fname, Lname, DOB = selectedAthlete.split(' ')
+
         newhoursofsleep = request.POST["hoursofsleep"]
         newsleepquality = request.POST["sleepquality"]
         newbreakfast = request.POST["breakfast"]
@@ -1066,13 +1049,13 @@ def wellnessForm(request):
         newdate = request.POST["date"]
 
         newWellness = WellnessT(
+
             fname=Fname,
             lname=Lname,
             dob=DOB,
+
             status=newstatus,
-            sportsteam=SportsTeam,
             date=newdate,
-            position=Position,
             hoursofsleep=newhoursofsleep,
             sleepquality=newsleepquality,
             breakfast=newbreakfast,
@@ -1080,13 +1063,10 @@ def wellnessForm(request):
             soreness=newsoreness,
             stress=newstress,
             mood=newmood,
-            image=Img,
         )
 
         newWellness.validate_constraints()
         newWellness.save()
-
-        """
 
 
     context = {
