@@ -25,8 +25,7 @@
             <div class="col-md-7">
                 <form method="post" id="addkpiform">
                     {% csrf_token %}
-                    &nbsp;
-                    &nbsp;
+
                     <div class="basicreport">
                         <div style="display: flex; justify-content: space-between;">
                             <div style="width: 30%;">
@@ -52,16 +51,6 @@
                             <input type="date" name="datekpi" id="datekpi" style="background-color: white; color-scheme: dark; border-radius: 10px; width: 30%; color: black;" value="{{ editKPI.datekpi }}">
                             <button class="kpidatabtn" style="width: 10%;" type="submit" value="Submit">Edit</button>
                         </div>
-        
-                        <script>
-                            const date = new Date();
-        
-                            if (month < 10)
-                                month = "0" + month;
-        
-                            if (day < 10)
-                                month = "0" + month;
-                        </script>
                     </div>
                 </form>
             </div>

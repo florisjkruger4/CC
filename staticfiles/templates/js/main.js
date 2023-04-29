@@ -42,4 +42,43 @@ $(document).ready(function () {
         }
     });
 
+    $(".clickable-row").click(function() {
+        window.location = $(this).data("href");
+    });
 });
+
+// used to prevent additional user input while an ajax request is processing
+// prevents garbled data
+
+function disable_inputs() {
+    
+    //disable all checkboxes, radios, dates, and selectors
+    document.querySelectorAll("input[type=checkbox]").forEach(checkbox => {
+        checkbox.disabled = true;
+    })
+    document.querySelectorAll("input[type=radio]").forEach(radio => {
+        radio.disabled = true;
+    })
+    document.querySelectorAll("input[type=date]").forEach(date => {
+        date.disabled = true;
+    })
+    document.querySelectorAll("input[type=select]").forEach(select => {
+        select.disabled = true;
+    })
+}
+function enable_inputs() {
+
+    // enable all checkboxes, radios, dates, and selectors
+    document.querySelectorAll("input[type=checkbox]").forEach(checkbox => {
+        checkbox.disabled = false;
+    })
+    document.querySelectorAll("input[type=radio]").forEach(radio => {
+        radio.disabled = false;
+    })
+    document.querySelectorAll("input[type=date]").forEach(date => {
+        date.disabled = false;
+    })
+    document.querySelectorAll("input[type=select]").forEach(select => {
+        select.disabled = false;
+    })
+}

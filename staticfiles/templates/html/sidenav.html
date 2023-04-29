@@ -1,3 +1,5 @@
+<script src="/staticfiles/templates/js/sidenav.js"></script>
+
 <nav class="position-fixed min-vh-100">
 
   <div class="d-flex align-items-center mb-4 nav-header">
@@ -57,20 +59,8 @@
 </nav>
 
 <script>
-
-  const fname = "{{ user.first_name}}";
-  const lname = "{{ user.last_name}}";
-
-  // Formats first name with uppercase first letter
-  form_fname = fname.charAt(0).toUpperCase() + fname.slice(1);
-
-  // Gets just the first character from first and last names 
-  // Makes them uppercase
-  var f_init = fname.charAt(0).toUpperCase();
-  var l_init = lname.charAt(0).toUpperCase();
-
-  // Injects initials and names into HTML
-  document.getElementById("user-initials").innerText = f_init + l_init;
-  document.getElementById("username").innerText = form_fname + " " + l_init + ".";
-
+  window.nav_userData = {
+    fname: "{{ user.first_name }}",
+    lname: "{{ user.last_name }}"
+  }
 </script>

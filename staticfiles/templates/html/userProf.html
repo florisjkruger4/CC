@@ -5,6 +5,8 @@
 <head>
   <!-- Header -->
   {% include 'html/header.html' %}
+  <script src="/staticfiles/templates/js/userProf.js"></script>
+
 </head>
 
 <body>
@@ -19,35 +21,34 @@
         <div class="basicreport"
           style="display: flex; flex-direction: column; justify-content: space-evenly; height: 90%;">
 
-          <div class="d-flex justify-content-center align-items-center user-display"
-            style="scale: 2.5; margin-top: 8%;">
-            <div id="user-initials_profile" class="user-initials"></div>
+          <div class="d-flex justify-content-center align-items-center user-display">
+            <div id="user-initials_profile" class="user-initials" style="width: 100px; height: 100px; font-size: 48px;"></div>
           </div>
 
           <form method="POST" style="height: 100%;">
             {% csrf_token %}
             <div style="display: flex; flex-direction: column; justify-content: space-evenly; height: 100%;">
 
-              <div style="display: flex; width: 100%;">
+              <div class="d-flex w-100">
                 <div style="float: left; width: 47%;">
                   <p>Current Password</p>
                   {% render_field updateForm.old_password class+="form-control" %}
                 </div>
               </div>
-              <div style="display: flex; width: 100%;">
+              <div class="d-flex w-100">
                 <div style="float: left; width: 47%;">
                   <p>New Password</p>
                   {% render_field updateForm.new_password1 class+="form-control" %}
                 </div>
               </div>
-              <div style="display: flex; width: 100%;">
+              <div class="d-flex w-100">
                 <div style="float: left; width: 47%;">
                   <p>Confirm New Password</p>
                   {% render_field updateForm.new_password2 class+="form-control" %}
                 </div>
               </div>
 
-              <div style="width: 100%;">
+              <div class="w-100">
                 <button class="submit" style="height: 45px; width: 30%; margin: auto; float: right;">Update
                   Changes</button>
               </div>
@@ -133,7 +134,7 @@
             <td>{{x.username}}</td>
             <td style="text-align: right;">
               <a onclick="return confirm('Are you sure?');" href="{% url 'DeleteUser' user.username x.id %}">
-                  <button class="delkpibtn" style="background-color: #fc515100; font-size: var(--icon-size)" name="delete" value="delete"><i class="fa-solid fa-x"></i></button>
+                  <button class="delkpibtn" style="background-color: #fc515100; font-size: var(--icon-size)" name="delete" value="delete"><i class="fa-solid fa-xmark"></i></button>
               </a>
             </td>
           </tr>
@@ -149,24 +150,10 @@
   </main>
 
   <script>
-
-    const fname_prof = "{{ user.first_name}}";
-    const lname_prof = "{{ user.last_name}}";
-
-    // Formats first name with uppercase first letter
-    form_fname = fname.charAt(0).toUpperCase() + fname.slice(1);
-
-    // Gets just the first character from first and last names 
-    // Makes them uppercase
-    var f_init_prof = fname_prof.charAt(0).toUpperCase();
-    var l_init_prof = lname_prof.charAt(0).toUpperCase();
-
-    // Injects initials and names into HTML
-    document.getElementById("user-initials_profile").innerText = f_init_prof + l_init_prof;
-
-    var rowCount = document.getElementById('usertable').rows.length;
-    document.getElementById("userCount").innerHTML = "(" + rowCount + ")";
-
+    window.userData = {
+      fname: "{{ user.first_name }}",
+      lname: "{{ user.last_name }}"
+    }
   </script>
 
 </body>

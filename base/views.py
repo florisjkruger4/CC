@@ -885,7 +885,6 @@ def AthleteProf(request, fname, lname, dob, id):
         "mostRecentWellnessReportDate": wellness_most_recent,
         "wellness_count": wellness_count,
         # Spider
-        "spider_date": spider_date,
         "all_tests": all_tests,
         # dashboard session stuff
         "recentlyViewedAthletes": recentlyViewedAthletes,

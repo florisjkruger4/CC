@@ -5,6 +5,7 @@
 <head>
     <!-- Header -->
     {% include 'html/header.html' %}
+    <script src="/staticfiles/templates/js/addathlete.js"></script>
 </head>
 
 <body onload="loadPage()">
@@ -87,26 +88,5 @@
                 </div>
             </div> 
         </form> 
-
-        <script>
-            
-            function loadPage() {
-                document.getElementById("addForm").reset();
-            }
-
-            // Prevents form resubmit when page is refreshed
-            if ( window.history.replaceState ) {
-                window.history.replaceState( null, null, window.location.href );
-            }
-
-            function fileUpload() {
-                if(document.getElementById("id_image").files.length > 0 ){
-                document.getElementById("imgHolder").style.backgroundColor = "var(--light-gray-1)";
-                document.getElementById("camicon").style.color = "var(--dark-gray)";
-                document.getElementById("uploadmsg").style.visibility = "visible";
-                }
-            }
-            
-        </script>
     </main>
 </body>
