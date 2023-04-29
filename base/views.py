@@ -1020,7 +1020,7 @@ def AddWellness(request, fname, lname, dob):
 @login_required(login_url="/")
 def wellnessForm(request):
 
-    # This is here sowe can retrieve a list of athletes for the name selector
+    # This is here so we can retrieve a list of athletes for the name selector
     q = request.GET.get("q") if request.GET.get("q") != None else ""
 
     athletes = AthleteT.objects.filter(
@@ -1033,12 +1033,10 @@ def wellnessForm(request):
     )
 
     # This is for adding a new wellness entry
-    # Need to get fname lname dob form selector form
     """
-    athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
-    Fname = fname
-    Lname = lname
-    DOB = dob
+    Fname = q.fname
+    Lname = q.lname
+    DOB = q.dob
 
     Sports = AthleteT.objects.filter(fname=fname, lname=lname, dob=dob).values(
         "sportsteam"
@@ -1087,7 +1085,9 @@ def wellnessForm(request):
 
         newWellness.validate_constraints()
         newWellness.save()
-    """
+
+        """
+
 
     context = {
         #"athleteProf": athleteProf,

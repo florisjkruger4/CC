@@ -8,13 +8,78 @@
   padding: 15px 25px;
   margin: 25px;
 
-  margin-left: 25%;
-  max-width: 50%;
+  max-width: 100%;
 
 }
 
+select{
+  display: block;
+  margin: 0 auto;
+  width: 40%;
+  height: 50px;
+}
+
+input[type="date"] {
+  display: block;
+  margin: 0 auto;
+  width: 40%;
+  height: 50px;
+}
+
 .submit{
-  margin-left: 25%;
-  margin-bottom: 50px;
-  width: 50%;
+  height: 50px;
+  width: 100%;
+}
+
+.inlineRadio {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+
+  border: var(--acc-color-main) 1px solid;
+  border-radius: var(--radius-big) var(--radius-big);
+
+}
+
+.inlineRadio input {
+
+  color: #fff;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	outline: none;
+	cursor: pointer;
+	transition: all 100ms linear;
+  border-radius: var(--radius-big) var(--radius-big);
+  font-size: 18pt;
+  width: calc(33.33%);
+  padding: 10px;
+
+
+}
+
+#breakfast1{
+  width: calc(50%);
+}
+
+#breakfast3{
+  width: calc(50%);
+}
+
+.inlineRadio input:checked {
+	background-color: var(--acc-color-main);
+  color: var(--black-text);
+}
+
+.inlineRadio input:before {
+	content: attr(label);
+	display: inline-block;
+	text-align: center;
+	width: 100%;
+}
+
+h2{
+  text-align: center;
+  margin-bottom: 10px;
 }

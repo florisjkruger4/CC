@@ -15,7 +15,7 @@
     <!-- Select Name -->
 
     <div class="formBox">
-      <h3>Please select your name:</h3>
+      <h2>Please select your name:</h2>
       <select id="name" name="name">
         <option disabled hidden selected>Select Name</option>
         {% for x in athletes %}
@@ -26,112 +26,92 @@
 
     <!-- Select Date? -->
     <div class="formBox">
-      <h3>Please select today's date:</h3>
+      <h2>Please select today's date:</h2>
         <input type="date" name="date" id="datekpi" style="background-color: var(--color-bg);">
     </div>
 
     <!-- How many hours of sleep did you get last night? -->
     <div class="formBox">
-      <h3>How many hours of sleep did you get last night?</h3>
-      <p>5 or fewer Hours</p>
-      <input type="radio" id="sleepHours1" class="radio-inline" name="sleepHours" value="1">
-      <label for="sleepHours1">1</label><br>
-      <input type="radio" id="sleepHours2" class="radio-inline" name="sleepHours" value="2">
-      <label for="sleepHours2">2</label><br>
-      <input type="radio" id="sleepHours3" class="radio-inline" name="sleepHours" value="3">
-      <label for="sleepHours3">3</label><br>
-      <p>8 or more hours</p>
+      <h2>How many hours of sleep did you get last night?</h2>
+      <group class="inlineRadio">
+        <input type="radio" label="5 or Fewer" id="sleepHours1" class="radio-inline" name="sleepHours" value="1">
+        <input type="radio" label="In Between"id="sleepHours2" class="radio-inline" name="sleepHours" value="2">
+        <input type="radio" label="8 or More"id="sleepHours3" class="radio-inline" name="sleepHours" value="3">
+      </group>
       <br>
     </div>
 
     <!-- How was the quality of your sleep? -->
     <div class="formBox">
-      <h3>How was the quality of your sleep?</h3>
-      <p>Poor - Constantly waking up; Rarely reached deep sleep</p>
-      <input type="radio" id="sleepQuality1" class="radio-inline" name="sleepQuality" value="1">
-      <label for="sleepQuality1">1</label><br>
-      <input type="radio" id="sleepQuality2" class="radio-inline" name="sleepQuality" value="2">
-      <label for="sleepQuality2">2</label><br>
-      <input type="radio" id="sleepQuality3" class="radio-inline" name="sleepQuality" value="3">
-      <label for="sleepQuality3">3</label><br>
-      <p>Great - Mostly slept through the night</p>
+      <h2>How was the quality of your sleep?</h2>
+      <group class="inlineRadio">
+        <input type="radio" label="Poor" id="sleepQuality1" class="radio-inline" name="sleepQuality" value="1">
+        <input type="radio" label="Okay" id="sleepQuality2" class="radio-inline" name="sleepQuality" value="2">
+        <input type="radio" label="Great!" id="sleepQuality3" class="radio-inline" name="sleepQuality" value="3">
+      </group>
       <br>
     </div>
 
     <!-- Did you eat breakfast? -->
     <div class="formBox">
-      <h3>Did you eat breakfast?</h3>
-      <p>No</p>
-      <input type="radio" id="breakfast1" class="radio-inline" name="breakfast" value="1">
-      <label for="breakfast1">1</label><br>
-      <input type="radio" id="breakfast2" class="radio-inline" name="breakfast" value="2">
-      <label for="breakfast2">2</label><br>
-      <input type="radio" id="breakfast3" class="radio-inline" name="breakfast" value="3">
-      <label for="breakfast3">3</label><br>
-      <p>Yes</p>
+      <h2>Did you eat breakfast?</h2>
+      <group class="inlineRadio">
+        <input type="radio" label="No" id="breakfast1" class="radio-inline binary" name="breakfast" value="1">
+        <input type="radio" label="Yes" id="breakfast3" class="radio-inline binary" name="breakfast" value="3">
+      </group>
       <br>
     </div>
 
     <!-- If your waking hours are divided into 4 quarters ...? -->
     <div class="formBox">
-      <h3>If your waking hours are divided into 4 quarters and you need to consume at least 20oz of water per quarter, are you on track to meet your goal?</h3>
-      <p>Behind quarterly requirement</p>
-      <input type="radio" id="quarters1" class="radio-inline" name="quarters" value="1">
-      <label for="quarters1">1</label><br>
-      <input type="radio" id="quarters2" class="radio-inline" name="quarters" value="2">
-      <label for="quarters2">2</label><br>
-      <input type="radio" id="quarters3" class="radio-inline" name="quarters" value="3">
-      <label for="quarters3">3</label><br>
-      <p>Ahead of quarterly requirement</p>
+      <h2>If your waking hours are divided into 4 quarters and you need to consume at least 20oz of water per quarter, are you on track to meet your goal?</h2>
+      <group class="inlineRadio">
+        <input type="radio" label="Behind" id="quarters1" class="radio-inline" name="quarters" value="1">
+        <input type="radio" label="On Track" id="quarters2" class="radio-inline" name="quarters" value="2">
+        <input type="radio" label="Ahead" id="quarters3" class="radio-inline" name="quarters" value="3">
+      </group>
       <br>
     </div>
 
     <!-- How does your body feel? -->
     <div class="formBox">
-      <h3>How does your body feel?</h3>
-      <p>Can barely move - Super sore, achy, and/or fatigued</p>
-      <input type="radio" id="feel1" class="radio-inline" name="feel" value="1">
-      <label for="feel1">1</label><br>
-      <input type="radio" id="feel2" class="radio-inline" name="feel" value="2">
-      <label for="feel2">2</label><br>
-      <input type="radio" id="feel3" class="radio-inline" name="feel" value="3">
-      <label for="feel3">3</label><br>
-      <p>Ready to go - Body feels great!</p>
+      <h2>How does your body feel?</h2>
+      <group class="inlineRadio">
+        <input type="radio" label="Can Barely Move" id="feel1" class="radio-inline" name="feel" value="1">
+        <input type="radio" label="In Between" id="feel2" class="radio-inline" name="feel" value="2">
+        <input type="radio" label="Body feels great!" id="feel3" class="radio-inline" name="feel" value="3">
+      </group>
       <br>
     </div>
 
     <!-- How stressed do you currently feel? -->
     <div class="formBox">
-      <h3>How stressed/anxious do you currently feel from your sport, school, relationships, and/or health?</h3>
-      <p>Very - I'm irritable/tired and need a break and/or to vent</p>
-      <input type="radio" id="stress1" class="radio-inline" name="stress" value="1">
-      <label for="stress1">1</label><br>
-      <input type="radio" id="stress2" class="radio-inline" name="stress" value="2">
-      <label for="stress2">2</label><br>
-      <input type="radio" id="stress3" class="radio-inline" name="stress" value="3">
-      <label for="stress3">3</label><br>
-      <p>Life is good!!!</p>
+      <h2>How stressed/anxious do you currently feel from your sport, school, relationships, and/or health?</h2>
+      <group class="inlineRadio">
+        <input type="radio" label="Very Stressed" id="stress1" class="radio-inline" name="stress" value="1">
+        <input type="radio" label="A Little Stressed" id="stress2" class="radio-inline" name="stress" value="2">
+        <input type="radio" label="Life is Good!" id="stress3" class="radio-inline" name="stress" value="3">
+      </group>
       <br>
     </div>
 
     <!-- How is your mood? -->
     <div class="formBox">
-      <h3>How is your mood?</h3>
-      <p>Negative</p>
-      <input type="radio" id="mood1" class="radio-inline" name="mood" value="1">
-      <label for="mood1">1</label><br>
-      <input type="radio" id="mood2" class="radio-inline" name="mood" value="2">
-      <label for="mood2">2</label><br>
-      <input type="radio" id="mood3" class="radio-inline" name="mood" value="3">
-      <label for="mood3">3</label><br>
-      <p>Positive</p>
+      <h2>How is your mood?</h2>
+      <group class="inlineRadio">
+        <input type="radio" label="Negative" id="mood1" class="radio-inline" name="mood" value="1">
+        <input type="radio" label="Moderate" id="mood2" class="radio-inline" name="mood" value="2">
+        <input type="radio" label="Positive" id="mood3" class="radio-inline" name="mood" value="3">
+      </group>
       <br>
     </div>
 
     <!-- Submit button -->
+    <div class="formBox">
     <h3>
       <input type="submit" class="submit" value="Submit">
     <h3>
+    </div>
 
 
   </form>
