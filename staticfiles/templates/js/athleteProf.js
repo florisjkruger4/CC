@@ -155,13 +155,30 @@ function spider_chart(athlete_results, average_results, date) {
 
     // Create an array of average group names
     let group_names = average_results.map(function (group_dict) {
-        return group_dict.group;
+        let name = group_dict.group.toLowerCase();
+        // Capitalize the group names
+        return name.charAt(0).toUpperCase() + name.slice(1);
     });
 
     // Create an array of arrays of average group results
     let group_results_arr = average_results.map(function (group_dict) {
         return Object.values(group_dict.results);
     });
+
+    // If there are two tests, duplicate them to create a diamond display
+    if (test_names.length == 2) {
+        // Athhlete dupes
+        test_names.push(test_names[0]+" (2)");
+        test_names.push(test_names[1]+" (2)");
+        athlete_results_arr.push(athlete_results_arr[0]);
+        athlete_results_arr.push(athlete_results_arr[1]);
+
+        // Average group dupes
+        for (let i = 0; i < group_results_arr.length; i++) {
+            group_results_arr[i].push(group_results_arr[i][0]);
+            group_results_arr[i].push(group_results_arr[i][1]);
+        }
+    }
 
     // Create the spider chart with Plotly
     let data = [{
@@ -240,7 +257,14 @@ function spider_chart(athlete_results, average_results, date) {
 
     $("#spider-graph").show();
     // Display the chart
-    Plotly.newPlot('spider-graph', data, layout, {responsive: true} );
+    Plotly.newPlot('spider-graph', data, layout, {
+        responsive: true,
+        // Change to false to get rid of the bar with "Download as png, Zoom, etc"
+        displayModeBar: true,
+        modeBarButtonsToRemove: ['lasso2d', 'select2d'],
+        displaylogo: false
+    });
+    
 }
 
 function spider_ajax(event) {
