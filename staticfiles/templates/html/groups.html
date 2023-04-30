@@ -56,7 +56,7 @@
               {% for TeamT in teams %}
               {% if forloop.counter == 1 %}
               <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="{{ forloop.counter }}" autocomplete="off" value="{{ TeamT.sport }}">
-              <label class="btn btn-outline-theme" for="{{ forloop.counter }}" style="display: flex; justify-content: space-between; border-radius: 5px 5px 0px 0px;">{{ TeamT.sport }}<a href="{% url 'TeamSpecificAthletes' TeamT.sport %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size-sm); margin-right: 5px;"></i></a></label>
+              <label class="btn btn-outline-theme" for="{{ forloop.counter }}" style="display: flex; justify-content: space-between; border-radius: 5px 5px 0px 0px;">{{ TeamT.sport }}<a href="{% url 'TeamSpecificAthletes' TeamT.sport %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
               {% else %}
               <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="{{ forloop.counter }}" autocomplete="off" value="{{ TeamT.sport }}">
               <label class="btn btn-outline-theme" for="{{ forloop.counter }}" style="display: flex; justify-content: space-between;">{{ TeamT.sport }}<a href="{% url 'TeamSpecificAthletes' TeamT.sport %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
