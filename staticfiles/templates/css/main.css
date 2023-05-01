@@ -67,17 +67,18 @@
 
 /* 3. Universal Element Modifications
    ********************************** */
+
 main {
   /* Respond to the navbar's fixed width */
   width: calc(100vw - (var(--nav-width)) - var(--gutter)*2 ); /* Remainder of navbar and 2 gutters */
   margin-left: calc(var(--nav-width) + var(--gutter));        /* Sum of navbar and a gutter */
   -ms-overflow-style: none !important;  /* IE and Edge */
   scrollbar-width: none !important;  /* Firefox */
+  scroll-padding: none !important;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
-body::-webkit-scrollbar {
-  display: none !important;
+::-webkit-scrollbar {
   width: 0 !important;
 }
 
@@ -137,11 +138,12 @@ input, textarea{
 }
 
 select {
-  background-color: inherit;
+  background-color: var(--color-bg);
   border-radius: 10px;
   border: none;
   font-family: inherit;
   color: var(--white-text);
+  padding: 5px;
 }
 
 /* Change color of calendar icon on input type=date to white */
@@ -207,6 +209,7 @@ select {
 
 .col-padding {
   padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 .col-inner-padding-r {
