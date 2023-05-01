@@ -179,12 +179,21 @@ function addColumn(value, id) {
 //deletes a column when test type is unchecked
 function deleteColumn(value, id, ParentIDarray) {
 
+    var table = tblHeadObj = document.getElementById("data-table").rows
+    var rows = table.length - 1;
+
     // find index of testype wanting to be removed
     var index = TestTypeArray.indexOf(value)
     // remove that index using splice
     if (index > -1) { // only splice array when item is found
         TestTypeArray.splice(index, 1); // 2nd parameter means remove one item only
-        ParentIDarray.splice(index, 1);
+        
+        var athlete_indexes = (index * rows);
+
+        for (var i = athlete_indexes; i<athlete_indexes+rows; i++){
+            console.log("test: " + i);
+            ParentIDarray.pop(i);
+        }
     }
 
     //find all headers with desired id and remove
@@ -193,7 +202,9 @@ function deleteColumn(value, id, ParentIDarray) {
     //find all cells with desired id and remove
     $("#data-table").find("td#" + id).remove();
 
+    console.log("index: " + index)
     console.log('test type arr: ' + TestTypeArray)
+    console.log("index: " + athlete_indexes)
     console.log('parent arr: ' + ParentIDarray)
 }
 
