@@ -1388,7 +1388,7 @@ def recordKPI(request):
                             testtype=x,
                             testresult=testResult[index],
                         )
-                        if (int(testResult[index]) >= 0):
+                        if (float(testResult[index]) >= 0):
                             print(y[0] + " " + y[1] + " " + y[2] + " " + date + " " + x + " " + testResult[index])
                             newKPI.validate_constraints()
                             newKPI.save()
