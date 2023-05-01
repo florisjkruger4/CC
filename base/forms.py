@@ -4,6 +4,7 @@ from .models import AthleteT, TeamT
 from django import forms  
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import PasswordChangeForm
 
   
 class AthleteForm(forms.ModelForm):  
@@ -37,13 +38,13 @@ class AthleteForm(forms.ModelForm):
 
     fname = forms.CharField(max_length=30, required=True)
     lname = forms.CharField(max_length=30, required=True)
-    year = forms.ChoiceField(widget=forms.Select, choices=SCHOOL_YEARS)
+    year = forms.ChoiceField(widget=forms.Select, choices=SCHOOL_YEARS, required=False)
     dob = forms.DateField(required=True)
-    height = forms.CharField(max_length=15, required=True)
-    gender = forms.ChoiceField(widget=forms.Select, choices=GENDER)
+    height = forms.CharField(max_length=15, required=False)
+    gender = forms.ChoiceField(widget=forms.Select, choices=GENDER, required=False)
     image = forms.FileField(required=False)
-    sportsteam = forms.ChoiceField(widget=forms.Select, choices=TEAMS)
-    position = forms.CharField(max_length=30, required=True)
+    sportsteam = forms.ChoiceField(widget=forms.Select, choices=TEAMS, required=False)
+    position = forms.CharField(max_length=30, required=False)
 
     class Meta:  
         # To specify the model to be used to create form  
@@ -62,3 +63,11 @@ class RegisterForm(UserCreationForm):
     class Meta:
         model = User
         fields = ("username", "first_name", "last_name", "password1", "password2")
+
+class UpdateUserForm(PasswordChangeForm):
+    #first_name = forms.CharField(max_length=50, required=True)
+    #last_name = forms.CharField(max_length=50, required=True)
+    #username = forms.CharField(max_length=50, required=True)
+    class Meta:
+        model = User
+        fields = ("username", "first_name", "last_name", "old_password", "new_password1", "new_password2")

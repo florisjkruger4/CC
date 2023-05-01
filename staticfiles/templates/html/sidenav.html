@@ -1,3 +1,5 @@
+<script src="/staticfiles/templates/js/sidenav.js"></script>
+
 <nav class="position-fixed min-vh-100">
 
   <div class="d-flex align-items-center mb-4 nav-header">
@@ -30,8 +32,8 @@
       </li>
       <hr class="w-100 my-2 d-none d-md-inline" />
       <li>
-        <a href="/teams" class="nav-link px-0 align-middle">
-          <i class="fs-4 fa-solid fa-people-group fa-fw"></i> <span class="ms-1 d-none d-md-inline">Teams</span>
+        <a href="/groups" class="nav-link px-0 align-middle">
+          <i class="fs-4 fa-solid fa-people-group fa-fw"></i> <span class="ms-1 d-none d-md-inline">Groups</span>
         </a>
       </li>
       <hr class="w-100 my-2 d-none d-md-inline" />
@@ -46,15 +48,6 @@
           <i class="fs-4 fa-solid fa-heart fa-fw"></i> <span class="ms-1 d-none d-md-inline">Wellness</span>
         </a>
       </li>
-      {% if request.user.is_authenticated %}
-      <hr class="w-100 my-2 d-none d-md-inline" />
-      <li>
-        <a href="{% url 'LogoutUser' %}" class="nav-link px-0 align-middle">
-          <i class="fs-4 fa-solid fa-arrow-right-from-bracket fa-fw"></i> <span
-            class="ms-1 d-none d-md-inline">Logout</span>
-        </a>
-      </li>
-      {% endif %}
     </ul>
   </div>
 
@@ -66,20 +59,8 @@
 </nav>
 
 <script>
-
-  const fname = "{{ user.first_name}}";
-  const lname = "{{ user.last_name}}";
-
-  // Formats first name with uppercase first letter
-  form_fname = fname.charAt(0).toUpperCase() + fname.slice(1);
-
-  // Gets just the first character from first and last names 
-  // Makes them uppercase
-  var f_init = fname.charAt(0).toUpperCase();
-  var l_init = lname.charAt(0).toUpperCase();
-
-  // Injects initials and names into HTML
-  document.getElementById("user-initials").innerText = f_init + l_init;
-  document.getElementById("username").innerText = form_fname + " " + l_init + ".";
-
+  window.nav_userData = {
+    fname: "{{ user.first_name }}",
+    lname: "{{ user.last_name }}"
+  }
 </script>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Header -->
+  {% include 'html/header.html' %}
+  <script src="/staticfiles/templates/js/groups.js"></script>
+</head>
+
+<body>
+
+  <!-- SideNavbar -->
+  {% include 'html/sidenav.html' %}
+
+  <div class="hide-template">
+    <div id="bar-template">
+      <h3 id="tname"></h3>
+      <img id="tgraph" style="width: 100%; height: auto;">
+    </div>
+
+    <div id="z-template">
+      <h3 id="zname"></h3>
+      <img id="zgraph" style="width: 100%; height: auto;">
+    </div>
+  </div>
+
+  <main class="py-3 py-override">
+    <div class="container" style="max-width: 1800px;">
+      <div class="row">
+
+        <!-- Team_T -->
+        <div class="col-lg-3 col-padding col-inner-padding-l overflow-scroll" style="height: 100vh;">
+          <div class="col-scroll">
+            <div class="main-header d-flex justify-content-between">
+              <h1>Groups</h1>
+            </div>
+
+            <div style="margin-top: 20px;">
+              <h4>Populations</h4>
+              &nbsp;
+            </div>
+
+          <div class="btn-group-vertical" role="group" aria-label="Vertical radio toggle button group" style="width:100%;">
+            <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="vbtn-radio1" autocomplete="off" value="allAthletes">
+            <label class="btn btn-outline-theme" for="vbtn-radio1" style="display: flex; justify-content: space-between;">All Athletes<a href="/athletes"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
+            <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="vbtn-radio2" autocomplete="off" value="allMales">
+            <label class="btn btn-outline-theme" for="vbtn-radio2" style="display: flex; justify-content: space-between;">Males<a href="{% url 'MaleAthletes' %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
+            <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="vbtn-radio3" autocomplete="off" value="allFemales">
+            <label class="btn btn-outline-theme" for="vbtn-radio3" style="display: flex; justify-content: space-between;; border-radius: 0px 0px 5px 5px;">Females<a href="{% url 'FemaleAthletes' %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
+          
+            <div style="margin-top: 20px;">
+              <h4>Sports Teams</h4>
+              &nbsp;
+            </div>
+
+              {% for TeamT in teams %}
+              {% if forloop.counter == 1 %}
+              <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="{{ forloop.counter }}" autocomplete="off" value="{{ TeamT.sport }}">
+              <label class="btn btn-outline-theme" for="{{ forloop.counter }}" style="display: flex; justify-content: space-between; border-radius: 5px 5px 0px 0px;">{{ TeamT.sport }}<a href="{% url 'TeamSpecificAthletes' TeamT.sport %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
+              {% else %}
+              <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="{{ forloop.counter }}" autocomplete="off" value="{{ TeamT.sport }}">
+              <label class="btn btn-outline-theme" for="{{ forloop.counter }}" style="display: flex; justify-content: space-between;">{{ TeamT.sport }}<a href="{% url 'TeamSpecificAthletes' TeamT.sport %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
+              {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+
+        </div>
+
+        <div class="col-lg-9 col-padding col-inner-padding-r overflow-scroll" style="height: 100vh;">
+          <div class="col-scroll">
+            <div class="main-header justify-content-between">
+
+              <div class="d-flex align-items-center" style="gap: var(--inner-padding);">
+                <input type="date" id="date1" name="date1" disabled="true" class="form-control input-box">
+                <p>to</p>
+                <input type="date" id="date2" name="date2" disabled="true" class="form-control input-box">
+              </div>
+
+              <i class="fa-solid fa-gear" id="settings" style="color: var(--acc-color-main); font-size: var(--icon-size); z-index: 2; float: right;"></i>
+
+              <div id="options-card" class="options-card overflow-scroll" style="display: none;">
+                <div class="d-flex justify-content-between align-items-center">
+                  <h4>Settings</h4>
+                  <i class="fa-solid fa-xmark" style="font-size: var(--icon-size);"></i>
+                </div>
+                <div id="raw-score-selections">
+                  <ul>
+                      <li>Bar Graph Selections:</li>
+                      </li>
+                      <li>Team Avg<input class="check_box" id="t_AVG" type="checkbox" name="t_avg" value="1">
+                      </li>
+                      <li>Gender Avg<input class="check_box" id="g_AVG" type="checkbox" name="g_avg" value="1">
+                      </li>
+                      <!--
+                      <li>Position Avg<input class="check_box" id="p_AVG" type="checkbox" name="p_avg" value="1"></li>
+                      -->
+                  </ul>
+                </div>
+                <div id="t-score-selections">
+                  <ul>
+                      <li>T-Score Comparisons:</li>
+                      </li>
+                      <li>Team Data<input class="radioBTN" id="teamAVG" type="radio" name="z_avg" value="1" checked="true">
+                      </li>
+                      <li>Gender Data<input class="radioBTN" id="genderAVG" type="radio" name="z_avg" value="2">
+                      </li>
+                      <!--
+                      <li>Position Avg<input class="radioBTN" id="positionAVG" type="radio" name="z_avg" value="3"></li>
+                      -->
+                  </ul>
+                </div>
+                <hr>
+                <ul id="test-list"></ul>
+              </div>
+            </div>
+
+            <div style="background-color: var(--med-gray-2); max-height: fit-content;" class="basicreport">
+              
+              <div id="bar-graphs">
+                <div class="btn-container">
+                    <div class="btn-group rt-toggle" role="group" aria-label="Basic radio toggle button group">
+                        <input type="radio" class="btn-check" name="btnradio" id="t-score-radio" autocomplete="off" value="Trad">
+                        <label class="btn btn-outline-primary" for="t-score-radio">T</label>
+                    
+                        <input type="radio" class="btn-check" name="btnradio" id="raw-score-radio" autocomplete="off" checked value="Rrad">
+                        <label class="btn btn-outline-primary" for="raw-score-radio">R</label>
+                    </div>
+                </div>
+                <div id="raw-score-graphs">
+                    <p id="no-data" style="margin-bottom: 0; align-self: center;">No data</p>
+                </div>
+                <div id="t-score-graphs">
+                    <p id="no-data" style="margin-bottom: 0; align-self: center;">No data</p>
+                </div>
+              </div>
+
+              <div style="margin: auto; width: fit-content; height: 100%;" class="how-to-text-teams" id="how-to-teams">
+                <p style="margin-top: 37vh; margin-bottom: 40vh">Select a Group and a Date Range</p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    window.groupsData = {
+      url: "{% url 'GroupDash' %}"
+    }
+
+  </script>
+</body>
+
+</html>

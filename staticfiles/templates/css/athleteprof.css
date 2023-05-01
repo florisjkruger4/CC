@@ -1,3 +1,11 @@
+.athlete-pic-holder{
+    max-width: 250px;
+    max-height: 250px;
+    width: 100%;
+    height: auto;
+    position: relative;
+}
+
 .athlete-pic {
     width: 100%;
     height: auto;
@@ -5,6 +13,23 @@
     max-height: 250px;
     background-color: white;
     border-radius: var(--radius-big);
+}
+
+.athlete-pic:hover + .cam {
+    display: block;
+}
+.athlete-pic:hover {
+    opacity: 50%;
+}
+
+.cam {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 50px;
+    pointer-events: none;
 }
 
 .tab-corner{
@@ -107,4 +132,26 @@
 .delbtn:hover {
     border: 1px solid #FC5151;
     transform: (1.2);
+}
+
+.btn-container{
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.rt-toggle{
+    position: relative;
+    float: right;
+    z-index: 0;
+}
+
+/* Bootstrap custom color override */
+.btn-outline-primary, .btn-outline-primary:hover, .btn-outline-primary:active {
+    --bs-btn-color: var(--acc-color-main);
+    --bs-btn-border-color: var(--acc-color-main);
+    --bs-btn-active-bg: var(--acc-color-main);
+    --bs-btn-active-border-color: var(--acc-color-main);
+    --bs-btn-focus-shadow-rgb: none;
+    --bs-btn-hover-bg: var(--acc-color-main);
+    --bs-btn-hover-border-color: var(--acc-color-main);
 }
