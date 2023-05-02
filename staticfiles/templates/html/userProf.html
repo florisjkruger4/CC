@@ -13,51 +13,66 @@
   <!-- SideNavbar -->
   {% include 'html/sidenav.html' %}
   <main class="py-3 py-override">
-    <div class="row" style="height: 90vh">
+    <div class="row">
+
       <div class="main-header">
         <h1>{{user.username}} - Profile</h1>
       </div>
-      <div class="col-md-4" style="height: 90%;">
-        <div class="basicreport"
-          style="display: flex; flex-direction: column; justify-content: space-evenly; height: 90%;">
+
+      <div class="col-md-4">
+        <div class="basicreport d-flex flex-column" style="gap:var(--inner-padding); height: 75vh;">
 
           <div class="d-flex justify-content-center align-items-center user-display">
-            <div id="user-initials_profile" class="user-initials" style="width: 100px; height: 100px; font-size: 48px;"></div>
+            <div id="user-initials_profile" class="user-initials" style="width: 90px; height: 90px; font-size: 42px;"></div>
           </div>
 
-          <form method="POST" style="height: 100%;">
+          <form method="POST">
             {% csrf_token %}
-            <div style="display: flex; flex-direction: column; justify-content: space-evenly; height: 100%;">
 
-              <div class="d-flex w-100">
-                <div style="float: left; width: 47%;">
-                  <p>Current Password</p>
-                  {% render_field updateForm.old_password class+="form-control" %}
+            <div class="d-flex flex-column" style="gap: var(--inner-padding);">
+              <div class="d-flex" style="gap: var(--inner-padding);">
+                <div>
+                  <p>First Name</p>
+                  <input type="text" class="form-control" name="fname" value="{{ user.first_name }}" disabled="true">
+                </div>
+                <div>
+                    <p>Last Name</p>
+                    <input type="text" class="form-control" name="lname" value="{{ user.last_name }}" disabled="true">
                 </div>
               </div>
-              <div class="d-flex w-100">
-                <div style="float: left; width: 47%;">
-                  <p>New Password</p>
-                  {% render_field updateForm.new_password1 class+="form-control" %}
-                </div>
+              <div>
+                <p>Username</p>
+                <input type="text" class="form-control" name="lname" value="{{ user.username }}" disabled="true">
               </div>
-              <div class="d-flex w-100">
-                <div style="float: left; width: 47%;">
-                  <p>Confirm New Password</p>
-                  {% render_field updateForm.new_password2 class+="form-control" %}
+                
+              <div>
+                <div class="d-flex flex-column w-100" style="gap: var(--inner-padding);">
+                  <h4>Reset Password</h4>
+                  <div>
+                    <p>Current Password</p>
+                    {% render_field updateForm.old_password class+="form-control" %}
+                  </div>
+                  <div class="d-flex" style="gap: var(--inner-padding);">
+                    <div>
+                      <p>New Password</p>
+                      {% render_field updateForm.new_password1 class+="form-control" %}
+                    </div>
+                    <div>
+                      <p>Confirm New Password</p>
+                      {% render_field updateForm.new_password2 class+="form-control" %}
+                    </div>
+                  </div>
+                  <div class="w-100">
+                    <button class="submit" style="position: relative; float: right; ">Update Changes</button>
+                  </div>
+                  
                 </div>
-              </div>
-
-              <div class="w-100">
-                <button class="submit" style="height: 45px; width: 30%; margin: auto; float: right;">Update
-                  Changes</button>
               </div>
             </div>
           </form>
 
         </div>
-
-        <div style="width: 100%; height: 10%;">
+        <div>
           {% if request.user.is_authenticated %}
           <a href="{% url 'LogoutUser' %}" class="nav-link px-0 align-middle">
             <i class="fs-4 fa-solid fa-arrow-right-from-bracket fa-fw" style="color: var(--acc-color-main);"></i> <span
@@ -65,42 +80,44 @@
           </a>
           {% endif %}
         </div>
-
       </div>
 
       {% if user.is_superuser %}
 
       <div class="col-md-4">
-        <div class="basicreport" style="display: flex; flex-direction: column; height: 90%">
+        <div class="basicreport d-flex flex-column" style="gap: var(--inner-padding); height: 75vh;">
           <h4>Register New User</h4>
-          <form method="POST" style="height: 100%;">
+          <form method="POST">
             {% csrf_token %}
-            <div
-              style="display: flex; flex-direction: column; justify-content: space-evenly; height: 100%; margin-top: 5%;">
-
-              <div style="display: flex; width: 100%; justify-content: space-between;">
-                <div style="width: 47%">
+            <div class="d-flex flex-column" style="gap: var(--inner-padding);">
+              <div class="d-flex" style="gap: var(--inner-padding);">
+                <div>
                   <p>First Name</p>
                   {% render_field form.first_name class+="form-control" %}
-                  <p>Username</p>
-                  {% render_field form.username class+="form-control" %}
                 </div>
-                <div style="width: 47%">
+                <div>
                   <p>Last Name</p>
                   {% render_field form.last_name class+="form-control" %}
                 </div>
               </div>
               <div>
+                <p>Username</p>
+                {% render_field form.username class+="form-control" %}
+              </div>
+              <div>
+                <h4>Password Guidelines</h4>
                 <ul>
                   <li>Your password can’t be too similar to your other personal information.</li>
                   <li>Your password must contain at least 8 characters.</li>
                   <li>Your password can’t be entirely numeric.</li>
                 </ul>
               </div>
-              <div class="d-flex w-100">
-                <div style="float: left">
+              <div class="d-flex" style="gap: var(--inner-padding);">
+                <div>
                   <p>Password</p>
                   {% render_field form.password1 class+="form-control" %}
+                </div>
+                <div>
                   <p>Confirm Password</p>
                   {% render_field form.password2 class+="form-control" %}
                 </div>
@@ -115,13 +132,13 @@
         </div>
       </div>
 
-      <div class="col-md-4" style="padding-top: 10px;">
-        <div style="display: flex;">
-          <h4 class="mainFont" style="padding-bottom: 10px; padding-right: 8%;">Registered Users</h4>
+      <div class="col-md-4">
+        <div class="d-flex">
+          <h4 style="padding-bottom: 10px; padding-right: var(--inner-padding);">Registered Users</h4>
           <h4 id="userCount"></h4>
         </div>
         
-        <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+        <div class="d-flex justify-content-between" style="margin-top: 10px;">
           <h6>Name</h6>
           <h6>Username</h6>
           <h6>Remove</h6>

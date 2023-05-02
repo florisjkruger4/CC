@@ -7,32 +7,37 @@
 </head>
 
 <body>
-    <div class="basicreport" style="display: flex; flex-direction: column; height: 90vh; width: 65vh; margin: auto; margin-top: 40px; text-align: center;">
-        <form method="POST" action="">
-            {% csrf_token %}
-            <div style="margin-top: 10%;">
-                <div>
-                    <h1>Login</h1>
+    <div class="login-card-container">
+        <div class="basicreport login-card" style="gap: var(--inner-padding);">
+            <form method="POST" action="">
+                {% csrf_token %}
+                <h1>Login</h1>
+
+                <div class="d-flex justify-content-center align-items-center user-display" style="margin: var(--inner-padding) 0;">
+                    <div id="user-initials_profile" class="user-initials" style="background-color: white; width: 90px; height: 90px; font-size: 42px;">
+                        <!--<i class="fa-solid fa-user" style="font-size: 30px;"></i>-->
+                        <img src="/staticfiles/templates/assets/CCLogo.svg">
+                    </div>
                 </div>
-                <div style="padding-top: 25px; padding-bottom: 30px;">
-                    <i class="fa-solid fa-user" style="font-size: 100px;"></i>
-                </div>
-                <div style="display: flex; flex-direction: column; margin-left: auto; margin-right: auto; width: 80%; height: 40%; justify-content: space-evenly;">
-                    <input type="text" class="searchbar" name="username" placeholder="Enter Username" style="margin-bottom: 30px;">
-                    <input type="password" class="searchbar" name="password" placeholder="Enter Password" style="margin-bottom: 30px;">
-                    <button class="submit" style="margin-bottom: 30px; height: 45px; width: 40%; margin: auto;">Login</button>
-                </div>
-            </div>
-            <body>
-                {% if messages %}
-                <p class="messages" style="padding-top: 15px;">
-                  {% for message in messages %}
-                  <p> <center>{{ message }}</center></p>
-                  {% endfor %}
-                </p>
-                {% endif %} 
-            </body>
-        </form>
+
+                <input type="text" class="form-control" name="username" placeholder="Enter Username" style="margin-bottom: var(--inner-padding);">
+                <input type="password" class="form-control" name="password" placeholder="Enter Password" style="margin-bottom: var(--inner-padding);">
+                <button class="submit" style="margin-top: auto; margin-bottom: 25px;">Login</button>
+
+                <body>
+                    {% if messages %}
+                    <p class="messages" style="padding-top: 15px;">
+                    {% for message in messages %}
+                    <p> <center>{{ message }}</center></p>
+                    {% endfor %}
+                    </p>
+                    {% endif %} 
+                </body>
+            </form>
+        </div>
+    </div>
+    <div style="position: fixed; bottom: 0; right: 0; padding: var(--inner-padding); opacity: 0.1;">
+        <h1 style="font-size: 60px;">Coach's Corner</h1>
     </div>
 </body>
 

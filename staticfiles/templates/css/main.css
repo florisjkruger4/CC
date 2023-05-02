@@ -258,6 +258,12 @@ select {
   border-radius: var(--radius-big);
 }
 
+input[type="text"]:disabled,
+input[type="date"]:disabled {
+  background-color: var(--color-bg);
+  color: hsl(223, 15%, 50%);
+}
+
 .submit {
   background-color: var(--acc-color-main);
   border-radius: 10px;
@@ -343,6 +349,23 @@ select {
   display: flex;
   justify-content: space-between;
   gap: 25px;
+}
+
+.login-card-container {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.login-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 50vh;
+  width: 35vh !important;
+  text-align: center;
 }
 
 /* 8. Animations
