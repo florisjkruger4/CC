@@ -1374,7 +1374,7 @@ def recordKPI(request):
                 testType = data.get("TestTypeArray")
 
                 selectedSport = data.get("sportsteam")
-                athletes = AthleteT.objects.filter(sportsteam__exact=selectedSport).values_list("fname", "lname", "dob")
+                athletes = AthleteT.objects.filter(sportsteam__exact=selectedSport).values_list("fname", "lname", "dob").order_by("fname")
 
                 testResult = data.get("InputCellArray")
 
