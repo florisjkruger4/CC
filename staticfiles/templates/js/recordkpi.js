@@ -77,6 +77,9 @@ document.addEventListener("DOMContentLoaded", function () {
             minBetter: minBetter.checked
         };
 
+        //add loading circle
+        $("#header").append("<div id=\"loading\" class=\"lds-dual-ring-small\"></div>");
+
         $.ajax({
         // URL to send the AJAX request to
         url: addTest_Ajax_url,
@@ -95,6 +98,8 @@ document.addEventListener("DOMContentLoaded", function () {
             "Content-Type": "application/json"
         },
         success: (response) => {
+            $("#loading").remove();
+            
             console.log(response);
             // Display a success message
             alert("Test added successfully");

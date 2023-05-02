@@ -40,8 +40,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // set initial values for date selectors
     document.getElementById("cal-date1").value = kpi_earliest;
     document.getElementById("cal-date2").value = today;
-    document.getElementById("exact-date1").value = all_dates[0];
-    document.getElementById("exact-date2").value = all_dates[all_dates.length-1];
+    //document.getElementById("exact-date1").value = all_dates[0];
+    //document.getElementById("exact-date2").value = all_dates[all_dates.length-1];
 
     // set min and max values for calendar selector so the user can only use
     // dates within a certain range (which is the first recorded kpi -> today)
@@ -55,6 +55,10 @@ document.addEventListener("DOMContentLoaded", function () {
     // for ajax requests
     date_one = kpi_earliest;
     date_two = today;
+
+    // Set dates in KPI Trend section
+    document.getElementById("resultone").innerText = date_one;
+    document.getElementById("resulttwo").innerText = date_two;
 
     // spider graph date stuff. same as above
     spider_date = today;
@@ -122,14 +126,17 @@ document.addEventListener("DOMContentLoaded", function () {
 function update_dates() {
 
     // get dates from selectors (depending on which is being used)
-    if(date_selector_type = "cal") {
+    if(date_selector_type == "cal") {
         date_one = document.getElementById("cal-date1").value;
         date_two = document.getElementById("cal-date2").value;
     }
-    else if(date_selector_type = "exact"){
+    else if(date_selector_type == "exact"){
         date_one = document.getElementById("exact-date1").value;
         date_two = document.getElementById("exact-date2").value;
     }
+
+    document.getElementById("resultone").innerText = date_one;
+    document.getElementById("resulttwo").innerText = date_two;
 
     // if there are 2 dates selected, proceed
     if(date_one && date_two) {
@@ -502,9 +509,6 @@ function tscore_ajax() {
 /* Trends AJAX function */
 function trends_ajax() {
 
-    resultone.innerText = date_one;
-    resulttwo.innerText = date_two;
-
     // clear trends and graphs 
     $("#kpi-trend").empty()
 
@@ -674,7 +678,6 @@ function hide_tests() {
 
             // get id of this checkbox
             id = this.id;
-            console.log(id);
             if (this.checked) {
 
                 // concatenate respective ids of bar and trend graphs

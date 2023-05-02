@@ -194,6 +194,7 @@ def TeamSpecificAthletes(request, sport):
 
     context = {
         "athletes": athletes,
+        "sport": sport,
     }
 
     return render(request, "html/athletes.html", context)

@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
        // hide how-to message and remove loading animation
        $("#how-to").hide();
-       $("#loading").remove()
+       $("#loading").remove();
 
        //$("#header-text").innerText = "Wellness - " + sport_selected;
 

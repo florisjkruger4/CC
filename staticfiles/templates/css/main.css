@@ -72,14 +72,16 @@ main {
   /* Respond to the navbar's fixed width */
   width: calc(100vw - (var(--nav-width)) - var(--gutter)*2 ); /* Remainder of navbar and 2 gutters */
   margin-left: calc(var(--nav-width) + var(--gutter));        /* Sum of navbar and a gutter */
-  -ms-overflow-style: none !important;  /* IE and Edge */
-  scrollbar-width: none !important;  /* Firefox */
+  -ms-overflow-style: none !important;  /* Hicd scrollbars IE and Edge */
+  scrollbar-width: none !important;  /* Hide SCrollbars Firefox */
   scroll-padding: none !important;
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
+/* Hide scrollbars for Chrome, Safari and Opera */
 ::-webkit-scrollbar {
-  width: 0 !important;
+  /*width: 1px !important;
+  */
+  display: none;
 }
 
 img {
@@ -172,10 +174,6 @@ select {
   color: var(--black-text);
 }
 
-.teams-table tr {
-  height: 200px;
-}
-
 /* 5. KPI Table
    ********************************** */
 
@@ -241,7 +239,7 @@ select {
 /* Search bar */
 .input-box{
   position: relative;
-  max-width: 175px;
+  max-width: 200px;
 }
 
 .input-box i {

@@ -9,16 +9,14 @@
     width: 100%;
     /* Full-width */
     font-size: 16px;
-    /* Increase font-size */
-    padding: 12px 20px 12px 40px;
     /* Add some padding */
     border: 2px solid var(--color-primary);
     border-radius: var(--radius-big);
     /* Add a grey border */
-    margin-bottom: 12px;
+    margin-bottom: var(--inner-padding);
     /* Add some space below the input */
 
-    color: var(--black-text);
+    color: var(--white-text);
 }
 
 #test-list {
@@ -34,6 +32,10 @@
     background-color: var(--color-primary);
 }
 
+#test-list a {
+    width: 80%;
+}
+
 /* When the checkbox is checked, add a blue background */
 .container input:checked~.checkmark {
     background-color: var(--acc-color-main);
@@ -44,7 +46,7 @@
     margin-top: -1px;
     /* Prevent double borders */
     /* Grey background color */
-    padding: 0 var(--inner-padding) 0 var(--inner-padding);
+    /*padding: 0 var(--inner-padding) 0 var(--inner-padding);*/
     /* Add some padding */
     text-decoration: none;
     /* Remove default text underline */

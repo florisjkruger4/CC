@@ -18,7 +18,12 @@
 
         <div class="d-flex align-items-center" style="gap: var(--inner-padding);">
 
+          {% if sport %}
+          <h1>{{ sport }} </h1>
+          {% else %}
           <h1>Athletes</h1>
+          {% endif %}
+         
 
           <div class="input-box" style="width: 250px;">
             <form method="GET" action="{% url 'AthletesDash' %}">

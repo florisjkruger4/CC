@@ -4,7 +4,7 @@
 <head>
     <!-- Header -->
     {% include 'html/header.html' %}
-    <script src="/staticfiles/templates/js/athleteProf.js" async></script>
+    <script src="/staticfiles/templates/js/athleteProf.js"></script>
 
 </head>
 
@@ -18,6 +18,27 @@
         <div id="bar-template">
             <h3 id="tname"></h3>
             <img id="tgraph" style="width: 100%; height: auto;">
+
+            <!--<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Large Modal</button>
+
+            <div class="modal fade" id="myModal" role="dialog">
+                <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                      <h4 class="modal-title">Modal Header</h4>
+                    </div>
+                    <div class="modal-body">
+                      <p>This is a large modal.</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>-->
+
         </div>
 
         <div id="trend-template">
@@ -44,11 +65,11 @@
         </div>
     </div>
 
-    <main class="py-3 py-override">
+    <main class="py-3 py-override" style="padding-bottom: 0 !important;">
         <div class="container" style="max-width: 1800px;">
             <div class="row">
                 <div class="col-lg-5 overflow-scroll col-padding">
-                    <div class="col-scroll">
+                    <div class="col-scroll" style="height: 100%;">
 
                         <!-- Athlete Info/Header -->
                         <div class="main-header justify-content-between" style="position: sticky; top:0; z-index: 2;">
@@ -112,7 +133,7 @@
                         </div>
 
                         <!-- KPI Trends -->
-                        <div id="kpireport" class="report tab-corner bottom-margin">
+                        <div id="kpireport" class="report tab-corner">
 
                             <div class="d-flex justify-content-between align-items-center">
                                 <div style="width: 50%">
@@ -217,16 +238,16 @@
                                 </div>
                             </div>
 
-                            <a href="{% url 'AddWellness' athleteProf.fname athleteProf.lname athleteProf.dob %}">
+                            <!--<a href="{% url 'AddWellness' athleteProf.fname athleteProf.lname athleteProf.dob %}">
                                 <button class="spanning-button" style="margin-top: 20px;">Add Wellness Report</button>
-                            </a>
+                            </a>-->
 
                         </div>
                     </div>
                 </div>
 
                 <div class="col-lg-7 overflow-scroll col-padding">
-                    <div class="col-scroll">
+                    <div class="col-scroll" style="height: 100%;">
 
                         <!-- Date Selector + Settings-->
                         <div class="main-header justify-content-between" style="padding-top: var(--inner-padding)">
@@ -237,12 +258,14 @@
                                     <div id="exact-date" style="display: none;">
                                         {% csrf_token %}
                                         <select id="exact-date1" name="date1" style="font-size:20px;" onchange="update_dates()">
+                                            <option selected hidden>Pick Date</option>
                                             {% for x in kpi_dates %}
                                             <option>{{ x.datekpi }}</option>
                                             {% endfor %}
                                         </select>
                                         to
                                         <select id="exact-date2" name="date2" style="font-size:20px;" onchange="update_dates()">
+                                            <option selected hidden>Pick Date</option>
                                             {% for x in kpi_dates %}
                                             <option>{{ x.datekpi }}</option>
                                             {% endfor %}
@@ -374,7 +397,7 @@
                             // check if it's empty before trying to parse
                             var alldates = '{{ all_dates }}';
                             if(alldates) {
-                                all_dates = JSON.parse('{{ all_dates|safe }}');
+                                alldates = JSON.parse('{{ all_dates|safe }}');
                             }
 
                             window.athleteData = {

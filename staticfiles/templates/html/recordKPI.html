@@ -20,10 +20,10 @@
 
       <div class="container" style="max-width: 1800px;">
         <div class="row">
-          <div class="col-lg-9 col-padding col-inner-padding-l">
+          <div class="col-lg-8 col-padding overflow-scroll col-inner-padding-l" style="height: 100vh;">
 
             <!-- Title Header -->
-            <div class="main-header justify-content-between">
+            <div id="header" class="main-header justify-content-between">
               <h1>Record KPI</h1>
             </div>
 
@@ -37,50 +37,63 @@
                 {% endfor %}
               </select>
             </div>
+          
+            <div class="overflow-scroll col-scroll" style="height: inherit;">
 
             <!-- Data Entry Table -->
-            <div class="table-container">
-              <table id="data-table" class="data-table">
-                <thead>
-                  <tr id="theader">
-                    <th style="min-width: 80px;"></th>
-                  </tr>
-                </thead>
-                <tbody id="tvalues">
-                </tbody>
-              </table>
-            </div>
+              <div class="table-container">
+                <table id="data-table" class="data-table">
+                  <thead>
+                    <tr id="theader">
+                      <th style="min-width: 80px;"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="tvalues">
+                  </tbody>
+                </table>
+              </div>
 
-            <div id="hide" style="display: none;">
-              <div class="d-flex" style="gap: var(--inner-padding);">
-                <input type="submit" value="Submit" class="submit" id="submitbtn">
-                <input type="submit" value="Clear Table" class="submit" id="clearbtn">
+              <div id="hide" style="display: none;">
+                <div class="d-flex" style="gap: var(--inner-padding); padding-bottom: var(--inner-padding);">
+                  <input type="submit" value="Submit" class="submit" id="submitbtn">
+                  <input type="submit" value="Clear Table" class="submit" id="clearbtn">
+                </div>
               </div>
             </div>
 
           </div>
 
-          <div class="col-lg-3 col-inner-padding-r" style="margin-top: var(--gutter); height: 85vh;">
+          <div class="col-lg-4 col-inner-padding-r" style="margin-top: var(--gutter); height: 90vh;">
 
-            <input type="text" id="test-search" onkeyup="listFilter()" placeholder="Search for tests..."
-              style="margin-bottom: 0; border-radius: var(--radius-big) var(--radius-big) 0 0; color: white;">
-            <div class="overflow-auto"
-              style="background-color: var(--color-secondary); height: 100%; padding-top: var(--inner-padding); border-radius: 0 0 var(--radius-big) var(--radius-big);">
-              <ul id="test-list">
-                {% for x in test_types %}
-                <li>
-                  <div><a>{{ x }}</a><input id="{{ forloop.counter }}" type="checkbox" disabled="true"></div>
-                  <hr style="margin-left: var(--inner-padding); margin-right: var(--inner-padding);">
-                </li>
-                {% endfor %}
-              </ul>
+            <div style="padding: var(--inner-padding); background-color: var(--color-secondary); border-radius: var(--radius-big);">
+
+              <div class="d-flex justify-content-between">
+                <h2>Tests</h2>
+                <!--<input type="text" id="test-search" onkeyup="listFilter()" placeholder="Search for tests..."
+                style="color: white;">-->
+                <div class="input-box">
+                    <input type="text" id="test-search" onkeyup="listFilter()" class="form-control" placeholder="Search">
+                    <i class="fa fa-search"></i>
+                </div>
+              </div>
+
+              <div class="overflow-auto" style="height: 70vh;">
+                <ul id="test-list">
+                  {% for x in test_types %}
+                  <li>
+                    <div><a>{{ x }}</a><input id="{{ forloop.counter }}" type="checkbox" disabled="true"></div>
+                    <hr>
+                  </li>
+                  {% endfor %}
+                </ul>
+              </div>
+
+              <div style="padding-top: var(--inner-padding)">
+                <button id="addTestBtn" class="submit w-100">Add New Test</button>
+              </div>
 
             </div>
-
-            <!-- STYLING NEEDED FOR STICKY BUTTON AND FORM -->
-            <!-- Sticky button to add a new test type -->
-            <button id="addTestBtn" style="position: sticky; bottom: 0; width: 100%;" class="submit">Add New Test</button>
-
+            
             <!-- Form to input new test type -->
             <!-- 'bottom' style pushes the form above the Add Test Type/Close button -->
             <form id="addTestForm" style="display: none; position: absolute; bottom: 155px; background-color: #31363d; width: 320px; border-radius: 5px;" method="POST" action="{% url 'addTestType' %}">
