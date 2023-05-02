@@ -45,10 +45,10 @@
 }
 
 .report-tab {
-    background-color: var(--color-secondary); 
-    padding: 10px 25px; 
-    border: none; 
-    color: white; 
+    background-color: var(--color-secondary);
+    padding: 10px 25px;
+    border: none;
+    color: white;
     border-radius: var(--radius-big) var(--radius-big) 0 0;
     padding: 15px 25px;
 }
