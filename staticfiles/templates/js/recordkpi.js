@@ -190,10 +190,12 @@ function deleteColumn(value, id, ParentIDarray) {
         
         var athlete_indexes = (index * rows);
 
-        for (var i = athlete_indexes; i<athlete_indexes+rows; i++){
-            console.log("test: " + i);
-            ParentIDarray.pop(i);
-        }
+        var p_index = ParentIDarray.indexOf(ParentIDarray[athlete_indexes]);
+        console.log("p_index: " + p_index);
+        ParentIDarray.splice(p_index, rows);
+
+        console.log('parent arr AFTER: ' + ParentIDarray)
+        
     }
 
     //find all headers with desired id and remove
@@ -204,8 +206,7 @@ function deleteColumn(value, id, ParentIDarray) {
 
     console.log("index: " + index)
     console.log('test type arr: ' + TestTypeArray)
-    console.log("index: " + athlete_indexes)
-    console.log('parent arr: ' + ParentIDarray)
+    
 }
 
 function sendData(ParentIDarray, id) {

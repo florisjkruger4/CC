@@ -152,7 +152,7 @@ def AthletesDash(request):
 
 @login_required(login_url="/")
 def MaleAthletes(request):
-    q = request.GET.get("q") 
+    q = request.GET.get("q")
     q = "M"
 
     athletes = AthleteT.objects.filter(
@@ -168,7 +168,7 @@ def MaleAthletes(request):
 
 @login_required(login_url="/")
 def FemaleAthletes(request):
-    q = request.GET.get("q") 
+    q = request.GET.get("q")
     q = "F"
 
     athletes = AthleteT.objects.filter(
@@ -184,7 +184,7 @@ def FemaleAthletes(request):
 
 @login_required(login_url="/")
 def TeamSpecificAthletes(request, sport):
-    q = request.GET.get("q") 
+    q = request.GET.get("q")
     q = sport
 
     athletes = AthleteT.objects.filter(
@@ -846,6 +846,7 @@ def AthleteProf(request, fname, lname, dob, id):
             kpi_earliest = None
             kpi_most_recent = None
             kpi_count = None
+
             all_tests = None
             all_dates = None
 
@@ -1365,10 +1366,10 @@ def recordKPI(request):
 
             # Gets the JSON data to hold info containig all tests selected
             if data.get("InputCellArray"):
-                
+
                 date = data.get("date_selector")
                 print(date)
-                
+
                 testType = data.get("TestTypeArray")
 
                 selectedSport = data.get("sportsteam")
@@ -1387,7 +1388,7 @@ def recordKPI(request):
                             testtype=x,
                             testresult=testResult[index],
                         )
-                        if (int(testResult[index]) >= 0):
+                        if (float(testResult[index]) >= 0):
                             print(y[0] + " " + y[1] + " " + y[2] + " " + date + " " + x + " " + testResult[index])
                             newKPI.validate_constraints()
                             newKPI.save()
@@ -1400,7 +1401,7 @@ def recordKPI(request):
 
     # Other (non-AJAX) requests will recieve a response with a whole HTML document. This requires a page reload.
 
-    
+
     if request.method == 'POST':
         print("test")
 
@@ -1481,7 +1482,7 @@ def WellnessDash(request):
                 if (x.image == ''):
                     x.image = "/media/placeholder.jpg"
                     athletes_img.append(str(x.image))
-                else: 
+                else:
                     # Get athlete image from AthleteT
                     athletes_img.append(x.image.url)
 
@@ -1669,7 +1670,7 @@ def AddWellness(request, fname, lname, dob):
     Fname = fname
     Lname = lname
     DOB = dob
-    
+
     if request.method == "POST":
         newhoursofsleep = request.POST["hoursofsleep"]
         newsleepquality = request.POST["sleepquality"]
@@ -1708,30 +1709,25 @@ def AddWellness(request, fname, lname, dob):
 
 @login_required(login_url="/")
 def wellnessForm(request):
-    """
-    athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
 
-    Fname = fname
-    Lname = lname
-    DOB = dob
+    # This is here so we can retrieve a list of athletes for the name selector
+    q = request.GET.get("q") if request.GET.get("q") != None else ""
 
-    Sports = AthleteT.objects.filter(fname=fname, lname=lname, dob=dob).values(
-        "sportsteam"
+    athletes = AthleteT.objects.filter(
+        Q()
+        | Q(fname__icontains=q)
+        | Q(lname__icontains=q)
+        | Q(sportsteam__icontains=q)
+        | Q(position__icontains=q)
+        | Q(year__icontains=q)
     )
-    for x in Sports:
-        SportsTeam = x["sportsteam"]
 
-    Positions = AthleteT.objects.filter(fname=fname, lname=lname, dob=dob).values(
-        "position"
-    )
-    for x in Positions:
-        Position = x["position"]
-
-    Images = AthleteT.objects.filter(fname=fname, lname=lname, dob=dob).values("image")
-    for x in Images:
-        Img = x["image"]
-
+    # This is for adding a new wellness entry
     if request.method == "POST":
+
+        selectedAthlete = request.POST.get("name")
+        Fname, Lname, DOB = selectedAthlete.split(' ')
+
         newhoursofsleep = request.POST["hoursofsleep"]
         newsleepquality = request.POST["sleepquality"]
         newbreakfast = request.POST["breakfast"]
@@ -1743,13 +1739,13 @@ def wellnessForm(request):
         newdate = request.POST["date"]
 
         newWellness = WellnessT(
+
             fname=Fname,
             lname=Lname,
             dob=DOB,
+
             status=newstatus,
-            sportsteam=SportsTeam,
             date=newdate,
-            position=Position,
             hoursofsleep=newhoursofsleep,
             sleepquality=newsleepquality,
             breakfast=newbreakfast,
@@ -1757,16 +1753,16 @@ def wellnessForm(request):
             soreness=newsoreness,
             stress=newstress,
             mood=newmood,
-            image=Img,
         )
 
         newWellness.validate_constraints()
         newWellness.save()
 
+
     context = {
-        "athleteProf": athleteProf,
+        #"athleteProf": athleteProf,
+        "athletes": athletes,
     }
 
-    """
 
-    return render(request, "html/wellnessForm.html")
+    return render(request, "html/wellnessForm.html", context)
