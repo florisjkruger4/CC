@@ -4,6 +4,7 @@
 <head>
   <!-- Header -->
   {% include 'html/header.html' %}
+  <script src="/staticfiles/templates/js/athletes.js"></script>
 </head>
 
 <body>
@@ -18,48 +19,48 @@
         <div class="d-flex align-items-center" style="gap: var(--inner-padding);">
 
           <h1>Athletes</h1>
-        
+
           <div class="input-box" style="width: 250px;">
             <form method="GET" action="{% url 'AthletesDash' %}">
               <input type="text" class="form-control" placeholder="Search" name="q">
               <i class="fa fa-search"></i>
             </form>
           </div>
-
+          
         </div>
+      </div>
 
         <div>
-          <a href="/addathlete" >
+          <a href="/addathlete">
             <i class="fa-solid fa-plus" style="color: var(--acc-color-main); font-size: 25px;"></i>
           </a>
         </div>
-
-      </div>
 
       <!--<a href="/athletes"><button type="button" class="submit">Clear Search</button></a>-->
 
     </div>
 
+
     <!-- Athlete_T -->
     <div class="d-flex">
 
-      <table class="table table-dark table-striped table-hover table-customs">
+      <table id="ath-table" class="table table-dark table-striped table-hover table-customs">
         <thead>
           <tr>
-            <th scope="col">First Name</i></th>
-            <th scope="col">Last Name</th>
-            <th scope="col">Sports Team</i></th>
-            <th scope="col">Position</th>
-            <th scope="col">Year</th>
-            <th scope="col">Height (in)</th>
-            <th scope="col">Gender</th>
+            <th scope="col" onclick="sortTable(0)">First Name </th>
+            <th scope="col" onclick="sortTable(1)">Last Name </th>
+            <th scope="col" onclick="sortTable(2)">Sports Team </th>
+            <th scope="col" onclick="sortTable(3)">Position </th>
+            <th scope="col" onclick="sortTable(4)">Year </th>
+            <th scope="col" onclick="sortTable(5)">Height (in) </th>
+            <th scope="col" onclick="sortTable(6)">Gender </th>
           </tr>
         </thead>
         <tbody>
           {% for AthleteT in athletes %}
           <tr class="clickable-row" data-href="{% url 'AthleteProf' AthleteT.fname AthleteT.lname AthleteT.dob AthleteT.id %}">
-            <td><a href="{% url 'AthleteProf' AthleteT.fname AthleteT.lname AthleteT.dob AthleteT.id %}">{{ AthleteT.fname }}</a></td>
-            <td><a href="{% url 'AthleteProf' AthleteT.fname AthleteT.lname AthleteT.dob AthleteT.id %}">{{ AthleteT.lname }}</a></td>
+            <td>{{ AthleteT.fname }}</td>
+            <td>{{ AthleteT.lname }}</td>
             <td>{{ AthleteT.sportsteam }}</td>
             <td>{{ AthleteT.position }}</td>
             <td>{{ AthleteT.year }}</td>
@@ -72,4 +73,5 @@
   </main>
 
 </body>
+
 </html>

@@ -4,7 +4,7 @@
 <head>
     <!-- Header -->
     {% include 'html/header.html' %}
-    <script src="/staticfiles/templates/js/athleteProf.js"></script>
+    <script src="/staticfiles/templates/js/athleteProf.js" async></script>
 
 </head>
 
@@ -370,6 +370,13 @@
 
                         <script>
 
+                            // Will throw an error if all_dates is empty when JSON tries to parse
+                            // check if it's empty before trying to parse
+                            var alldates = '{{ all_dates }}';
+                            if(alldates) {
+                                all_dates = JSON.parse('{{ all_dates|safe }}');
+                            }
+
                             window.athleteData = {
                                 fname: '{{ athleteProf.fname }}',
                                 lname: '{{ athleteProf.lname }}',
@@ -379,7 +386,7 @@
                                 wellness_count: '{{ wellness_count }}',
                                 kpi_earliest: '{{ kpi_earliest }}',
                                 kpi_most_recent: '{{ kpi_most_recent }}',
-                                all_dates: JSON.parse('{{ all_dates|safe }}')
+                                all_dates: alldates,
                             };
                             
                         </script>

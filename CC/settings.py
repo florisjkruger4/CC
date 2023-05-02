@@ -28,7 +28,7 @@ DEBUG = True
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-ALLOWED_HOSTS = ['cc-production-832e.up.railway.app', '127.0.0.1']
+ALLOWED_HOSTS = ['cc-production-832e.up.railway.app', '127.0.0.1', '192.168.1.247']
 
 CSRF_TRUSTED_ORIGINS = ['https://cc-production-832e.up.railway.app','https://127.0.0.1']
 

@@ -142,7 +142,7 @@ def AthletesDash(request):
         | Q(sportsteam__icontains=q)
         | Q(position__icontains=q)
         | Q(year__icontains=q)
-    )
+    ).order_by("fname");
 
     context = {
         "athletes": athletes,
@@ -158,7 +158,7 @@ def MaleAthletes(request):
     athletes = AthleteT.objects.filter(
         Q()
         | Q(gender__icontains=q)
-    )
+    ).order_by("fname")
 
     context = {
         "athletes": athletes,
@@ -174,7 +174,7 @@ def FemaleAthletes(request):
     athletes = AthleteT.objects.filter(
         Q()
         | Q(gender__icontains=q)
-    )
+    ).order_by("fname")
 
     context = {
         "athletes": athletes,
@@ -190,7 +190,7 @@ def TeamSpecificAthletes(request, sport):
     athletes = AthleteT.objects.filter(
         Q()
         | Q(sportsteam__icontains=q)
-    )
+    ).order_by("fname")
 
     context = {
         "athletes": athletes,
@@ -1338,7 +1338,6 @@ def GroupDash(request):
 
     return render(request, "html/groups.html", context)
 
-
 @login_required(login_url="/")
 def recordKPI(request):
     # Define teams
@@ -1362,7 +1361,7 @@ def recordKPI(request):
             # Get the first names and last names of all the athletes whose team matches requested team
             athletes = AthleteT.objects.filter(sportsteam__exact=selectedSport).values(
                 "fname", "lname"
-            )
+            ).order_by("fname")
 
             # Gets the JSON data to hold info containig all tests selected
             if data.get("InputCellArray"):
@@ -1460,7 +1459,7 @@ def WellnessDash(request):
             selectedSport = data.get("sportsteam")
 
             # Get all athletes on this team
-            athletes = AthleteT.objects.filter(sportsteam__exact=selectedSport)
+            athletes = AthleteT.objects.filter(sportsteam__exact=selectedSport).order_by("fname")
 
             all_wellness = {}
             athletes_img = []
