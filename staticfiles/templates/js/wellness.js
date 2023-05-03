@@ -5,7 +5,7 @@ let wellness_AJAXurl;
 
 document.addEventListener("DOMContentLoaded", function () {
   // Get today's date as a string in the format "yyyy-mm-dd"
-  today = new Date().toISOString().substr(0, 10);
+  today = new Date().toISOString().substring(0, 10);
 
   wellness_AJAXurl = window.wellnessData.url;
 

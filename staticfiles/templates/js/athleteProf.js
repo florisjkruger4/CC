@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
     ajaxURL = "/" + a_fname + "/" + a_lname + "/" + a_dob + "/" + a_id;
 
     // get today's date
-    today = new Date().toISOString().substr(0, 10);
+    today = new Date().toISOString().substring(0, 10);
 
     // set initial values for date selectors
     document.getElementById("cal-date1").value = kpi_earliest;

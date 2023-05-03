@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* This block of code sets the default date in the selector to today's date */
     // Get today's date as a string in the format "yyyy-mm-dd"
-    today = new Date().toISOString().substr(0, 10);
+    today = new Date().toISOString().substring(0, 10);
     document.getElementById("date_selector").value = today;
 
     date_selector = document.getElementById("date_selector").value
@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         success: (response) => {
             $("#loading").remove();
-            
+
             console.log(response);
             // Display a success message
             alert("Test added successfully");
