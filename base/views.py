@@ -900,6 +900,7 @@ def AthleteProf(request, fname, lname, dob, id):
 @login_required(login_url="/")
 def EditAthlete(request, fname, lname, dob, id):
     athlete = AthleteT.objects.get(id=id)
+    teams = TeamT.objects.all
 
     # deletes entire athlete from database... along with their wellness and kpi records
     if request.GET.get("delete") == "delete":
@@ -975,7 +976,10 @@ def EditAthlete(request, fname, lname, dob, id):
 
         return redirect(AthleteProf, fname=x.fname, lname=x.lname, dob=x.dob, id=x.id)
 
-    context = {"athlete": athlete}
+    context = {
+        "athlete": athlete,
+        "teams": teams
+        }
 
     return render(request, "html/editathlete.html", context)
 

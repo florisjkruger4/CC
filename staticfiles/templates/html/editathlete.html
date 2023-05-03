@@ -65,17 +65,14 @@
                 <div class="d-flex" style="gap: var(--inner-padding); padding-top: var(--inner-padding); padding-bottom: var(--inner-padding);">
                     <div>
                         <p>Team</p>
+                        
                         <select name="sportsteam" class="form-control">
-                            <option selected>{{athlete.sportsteam}}</option>
-                            <option>Field Hockey</option>
-                            <option>Football</option>
-                            <option>Men's Ice Hockey</option>
-                            <option>Men's Rugby</option>
-                            <option>Men's Swimming</option>
-                            <option>Women's Ice Hockey</option>
-                            <option>Women's Rugby</option>
-                            <option>Women's Swimming</option>
+                            <option selected hidden >{{athlete.sportsteam}}</option>
+                            {% for x in teams %}
+                            <option >{{x.sport}}</option>
+                            {% endfor %}
                         </select>
+                        
                        
                     </div>
                     <div>
