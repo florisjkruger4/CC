@@ -62,7 +62,7 @@ function disable_inputs() {
     document.querySelectorAll("input[type=date]").forEach(date => {
         date.disabled = true;
     })
-    document.querySelectorAll("input[type=select]").forEach(select => {
+    document.querySelectorAll("select").forEach(select => {
         select.disabled = true;
     })
 }
@@ -78,7 +78,7 @@ function enable_inputs() {
     document.querySelectorAll("input[type=date]").forEach(date => {
         date.disabled = false;
     })
-    document.querySelectorAll("input[type=select]").forEach(select => {
+    document.querySelectorAll("select").forEach(select => {
         select.disabled = false;
     })
 }

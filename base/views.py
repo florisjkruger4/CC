@@ -1459,6 +1459,7 @@ def WellnessDash(request):
             data = json.load(request)
             selectedDate = data.get("wellnessdate")
             selectedSport = data.get("sportsteam")
+            show_trends = data.get("show_trends")
 
             # Get all athletes on this team
             athletes = AthleteT.objects.filter(sportsteam__exact=selectedSport).order_by("fname")
@@ -1537,7 +1538,7 @@ def WellnessDash(request):
                     wellness_trend_data_x.append(y.date)
 
                 # If there is more than one wellness report, create trend graph
-                if len(wellness_trend_data_x) > 1:
+                if len(wellness_trend_data_x) > 1 and show_trends:
                     wellness_trends.append(
                         line_graph(
                             wellness_trend_data_x, wellness_trend_data_y, 0, None
