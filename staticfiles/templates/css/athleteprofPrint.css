@@ -1,0 +1,32 @@
+/* Elements to hide */
+nav,
+#spider-tab, #bar-tab, #settings,
+#kpi-tab, #wellness-tab,
+#cal-toggle,
+#spider-submit,
+.print-hide {
+    display: none;
+}
+
+/* Make main fill entire space */
+main {
+    margin-left: 0;
+    width: 100%;
+}
+
+.bar-graphs img {
+    /*min-height: 200px;*/
+}
+
+#kpireport img {
+    filter: brightness(0);
+}
+
+body,
+#kpi-change {
+    color: black!important;
+}
+
+#spider-graph  {
+    margin: 0 auto;
+}

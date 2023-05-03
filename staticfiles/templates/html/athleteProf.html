@@ -6,12 +6,20 @@
     {% include 'html/header.html' %}
     <script src="/staticfiles/templates/js/athleteProf.js"></script>
 
+    <!-- Printed Stylings -->
+    <link rel="stylesheet" media="print" href="/staticfiles/templates/css/athleteprofPrint.css" />
 </head>
 
 <body>
 
     <!-- SideNavbar -->
     {% include 'html/sidenav.html' %}
+
+    <!-- Display print button -->
+    <script>
+        const printBtn = document.getElementById("printBtn");
+        printBtn.classList.remove("d-none");
+    </script>
 
     <!-- HTML Templates for KPI Trends and Bar Graphs -->
     <div class="hide-template">
@@ -80,7 +88,7 @@
                                 &nbsp;
                                 <a
                                     href="{% url 'EditAthlete' athleteProf.fname athleteProf.lname athleteProf.dob athleteProf.id %}">
-                                    <i class="fa-solid fa-pen"
+                                    <i class="print-hide fa-solid fa-pen"
                                         style="color: var(--acc-color-main); font-size: var(--icon-size);"></i>
                                 </a>
                             </div>
@@ -152,7 +160,7 @@
                             </div>
 
                             <a href="{% url 'AddKPI' athleteProf.fname athleteProf.lname athleteProf.dob %}">
-                                <button class="spanning-button" style="margin-top: var(--inner-padding);">KPI History</button>
+                                <button class="print-hide spanning-button" style="margin-top: var(--inner-padding);">KPI History</button>
                             </a>
 
                         </div>
@@ -375,7 +383,7 @@
                         <!-- This is where bar graphs will populate -->
                         <div id="bar-graphs" class="graphprof">
                             <div class="btn-container">
-                                <div class="btn-group rt-toggle" role="group" aria-label="Basic radio toggle button group">
+                                <div class="print-hide btn-group rt-toggle" role="group" aria-label="Basic radio toggle button group">
                                     <input type="radio" class="btn-check" name="btnradio" id="t-score-radio" autocomplete="off">
                                     <label class="btn btn-outline-primary" for="t-score-radio">T</label>
                                 
@@ -418,6 +426,7 @@
             </div>
         </div>
     </main>
+
 </body>
 
 </html>

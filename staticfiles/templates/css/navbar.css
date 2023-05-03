@@ -41,6 +41,14 @@ nav {
   padding-right: var(--nav-padding);
 }
 
+.nav-footer {
+  position: fixed;
+  bottom: 0.4em;
+  width: var(--nav-width);
+  text-align: center;
+  --bs-nav-link-hover-color: var(--acc-color-2) !important;
+}
+
 /* Circle containing user initials */
 .user-initials {
   width: 40px;
