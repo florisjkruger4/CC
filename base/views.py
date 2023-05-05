@@ -1572,6 +1572,21 @@ def WellnessDash(request):
     return render(request, "html/wellness.html", context)
 
 @login_required(login_url="/")
+def AddTeam(request):
+
+    if request.method == "POST":
+        team = request.POST["teamname"]
+
+        newTeam = TeamT(
+            sport=team
+        )
+
+        newTeam.validate_unique()
+        newTeam.save()
+
+    return render(request, "html/addteam.html")
+
+@login_required(login_url="/")
 def AddKPI(request, fname, lname, dob):
     athleteProf = AthleteT.objects.get(fname=fname, lname=lname, dob=dob)
 
@@ -1668,6 +1683,13 @@ def DeleteKPI(request, id):
     kpi_to_delete.delete()
 
     return redirect(AddKPI, fname=kpi_to_delete.fname, lname=kpi_to_delete.lname, dob=kpi_to_delete.dob)
+
+@login_required(login_url="/")
+def DeleteTeam(request, sport):
+    team_to_delete = TeamT.objects.get(sport=sport)
+    team_to_delete.delete()
+    
+    return redirect(GroupDash)
 
 @login_required(login_url="/")
 def AddWellness(request, fname, lname, dob):

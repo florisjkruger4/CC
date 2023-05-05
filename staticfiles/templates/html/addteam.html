@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Header -->
+  {% include 'html/header.html' %}
+  <script src="/staticfiles/templates/js/groups.js"></script>
+</head>
+
+<body>
+    <!-- SideNavbar -->
+    {% include 'html/sidenav.html' %}
+
+    <main class="py-3 py-override">
+        <div class="main-header" style="gap: 25px;">
+            <a href="{% url 'GroupDash' %}"><i
+                    class="fa-solid fa-circle-arrow-left"></i></a>
+            <h1>Add Sports Team</h1>
+        </div>
+        <div class="row" style="width: 50%;">
+            <div class="col-md-12">
+                <form method="post" id="addkpiform">
+                    {% csrf_token %}
+                    &nbsp;
+                    <h4>New Team</h4>
+                    &nbsp;
+                    <div class="basicreport">
+                        <div class="d-flex" style="gap: var(--inner-padding);">
+                            <div style="width: 50%;">
+                                <h6>Team Name</h6>
+                                <input type="text" name="teamname" id="teamname" class="form-control">
+    
+                            </div>
+                            <button class="spanning-button"
+                                style="width: 10%; margin-top: auto; margin-bottom: inherit; margin-left: auto; margin-right: inherit;" type="submit"
+                                value="Submit">Add</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>    
+    </main>
+</body>

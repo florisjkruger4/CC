@@ -19,6 +19,7 @@ urlpatterns = [
     path('addathlete/', views.AddAthlete, name="AddAthlete"),
     path('<str:fname>/<str:lname>/<path:dob>/<int:id>', views.AthleteProf, name="AthleteProf"),
     path('/editAthlete/<str:fname>/<str:lname>/<path:dob>/<int:id>', views.EditAthlete, name="EditAthlete"),
+    path('addteam/', views.AddTeam, name="AddTeam"),
     
     path('groups/', views.GroupDash, name="GroupDash"),
     path('recordKPI/', views.recordKPI, name="recordKPI"),
@@ -29,7 +30,8 @@ urlpatterns = [
     path('/addkpi/<str:fname>/<str:lname>/<path:dob>', views.AddKPI, name="AddKPI"),
     path('deletekpi/<int:id>', views.DeleteKPI, name="DeleteKPI"),
     path('deletekpidash/<int:id>', views.DeleteKPI_Dash, name="DeleteKPI_Dash"),
-    path('editkpi/<int:id>', views.EditKPI, name="EditKPI")
+    path('editkpi/<int:id>', views.EditKPI, name="EditKPI"),
+    path('deleteteam/<str:sport>', views.DeleteTeam, name="DeleteTeam"),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

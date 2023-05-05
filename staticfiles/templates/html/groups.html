@@ -33,6 +33,13 @@
           <div class="col-scroll">
             <div class="main-header d-flex justify-content-between">
               <h1>Groups</h1>
+
+              <div>
+                <a href="/addteam">
+                  <i class="fa-solid fa-plus" style="color: var(--acc-color-main); font-size: 25px;"></i>
+                </a>
+              </div>
+
             </div>
 
             <div style="margin-top: 20px;">
@@ -56,10 +63,28 @@
               {% for TeamT in teams %}
               {% if forloop.counter == 1 %}
               <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="{{ forloop.counter }}" autocomplete="off" value="{{ TeamT.sport }}">
-              <label class="btn btn-outline-theme" for="{{ forloop.counter }}" style="display: flex; justify-content: space-between; border-radius: 5px 5px 0px 0px;">{{ TeamT.sport }}<a href="{% url 'TeamSpecificAthletes' TeamT.sport %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
+              <label class="btn btn-outline-theme" for="{{ forloop.counter }}" style="display: flex; justify-content: space-between; border-radius: 5px 5px 0px 0px;">{{ TeamT.sport }}
+                <div>
+                  <a href="{% url 'TeamSpecificAthletes' TeamT.sport %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a>
+                &nbsp;
+                <a onclick="return confirm('Are you sure?');" href="{% url 'DeleteTeam' TeamT.sport %}">
+                  <button class="delkpibtn" style="background-color: #fc515100; font-size: var(--icon-size)"
+                    name="delete" value="delete"><i class="fa-solid fa-xmark"></i></button>
+                </a>
+              </div>
+              </label>
               {% else %}
               <input type="radio" class="btn-check radiotest" name="vbtn-radio" id="{{ forloop.counter }}" autocomplete="off" value="{{ TeamT.sport }}">
-              <label class="btn btn-outline-theme" for="{{ forloop.counter }}" style="display: flex; justify-content: space-between;">{{ TeamT.sport }}<a href="{% url 'TeamSpecificAthletes' TeamT.sport %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a></label>
+              <label class="btn btn-outline-theme" for="{{ forloop.counter }}" style="display: flex; justify-content: space-between;">{{ TeamT.sport }}
+                <div>
+                  <a href="{% url 'TeamSpecificAthletes' TeamT.sport %}"><i class="fa-solid fa-user-group" style="font-size: var(--icon-size); margin-right: 5px;"></i></a>
+                &nbsp;
+                <a onclick="return confirm('Are you sure?');" href="{% url 'DeleteTeam' TeamT.sport %}">
+                  <button class="delkpibtn" style="background-color: #fc515100; font-size: var(--icon-size)"
+                    name="delete" value="delete"><i class="fa-solid fa-xmark"></i></button>
+                </a>
+                </div>
+              </label>
               {% endif %}
               {% endfor %}
             </div>
