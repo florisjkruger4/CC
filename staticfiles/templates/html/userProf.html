@@ -145,7 +145,8 @@
         </div>
         <table class="table table-dark table-striped table-hover table-customs" id="usertable">
           {% for x in allUsers %}
-          {% if forloop.counter != 1 %}
+          {% if x.is_superuser %}
+          {% else %}
           <tr style="height: 50px; vertical-align:middle;">
             <td style="width: 37%;">{{ x.first_name }} {{ x.last_name }}</td>
             <td>{{x.username}}</td>
