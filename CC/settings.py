@@ -28,9 +28,9 @@ DEBUG = True
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-ALLOWED_HOSTS = ['cc-production-832e.up.railway.app', '127.0.0.1', '192.168.1.247']
+ALLOWED_HOSTS = ['cc-production-832e.up.railway.app', '127.0.0.1', 'coachscorner.up.railway.app']
 
-CSRF_TRUSTED_ORIGINS = ['https://cc-production-832e.up.railway.app','https://127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['https://cc-production-832e.up.railway.app','https://127.0.0.1', 'coachscorner.up.railway.app']
 
 # Application definition
 
@@ -88,11 +88,11 @@ WSGI_APPLICATION = 'CC.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'lindenwood',
-        'USER': 'a5group',
-        'PASSWORD': '@spring2023',
-        'PORT': '3306',
-        'HOST': '137.184.106.207',
+        'NAME': 'railway',
+        'USER': 'root',
+        'PASSWORD': 'VOEhNMTbnFmxirZDK3qj',
+        'PORT': '7789',
+        'HOST': 'containers-us-west-69.railway.app',
     }
 }
 
